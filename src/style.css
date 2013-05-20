@@ -1,0 +1,46 @@
+.gen-button {
+	-fx-font: bold italic 20pt "Arial";
+	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+	-fx-background-insets: 0 0 0 0, 0, 1, 2;
+	-fx-background-radius: 5, 5, 4, 3;
+}
+.gen-button: focus {
+	-fx-font: bold italic 20pt "Arial";
+	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+	-fx-background-insets: 0 0 0 0, 0, 1, 2;
+	-fx-background-radius: 5, 5, 4, 3;
+}
+
+.clickable: hover {
+	-fx-color: -fx-focused-base;
+	-fx-background-color: -fx-focus-color, -fx-outer-border,
+		-fx-inner-border, -fx-body-color;
+	-fx-background-insets: 0, 2, 2, 2;
+	-fx-background-radius: 6, 6, 6, 6;
+	
+}
+
+.gen-vBox {
+	-fx-fill-width: true;
+	-fx-spacing: 10px;
+}
+
+.gen-hBox {
+	-fx-fill-height: true;
+	-fx-spacing: 2px;
+}
+
+.white-text-button {
+	-fx-font: bold italic 20pt "Arial";
+	-fx-text-fill: white;
+}
+
+.select-player-msg {
+	-fx-font: bold italic 50pt "Arial";
+	-fx-text-fill: white;
+}
+
+.messagePanel { 
+	-fx-stroke: white;
+	-fx-stroke-width : 4;
+}
