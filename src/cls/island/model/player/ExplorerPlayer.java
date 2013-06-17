@@ -21,8 +21,10 @@ public class ExplorerPlayer extends Player {
 	
 	@Override
 	public boolean isValidShoreUp(Island fromIsland, Island toIsland, IslandGrid<Island> grid) {
-		if (toIsland.isSunk()) return false;
-		if (grid.isAdjacent(fromIsland, toIsland))return true;
+		if (toIsland.isSunk())
+			return false;
+		if (fromIsland == toIsland)return true;
+		if (grid.isAdjacent(fromIsland, toIsland)) return true;
 		return false;
 	}
 

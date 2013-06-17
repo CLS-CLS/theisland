@@ -17,6 +17,7 @@ import cls.island.model.player.PlayerFactory;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Grid;
 import cls.island.utils.ViewUtils;
+import cls.island.view.component.actionsleft.ActionsLeft;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.Island.IslandName;
 import cls.island.view.component.piece.Piece;
@@ -56,6 +57,7 @@ public class GameModel {
 
 	private TreasuryPile treasuryPile;
 	private TreasureBag treasureBag;
+	private ActionsLeft actionsLeft;
 
 	public GameModel(Options options, Config config) {
 		this.config = config;
@@ -66,6 +68,15 @@ public class GameModel {
 		initTreasuryCards();
 		initPlayers(options.getPlayers());
 		initTreasuryBag();
+		initActionLeft();
+	}
+
+	private void initActionLeft() {
+		actionsLeft = new ActionsLeft();
+	}
+
+	public ActionsLeft getActionsLeft() {
+		return actionsLeft;
 	}
 
 	private void initTreasuryBag() {
@@ -129,6 +140,8 @@ public class GameModel {
 
 		islandsToFlood.addAll(islands);
 		Collections.shuffle(islandsToFlood);
+		
+		actionsLeft.setPlayer(getCurrentTurnPlayer());
 	}
 
 	private void initPlayers(List<PlayerAndColor> players) {
@@ -265,7 +278,9 @@ public class GameModel {
 	 */
 	public Player nextTurn() {
 		currentTurn = (currentTurn == players.size() - 1) ? 0 : currentTurn + 1;
-		return players.get(currentTurn);
+		Player currentPlayer =  players.get(currentTurn);
+		actionsLeft.setPlayer(currentPlayer);
+		return currentPlayer;
 	}
 
 	public Player getCurrentTurnPlayer() {

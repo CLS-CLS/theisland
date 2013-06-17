@@ -34,6 +34,7 @@ import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.view.component.MessagePanel;
+import cls.island.view.component.actionsleft.ActionsLeftView;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.piece.Piece;
@@ -120,7 +121,9 @@ public class IslandScreen extends AbstractScreen {
 		tradeButton = ButtonFactory.actionButton("Trade");
 		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure");
 		nextTurnButton = ButtonFactory.actionButton("Next \n Turn");
-
+		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
+		getChildren().add(actionsLeft);
+		actionsLeft.relocate(400, 810);
 		moveButton.relocate(1200, 300);
 		shoreUpButton.relocate(1310, 300);
 		tradeButton.relocate(1200, 410);

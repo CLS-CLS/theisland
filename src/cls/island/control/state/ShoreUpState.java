@@ -9,9 +9,9 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
+import cls.island.model.player.EngineerPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
-import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.screen.IslandComponent;
@@ -76,20 +76,14 @@ public class ShoreUpState implements GameState {
 
 	@Override
 	public void start() {
-		if (!gameModel.getCurrentTurnPlayer().hasAction()) {
+		Player currentPlayer = gameModel.getCurrentTurnPlayer();
+		if (currentPlayer instanceof EngineerPlayer){
+			if (!((EngineerPlayer)currentPlayer).canShoreUp())return;
+		}else if (!currentPlayer.hasAction()) {
 			gameController.setGameState(new NormalState(gameController, islandScreen, gameModel));
 			return;
 		}
-		List<TreasuryCard> cards = gameModel.getCurrentTurnPlayer().getTreasuryCards();
-//		if (cards.size()>0){
-//			cards.get(0).getComponent().enableValidToCkickEffect(true);
-//			
-//		}
-//		for (Island island : gameModel.getIslands()){
-//			if (island.isFlooded()){
-//				island.getComponent().enableValidToCkickEffect(true);
-//			}
-//		}
+		List<TreasuryCard> cards = currentPlayer.getTreasuryCards();
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
 
