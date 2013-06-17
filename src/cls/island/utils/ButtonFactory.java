@@ -13,7 +13,7 @@ public class ButtonFactory {
 	}
 	
 	public static Button actionButton(String text){
-		double size = 80D;
+		double size = 100D;
 		Button genButton = new Button(text);
 		genButton.getStyleClass().add("action-button");
 		genButton.setMaxWidth(size);

@@ -95,7 +95,7 @@ public class MainController {
 		});
 
 		// goToMainScreen(null);
-		options.setPlayers(Arrays.asList(new PlayerAndColor[] { new PlayerAndColor(PlayerType.DIVER, PieceColor.RED),
+		options.setPlayers(Arrays.asList(new PlayerAndColor[] { new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
 				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN) }));
 		gameModel = new GameModel(options, config);
 		gameModel.setUpNewGame();

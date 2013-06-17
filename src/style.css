@@ -34,6 +34,10 @@
 	-fx-scale-x: 1.1;
 	-fx-scale-y: 1.1;
 }
+.standard-label: {
+	-fx-font: bold italic 20pt "Arial";
+	-fx-background-color: transparent;
+}
 
 .action-button: pressed {
 	-fx-font: bold italic 20pt "Arial";

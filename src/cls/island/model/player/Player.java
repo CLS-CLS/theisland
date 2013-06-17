@@ -1,9 +1,7 @@
 package cls.island.model.player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -69,10 +67,7 @@ public class Player {
 		return base.addCard(card);
 	}
 
-	public void removeCard(TreasuryCard card) {
-		base.removeCard(card);
-	}
-
+	
 	public void giveCardToPlayer(TreasuryCard card, Player player) {
 		base.removeCard(card);
 		player.base.addCard(card);
@@ -129,6 +124,7 @@ public class Player {
 	 * checks if the player can shore up the specific island. The checks are:
 	 * 1) if the island is adjacent to player 
 	 * 2) the island is not sunk. 
+	 * 3) the island is the same island the player is on
 	 * @param fromIsland
 	 * @param toIsland
 	 * @param grid
@@ -137,11 +133,10 @@ public class Player {
 	public boolean isValidShoreUp(Island fromIsland, Island toIsland, IslandGrid<Island> grid) {
 		if (toIsland.isSunk())
 			return false;
-		boolean valid = false;
-		if (grid.isAdjacent(fromIsland, toIsland, Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT)) {
-			valid = true;
-		}
-		return valid;
+		if (fromIsland == toIsland)return true;
+		if (grid.isAdjacent(fromIsland, toIsland, Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT)) return true;
+		return false;
+		
 		
 	}
 
@@ -204,9 +199,34 @@ public class Player {
 	 * @return the cards forming the treasure collection
 	 */
 	public List<TreasuryCard> getTreasureCollection() {
+		ArrayList<TreasuryCard> collectionCards = new ArrayList<>();
+		int[] collectionQuantity = new int[10];
+		for (TreasuryCard card : getTreasuryCards()){
+			if (card.getType().getAbility()==Ability.TREASURE){
+				collectionQuantity[card.getType().ordinal()]++;
+			}
+		}
+		int index = -1;
+		for (int i=0;i<10;i++){
+			if (collectionQuantity[i]>=4){
+				index = i;
+				break;
+			}
+		}
+		if (index !=-1){
+			for (TreasuryCard treasuryCard : getTreasuryCards()){
+				if (treasuryCard.getType() == Type.values()[index]){
+					collectionCards.add(treasuryCard);
+					if (collectionCards.size()==4)break;
+				}
+			}
+		}
+		return collectionCards;
 		
-		return null;
-		
+	}
+
+	public void decreaseActionLeft() {
+		actionsLeft.setValue(actionsLeft.getValue()-1);
 	}
 
 }

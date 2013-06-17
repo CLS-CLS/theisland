@@ -69,7 +69,7 @@ public class GameModel {
 	}
 
 	private void initTreasuryBag() {
-		treasureBag = new TreasureBag();
+		setTreasureBag(new TreasureBag());
 
 	}
 
@@ -113,8 +113,7 @@ public class GameModel {
 		}
 		int minimumAddIndex = getPlayers().size() * DRAW_CARDS_PER_TURN;
 		for (TreasuryCard card : removedCards) {
-			treasuryCards.add(ViewUtils.getRandomInt(0, treasuryCards.size() - minimumAddIndex),
-					card);
+			treasuryCards.add(ViewUtils.getRandomInt(0, treasuryCards.size() - minimumAddIndex), card);
 		}
 
 		for (TreasuryCard treasuryCard : treasuryCards) {
@@ -137,10 +136,10 @@ public class GameModel {
 		for (PlayerAndColor playerType : options.getPlayers()) {
 			Image playerBaseImg = config.getPlayerCardHolder();
 			Image playerImg = config.getLolImagePlayer();
-			this.players.add(PlayerFactory.createPlayer(playerType.getPlayer(),
-					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer()
-							.name(), playerType.getColor()), new PlayerBase(playerType,
-							playerBaseImg, playerImg, index)));
+			this.players.add(PlayerFactory.createPlayer(
+					playerType.getPlayer(),
+					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer().name(), playerType
+							.getColor()), new PlayerBase(playerType, playerBaseImg, playerImg, index)));
 			index++;
 		}
 	}
@@ -162,10 +161,9 @@ public class GameModel {
 				repeats = SANDBAG_CARD_QUANTITY;
 			}
 			for (int i = 0; i < repeats; i++) {
-				treasuryCards.add(new TreasuryCard(config.getTreasureIslandImgFront(type), config
-						.getTreasureIslandImgBack(), new TreasuryCard.Model(type,
-						ViewStatus.FACE_UP), config.getTreasuryCardUseImg(), config
-						.getTreasuryCardDiscardImg()));
+				treasuryCards.add(new TreasuryCard(config.getTreasureIslandImgFront(type),
+						config.getTreasureIslandImgBack(), new TreasuryCard.Model(type, ViewStatus.FACE_UP), config
+								.getTreasuryCardUseImg(), config.getTreasuryCardDiscardImg()));
 			}
 		}
 	}
@@ -192,9 +190,8 @@ public class GameModel {
 			if (name == IslandName.TempleOfTheSun)
 				treasure = Type.EARTH_STONE;
 
-			islands.add(new Island(config.getIslandTilesImages().get(name.name()),
-					new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name.name(),
-							false, false, LocCalculator.getInstance())));
+			islands.add(new Island(config.getIslandTilesImages().get(name.name()), new Island.Model(new Grid(0, 0),
+					new Piece[4], treasure, false, name.name(), false, false, LocCalculator.getInstance())));
 		}
 	}
 
@@ -236,8 +233,7 @@ public class GameModel {
 	}
 
 	public boolean isAdjacentIslands(Island from, Island to) {
-		Direction[] directions = new Direction[] { Direction.LEFT, Direction.UP, Direction.RIGHT,
-				Direction.DOWN };
+		Direction[] directions = new Direction[] { Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN };
 		return islandGrid.isAdjacent(from, to, directions);
 	}
 
@@ -369,18 +365,17 @@ public class GameModel {
 	 */
 	public LooseCondition checkLooseCondition() {
 
-		//Lost because of water level
+		// Lost because of water level
 		if (waterLevel.getWaterLevel() >= MAX_WATER_LEVEL) {
 			return LooseCondition.MAX_WATER_LEVEL_REACHED;
 		}
-		//lost because a treasure is sunk
+		// lost because a treasure is sunk
 		List<Type> remainingTreasures = Type.getTypesWithAbility(Ability.TREASURE);
-		remainingTreasures.removeAll(treasureBag.getAcquiredTreaures());
+		remainingTreasures.removeAll(getTreasureBag().getAcquiredTreaures());
 		for (Type remainingTreasure : remainingTreasures) {
 			int sinked = 0;
 			for (Island island : islands) {
-				if (island.hasTreasure() && island.getTreasure() == remainingTreasure
-						&& island.isSunk()) {
+				if (island.hasTreasure() && island.getTreasure() == remainingTreasure && island.isSunk()) {
 					sinked++;
 				}
 			}
@@ -389,6 +384,32 @@ public class GameModel {
 			}
 		}
 		return null;
+	}
+
+	public TreasureBag getTreasureBag() {
+		return treasureBag;
+	}
+
+	public void setTreasureBag(TreasureBag treasureBag) {
+		this.treasureBag = treasureBag;
+	}
+
+	/**
+	 * Collects a treasure for the current turn player.
+	 * 1)discards all the collection cards from the player hand 
+	 * 2)Adds the collected treasure to the treasure bug
+	 * 3)decreases the actions of the  player by 1.
+	 * 
+	 * @param collectionCards
+	 *            the cards that form the collection.
+	 */
+	public void collectTreasure(List<TreasuryCard> collectionCards) {
+		Player currentPlayer = getCurrentTurnPlayer();
+		getTreasureBag().addTreasure(collectionCards.get(0).getType());
+		currentPlayer.decreaseActionLeft();
+		for (TreasuryCard card : collectionCards) {
+			discardCard(currentPlayer, card);
+		}
 	}
 
 }

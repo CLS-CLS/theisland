@@ -1,5 +1,7 @@
 package cls.island.control.state;
 
+import java.util.List;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -9,7 +11,9 @@ import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
+import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
+import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.screen.IslandComponent;
 import cls.island.view.screen.IslandScreen;
 
@@ -28,8 +32,10 @@ public class ShoreUpState implements GameState {
 
 	@Override
 	public void mouseClicked(MouseEvent event) {
-		if (event.getButton() == MouseButton.SECONDARY)
+		if (event.getButton() == MouseButton.SECONDARY) {
 			goToNormalState();
+			return;
+		}
 		final IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event
 				.getTarget());
 		if (!(islandComponent instanceof IslandView))
@@ -74,6 +80,16 @@ public class ShoreUpState implements GameState {
 			gameController.setGameState(new NormalState(gameController, islandScreen, gameModel));
 			return;
 		}
+		List<TreasuryCard> cards = gameModel.getCurrentTurnPlayer().getTreasuryCards();
+//		if (cards.size()>0){
+//			cards.get(0).getComponent().enableValidToCkickEffect(true);
+//			
+//		}
+//		for (Island island : gameModel.getIslands()){
+//			if (island.isFlooded()){
+//				island.getComponent().enableValidToCkickEffect(true);
+//			}
+//		}
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
 

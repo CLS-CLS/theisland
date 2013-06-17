@@ -8,6 +8,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -35,6 +36,8 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	private Timeline onExitedAnimation = new Timeline();
 	private T model;
 	protected volatile Condition wait = lock.newCondition();
+	private ValidEffectNode validToClick;
+	private Parent validNode = null;
 
 	private static final Effect defaultEffect() {
 		Light.Distant light = new Light.Distant();
@@ -45,8 +48,20 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 		l.setSurfaceScale(5.5);
 		l.setDiffuseConstant(1.5);
 		DropShadow dr = new DropShadow();
-//		dr.setInput(l);
 		return dr;
+	}
+
+	private ValidEffectNode createValidToClick() {
+		return new ValidEffectNode(getLayoutBounds().getWidth(), getLayoutBounds()
+				.getHeight(), validNode);
+	}
+	
+	/**
+	 * Override this to set custom validTOclick node shape
+	 * @param node
+	 */
+	protected void setValidToClick(Parent node){
+		this.validNode = node;
 	}
 
 	public AbstractView(boolean enableDefaultEffect, T model) {
@@ -66,10 +81,32 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	public void relocate(Loc loc) {
 		super.relocate(loc.x, loc.y);
 	}
+	
+		
+	public void enableValidToCkickEffect(final boolean on){
+		if (validToClick == null){
+			validToClick = createValidToClick();
+		}
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (on && !getChildren().contains(validToClick)){
+					getChildren().add(0, validToClick);
+					validToClick.switchEffectOn();
+					validToClick.relocate(-3,-3);
+				}else if (!on){
+					getChildren().remove(validToClick);
+					validToClick.switchEffectOff();
+				}
+				
+			}
+		});
+	
+	}
 
 	private void initSelectableHandlers() {
 
-		
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -77,16 +114,17 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 				if (!isSelectable())
 					return;
 				onExitedAnimation.stop();
-				if (mouseEnteredRect == null){
-					mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(),
-							AbstractView.this.getLayoutBounds().getHeight(), Color.BLACK);
+				if (mouseEnteredRect == null) {
+					mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(), AbstractView.this
+							.getLayoutBounds().getHeight(), Color.BLACK);
 					mouseEnteredRect.setOpacity(0);
 					getChildren().add(mouseEnteredRect);
 				}
 				double delta = HOVER_OVER_OPACITY - mouseEnteredRect.getOpacity();
-				Duration duration = Duration.millis(delta * HOVER_OVER_ANIM_DURATION/ HOVER_OVER_OPACITY);
+				Duration duration = Duration.millis(delta * HOVER_OVER_ANIM_DURATION / HOVER_OVER_OPACITY);
 				if (duration.toMillis() > 0) {
-					onEnteredAnimation = new Timeline(new KeyFrame(duration, new KeyValue(mouseEnteredRect.opacityProperty(), HOVER_OVER_OPACITY)));
+					onEnteredAnimation = new Timeline(new KeyFrame(duration, new KeyValue(
+							mouseEnteredRect.opacityProperty(), HOVER_OVER_OPACITY)));
 					onEnteredAnimation.playFromStart();
 				}
 			}
@@ -98,17 +136,17 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 				if (!isSelectable())
 					return;
 				onEnteredAnimation.stop();
-				if (mouseEnteredRect == null){
-					mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(),
-							AbstractView.this.getLayoutBounds().getHeight(), Color.BLACK);
+				if (mouseEnteredRect == null) {
+					mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(), AbstractView.this
+							.getLayoutBounds().getHeight(), Color.BLACK);
 					mouseEnteredRect.setOpacity(0);
 					getChildren().add(mouseEnteredRect);
 				}
 				double delta = mouseEnteredRect.getOpacity();
-				Duration duration = Duration.millis(Math.max(0,delta * 400));
+				Duration duration = Duration.millis(Math.max(0, delta * 400));
 				onExitedAnimation = new Timeline(new KeyFrame(duration, new KeyValue(mouseEnteredRect.opacityProperty(), 0)));
 				onExitedAnimation.playFromStart();
-				
+
 			}
 		});
 
@@ -117,41 +155,42 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	public boolean isSelectable() {
 		return selectable;
 	}
-	
+
 	/**
-	 * Temporarily cancels the selected effect. This method is provided because is some
-	 * cases the mouseExited event is not throw and the component has the selected effect even
-	 * if the mouse is not over it. An example of such case is when a treasury card is clicked and
-	 * immediately is moved to pile by the computer. 
+	 * Temporarily cancels the selected effect. This method is provided because
+	 * is some cases the mouseExited event is not throw and the component has
+	 * the selected effect even if the mouse is not over it. An example of such
+	 * case is when a treasury card is clicked and immediately is moved to pile
+	 * by the computer.
 	 */
-	public void cancelSelectedEffect(){
+	public void cancelSelectedEffect() {
 		mouseEnteredRect.opacityProperty().setValue(0);
 	}
 
 	public void setSelectable(boolean selectable) {
 		onEnteredAnimation.stop();
-		if (mouseEnteredRect!=null){
+		if (mouseEnteredRect != null) {
 			mouseEnteredRect.setOpacity(0);
 		}
 		this.selectable = selectable;
 	}
-	
-	public T getParentModel(){
+
+	public T getParentModel() {
 		return model;
 	}
-	
-	public void execute(final SignaledRunnable runnable){
-		if (Platform.isFxApplicationThread()){
+
+	public void execute(final SignaledRunnable runnable) {
+		if (Platform.isFxApplicationThread()) {
 			runnable.run();
 			return;
 		}
 		lock.lock();
-		
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				runnable.run();
-				if (!runnable.willSignal()){
+				if (!runnable.willSignal()) {
 					wait.signal();
 				}
 			}
@@ -162,5 +201,16 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public void enableValidToClick() {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				getChildren().add(0, validToClick);
+
+			}
+		});
+	}
+
 }

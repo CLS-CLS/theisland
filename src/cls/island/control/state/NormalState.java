@@ -81,10 +81,10 @@ public class NormalState implements GameState {
 		// check that the treasury card belongs to one player
 		boolean playerHasit = false;
 		for (Player player : gameModel.getPlayers()) {
-			if (player.getTreasuryCards().contains(card))
-				;
-			playerHasit = true;
-			break;
+			if (player.getTreasuryCards().contains(card)){
+				playerHasit = true;
+				break;
+			}
 		}
 		if (!playerHasit)
 			return;
@@ -107,7 +107,7 @@ public class NormalState implements GameState {
 			gameController.setGameState(new ShoreUpState(gameController, islandScreen, gameModel));
 			break;
 		case COLLECT_TREASURE:
-			gameController.setGameState(new CollectTreasureState(gameController, islandScreen, gameModel));
+			gameController.setGameState(new CollectTreasureState(gameController, islandScreen, gameModel, this));
 		default:
 			break;
 		}

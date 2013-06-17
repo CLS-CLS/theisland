@@ -51,6 +51,8 @@ public class UseHelicopterCardState implements GameState {
 		final Island island = islandComponent.getParentModel();
 		if (island.isSunk())
 			return;
+		//cannot fly to the island that he already is
+		if (island == gameModel.getCurrentTurnPlayer().getPiece().getIsland())return;
 		Player playerWithHeliCard = ViewUtils.findPlayerHoldingCard(gameModel, card);
 		if (playerWithHeliCard == null) return;
 

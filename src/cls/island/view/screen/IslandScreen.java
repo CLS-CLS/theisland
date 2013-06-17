@@ -96,7 +96,7 @@ public class IslandScreen extends AbstractScreen {
 
 		// ~~~~ ~~~~~~~~~~~~~ treasury base -cards ~~~~~~~~~~~~~~~~~~~~~~ //
 		treasuryBase = model.getTreasuryPile();
-		treasuryBase.getComponent().relocate(1200, 30);
+		treasuryBase.getComponent().relocate(1200, 5);
 		getChildren().add(2, treasuryBase.getComponent());
 		for (TreasuryCard trCard : model.getTreasuryPile().getTreasuryCards(PileType.NORMAL)) {
 			cards.add(trCard);
@@ -121,11 +121,11 @@ public class IslandScreen extends AbstractScreen {
 		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure");
 		nextTurnButton = ButtonFactory.actionButton("Next \n Turn");
 
-		moveButton.relocate(450, 810);
-		shoreUpButton.relocate(545, 810);
-		tradeButton.relocate(640, 810);
-		collectTreasureButton.relocate(735,810);
-		nextTurnButton.relocate(830, 810);
+		moveButton.relocate(1200, 300);
+		shoreUpButton.relocate(1310, 300);
+		tradeButton.relocate(1200, 410);
+		collectTreasureButton.relocate(1310,410);
+		nextTurnButton.relocate(1200, 520);
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
 		getChildren().add(collectTreasureButton);

@@ -57,26 +57,11 @@ public class PileView extends AbstractView<TreasuryPile> {
 
 			}
 		});
+		treasuryCard.setSelectable(false);
 
 	}
 
-	public void moveCardtoDiscardPile(final TreasuryCardView treasuryCard, final int index) {
-		treasuryCard.toFront();
-		execute(new SignaledRunnable() {
 
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
-
-			@Override
-			public void run() {
-				Animations.teleportCardToLocation(treasuryCard,
-						PileView.this.getLoc().add(DISCARD_PILE_LOC).add(locCalculator.cardLocationInPile(index)), wait);
-			}
-		});
-
-	}
 
 	public void rearrangePiles() {
 		execute(new SignaledRunnable() {
@@ -92,11 +77,13 @@ public class PileView extends AbstractView<TreasuryPile> {
 					TreasuryCardView card = getParentModel().getDiscardPileCards().get(i).getComponent();
 					card.toFront();
 					card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(DISCARD_PILE_LOC));
+					card.setSelectable(false);
 				}
 				for (int i = 0; i < getParentModel().getNormalPileCards().size(); i++) {
 					TreasuryCardView card = getParentModel().getNormalPileCards().get(i).getComponent();
 					card.toFront();
 					card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(PILE_LOC));
+					card.setSelectable(false);
 				}
 			}
 		});

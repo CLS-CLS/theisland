@@ -54,6 +54,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			@Override
 			public void run() {
 				int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
+				treasuryCard.setSelectable(true);
 				Animations.teleportCardToLocationReverse(treasuryCard, PlayerBaseView.this.getLoc()
 						.add(locCalculator.cardLocationInCardHolder(index)), wait);
 			}

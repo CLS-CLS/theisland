@@ -145,11 +145,11 @@ public class Animations {
 		double opacity = flood ? 0.5 : 0;
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(
-				new KeyFrame(Duration.millis(10), new KeyValue(animateProps.get(0), brightness)
+				new KeyFrame(Duration.millis(1000), new KeyValue(animateProps.get(0), brightness)
 						,new KeyValue(animateProps.get(1), contrast)
 						,new KeyValue(animateProps.get(2), saturation)
-						,new KeyValue(animateProps.get(3),opacity)
-				));
+						,new KeyValue(animateProps.get(3),opacity))
+				);
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override

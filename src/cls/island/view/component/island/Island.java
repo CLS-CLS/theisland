@@ -73,7 +73,6 @@ public class Island {
 
 	private final Model model;
 	private IslandView islandView;
-	private boolean saved;
 
 	public Island(Image tileImage, Model model) {
 		this.model = model;
