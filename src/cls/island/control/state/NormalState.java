@@ -38,11 +38,8 @@ public class NormalState implements GameState {
 			return;
 		if (island.isSunk())
 			return;
-
-		// TODO remove from!=null when ready (aka when the piece is set on the
-		// island on the beginning)
-		if (from != null
-				&& !gameModel.getCurrentTurnPlayer().isValidMove(from, island,
+		
+		if (!gameModel.getCurrentTurnPlayer().isValidMove(from, island,
 						gameModel.getIslandGrid())) {
 			return;
 		}
@@ -50,13 +47,10 @@ public class NormalState implements GameState {
 		islandScreen.c_movePiece(movingPiece, island.getComponent(), addedIndex);
 	}
 
-	public void mouseClickedOnCard(TreasuryCardView treasuryCardView) {
-		gameController.setGameState(new UseShoreUpCardState(gameController, islandScreen,
-				gameModel, treasuryCardView.getParentModel(), this));
-	}
+	
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
+	public GameState mouseClicked(MouseEvent event) {
 		final IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event
 				.getTarget());
 		if (islandComponent instanceof IslandView) {
@@ -65,12 +59,13 @@ public class NormalState implements GameState {
 			mouseClickedOnIslandTile(island);
 		} else if (islandComponent instanceof TreasuryCardView) {
 			TreasuryCardView cardView = (TreasuryCardView) islandComponent;
-			mouseClickedOnTreasuryCard(cardView.getParentModel());
+			return mouseClickedOnTreasuryCard(cardView.getParentModel());
 		}
+		return null;
 
 	}
 
-	private void mouseClickedOnTreasuryCard(TreasuryCard card) {
+	private GameState mouseClickedOnTreasuryCard(TreasuryCard card) {
 		// check that the treasury card belongs to one player
 		boolean playerHasit = false;
 		for (Player player : gameModel.getPlayers()) {
@@ -80,36 +75,34 @@ public class NormalState implements GameState {
 			}
 		}
 		if (!playerHasit)
-			return;
+			return null;
 		if (card.getType().equals(Type.SANDBAGS)) {
-			gameController.setGameState(new UseShoreUpCardState(gameController, islandScreen,
-					gameModel, card, this));
+			return new UseShoreUpCardState(gameController, islandScreen,
+					gameModel, card, this);
 		} else if (card.getType().equals(Type.HELICOPTER)) {
-			gameController.setGameState(new UseHelicopterCardState(gameController, islandScreen,
-					gameModel, card, this));
+			return new UseHelicopterCardState(gameController, islandScreen,
+					gameModel, card, this);
 		}
+		return null;
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
+	public GameState buttonPressed(ButtonAction action) {
 		switch (action) {
 		case NEXT_TURN:
-			nextTurn();
-			break;
+			return nextTurn();
 		case SHORE_UP:
-			gameController.setGameState(new ShoreUpState(gameController, islandScreen, gameModel));
-			break;
+			return new ShoreUpState(gameController, islandScreen, gameModel);
 		case COLLECT_TREASURE:
-			gameController.setGameState(new CollectTreasureState(gameController, islandScreen, gameModel, this));
+			return new CollectTreasureState(gameController, islandScreen, gameModel, this);
 		default:
-			islandScreen.c_setAnimationInProgress(false);
-			break;
 		}
+		return null;
 	}
 
-	private void nextTurn() {
+	private GameState nextTurn() {
 		gameModel.getCurrentTurnPlayer().resetActions();
-		gameController.setGameState(new DrawCardState(gameController, islandScreen, gameModel));
+		return new DrawCardState(gameController, islandScreen, gameModel);
 	}
 
 	@Override
@@ -119,11 +112,12 @@ public class NormalState implements GameState {
 	}
 
 	@Override
-	public void start() {
+	public GameState start() {
 		if (gameModel.getCurrentTurnPlayer().getTreasuryCards().size() > GameModel.MAX_CARDS_ALLOWED_IN_HAND) {
-			gameController.setGameState(new ChooseDiscardCardState(gameController, islandScreen,
-					gameModel, this));
+			return new ChooseDiscardCardState(gameController, islandScreen,
+					gameModel, this);
 		}
+		return null;
 	}
 
 	@Override

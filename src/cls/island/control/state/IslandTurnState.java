@@ -32,14 +32,14 @@ public class IslandTurnState implements GameState {
 		this.fromState = fromState;
 	}
 
-	private void drawCard() {
+	private GameState drawCard() {
 
 		if (numberOfDrawCards > gameModel.getNumberOfIslandsToSink()) {
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(false);
 			gameModel.nextTurn();
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
-			gameController.setGameState(new NormalState(gameController, islandScreen, gameModel));
-			return;
+			return new NormalState(gameController, islandScreen, gameModel);
+			
 		}
 		if (!gameModel.hasIslandToFlood()) {
 			gameModel.shuffleDiscardedAndPutBackToNormalPile();
@@ -54,8 +54,8 @@ public class IslandTurnState implements GameState {
 			island.getComponent().flood();
 
 		}
-		gameController.setGameState(new IslandTurnState(numberOfDrawCards + 1, gameController,
-				islandScreen, gameModel, fromState));
+		return new IslandTurnState(numberOfDrawCards + 1, gameController,
+				islandScreen, gameModel, fromState);
 
 	}
 
@@ -65,13 +65,13 @@ public class IslandTurnState implements GameState {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
-
+	public GameState mouseClicked(MouseEvent event) {
+		return null;
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
-
+	public GameState buttonPressed(ButtonAction action) {
+		return null;
 	}
 
 	@Override
@@ -80,8 +80,8 @@ public class IslandTurnState implements GameState {
 	}
 
 	@Override
-	public void start() {
-		drawCard();
+	public GameState start() {
+		return drawCard();
 	}
 
 	@Override

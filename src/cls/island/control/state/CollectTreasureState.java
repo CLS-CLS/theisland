@@ -14,14 +14,12 @@ import cls.island.view.screen.IslandScreen;
 
 public class CollectTreasureState implements GameState {
 
-	private final GameController gameController;
 	private final IslandScreen islandScreen;
 	private final GameModel gameModel;
 	private final GameState fromState;
 
 	public CollectTreasureState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
 			GameState fromState) {
-		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.fromState = fromState;
@@ -29,12 +27,12 @@ public class CollectTreasureState implements GameState {
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override

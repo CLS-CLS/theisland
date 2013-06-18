@@ -10,9 +10,14 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD; // OK when shore up is completed
-												// after water rise card is
-												// drawn
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD; // OK
+																				// when
+																				// shore
+																				// up
+																				// is
+																				// completed
+		// after water rise card is
+		// drawn
 	}
 
 	volatile private GameState gameState;
@@ -20,8 +25,7 @@ public class GameController {
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
 
-	public GameController(MainController mainController, GameModel gameModel,
-			IslandScreen islandScreen) {
+	public GameController(MainController mainController, GameModel gameModel, IslandScreen islandScreen) {
 		this.mainController = mainController;
 		this.gameModel = gameModel;
 		this.islandScreen = islandScreen;
@@ -29,33 +33,46 @@ public class GameController {
 	}
 
 	public void buttonPressed(final ButtonAction action) {
-		islandScreen.c_setAnimationInProgress(true);
 		new Thread(new Runnable() {
-	
+
 			@Override
 			public void run() {
-				setGameState(gameState.buttonPressed(action));
+				GameState state = gameState.buttonPressed(action);
+				if (state != null) {
+					setGameState(state);
+				}
 			}
 		}).start();
 	}
 
 	public void mouseClicked(final MouseEvent event) {
+		islandScreen.c_setAnimationInProgress(true);
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				setGameState(gameState.mouseClicked(event));
+				GameState state = gameState.mouseClicked(event);
+				if (state != null) {
+					setGameState(state);
+				}else{
+					islandScreen.c_setAnimationInProgress(false);
+				}
+
 			}
 		}).start();
 
 	}
 
 	private void setGameState(GameState state) {
+		islandScreen.c_setAnimationInProgress(true);
+		if (state == null)
+			throw new IllegalArgumentException();
 		this.gameState = state;
 		GameState newState = gameState.start();
-		if (newState != null){
+		if (newState != null) {
 			setGameState(newState);
 		}
+		islandScreen.c_setAnimationInProgress(false);
 	}
 
 	public void backToMainScreen() {
@@ -69,8 +86,8 @@ public class GameController {
 				TreasuryPile treasuryPile = gameModel.getTreasuryPile();
 				TreasuryCard treasuryCard = treasuryPile.getTopPileCard();
 				gameModel.giveCardToPlayerFromTreasurePile(player, treasuryCard);
-				islandScreen.c_moveTreasuryCardFromPileToPlayer(treasuryCard.getComponent(), player
-						.getBase().getComponent());
+				islandScreen
+						.c_moveTreasuryCardFromPileToPlayer(treasuryCard.getComponent(), player.getBase().getComponent());
 			}
 		}
 	}

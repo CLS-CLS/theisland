@@ -17,15 +17,13 @@ import cls.island.view.screen.IslandScreen;
 
 public class UseHelicopterCardState implements GameState {
 
-	private final GameController gameController;
 	private final IslandScreen islandScreen;
 	private final GameModel gameModel;
 	private final TreasuryCard card;
 	private final GameState fromState;
 
-	public UseHelicopterCardState(GameController gameController, IslandScreen islandScreen,
-			GameModel gameModel, TreasuryCard card, GameState fromState) {
-		this.gameController = gameController;
+	public UseHelicopterCardState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
+			TreasuryCard card, GameState fromState) {
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.card = card;
@@ -33,57 +31,57 @@ public class UseHelicopterCardState implements GameState {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
+	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
 			islandScreen.c_hideMessagePanel();
-			gameController.setGameState(fromState);
-		} else {
-			IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event
-					.getTarget());
-			if (islandComponent != null && islandComponent instanceof IslandView) {
-				handleClickOnIsland((IslandView) islandComponent);
-			}
+			return fromState.createGameState();
 		}
+		IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event.getTarget());
+		if (islandComponent != null && islandComponent instanceof IslandView) {
+			return handleClickOnIsland((IslandView) islandComponent);
+		}
+		return null;
 
 	}
 
-	private void handleClickOnIsland(IslandView islandComponent) {
+	private GameState handleClickOnIsland(IslandView islandComponent) {
 		final Island island = islandComponent.getParentModel();
 		if (island.isSunk())
-			return;
-		//cannot fly to the island that he already is
-		if (island == gameModel.getCurrentTurnPlayer().getPiece().getIsland())return;
+			return null;
+		// cannot fly to the island that he already is
+		if (island == gameModel.getCurrentTurnPlayer().getPiece().getIsland())
+			return null;;
 		Player playerWithHeliCard = ViewUtils.findPlayerHoldingCard(gameModel, card);
-		if (playerWithHeliCard == null) return;
+		if (playerWithHeliCard == null)
+			return null;
 
 		// move player to selected island
 		int moveIndex = gameModel.getCurrentTurnPlayer().setToIsland(island);
-		islandScreen.c_movePiece(gameModel.getCurrentTurnPlayer().getPiece().getComponent(),
-				island.getComponent(), moveIndex);
+		islandScreen.c_movePiece(gameModel.getCurrentTurnPlayer().getPiece().getComponent(), island.getComponent(),
+				moveIndex);
 
 		// discard the card from the players hand
-		
-		gameModel.discardCard(playerWithHeliCard, card);
-		islandScreen.c_discardPlayerCard(playerWithHeliCard.getBase().getComponent(),
-				card.getComponent());
 
-		goToNextState();
+		gameModel.discardCard(playerWithHeliCard, card);
+		islandScreen.c_discardPlayerCard(playerWithHeliCard.getBase().getComponent(), card.getComponent());
+
+		return goToNextState();
 
 	}
 
-	private void goToNextState() {
+	private GameState goToNextState() {
 		islandScreen.c_hideMessagePanel();
 		if (fromState instanceof ChooseDiscardCardState) {
-			gameController.setGameState(fromState.getFromState().createGameState());
+			return fromState.getFromState().createGameState();
 		} else {
-			gameController.setGameState(fromState.createGameState());
+			return fromState.createGameState();
 		}
 
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
-		// TODO Auto-generated method stub
+	public GameState buttonPressed(ButtonAction action) {
+		return null;
 
 	}
 
@@ -93,9 +91,9 @@ public class UseHelicopterCardState implements GameState {
 	}
 
 	@Override
-	public void start() {
+	public GameState start() {
 		islandScreen.c_showMessagePanel("Select an Island to Fly to!\nRight Click to cancel");
-
+		return null;
 	}
 
 	@Override

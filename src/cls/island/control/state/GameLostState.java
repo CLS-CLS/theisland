@@ -26,7 +26,7 @@ public class GameLostState implements GameState {
 	}
 
 	@Override
-	public void start() {
+	public GameState start() {
 		islandScreen.c_showLooseGamePopUp(gameModel.checkLooseCondition());
 
 		// Go to back to main Screen. Ensure that from now we are in FX-Thread
@@ -37,8 +37,10 @@ public class GameLostState implements GameState {
 			@Override
 			public void run() {
 				gameController.backToMainScreen();
+				
 			}
 		});
+		return null;
 	}
 
 	@Override
@@ -47,14 +49,14 @@ public class GameLostState implements GameState {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
-		throw new UnsupportedOperationException();
+	public GameState mouseClicked(MouseEvent event) {
+		return null;
 
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
-		throw new UnsupportedOperationException();
+	public GameState buttonPressed(ButtonAction action) {
+		return null;
 
 	}
 

@@ -31,7 +31,7 @@ public class ChooseDiscardCardState implements GameState {
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override

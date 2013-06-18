@@ -22,32 +22,28 @@ public class WaterRiseState implements GameState {
 	private final IslandScreen islandScreen;
 	private final GameState fromState;
 	private final GameModel gameModel;
-	private Player currentPlayer;
-	
 
-	public WaterRiseState(GameController gameController, IslandScreen islandScreen,
-			GameModel gameModel,  GameState fromState) {
+	public WaterRiseState(GameController gameController, IslandScreen islandScreen, GameModel gameModel, GameState fromState) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.fromState = fromState;
-		currentPlayer = gameModel.getCurrentTurnPlayer();
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
+	public GameState mouseClicked(MouseEvent event) {
 		// check left click
 		if (event.getButton() != MouseButton.PRIMARY)
-			return;
+			return null;
 		// check clicked on treasy card
 		IslandComponent component = ViewUtils.findIslandComponent((Node) event.getTarget());
 		if (component == null || !(component instanceof TreasuryCardView))
-			return;
+			return null;
 		final TreasuryCard selectedCard = ((TreasuryCardView) component).getParentModel();
 
 		// check that is a sandbag
 		if (Type.SANDBAGS != selectedCard.getType())
-			return;
+			return null;
 
 		// check that it belongs to a player
 		boolean belongsToPlayer = false;
@@ -60,19 +56,19 @@ public class WaterRiseState implements GameState {
 			}
 		}
 		if (!belongsToPlayer)
-			return;
+			return null;
 
 		islandScreen.c_hideMessagePanel();
-		gameController.setGameState(new UseShoreUpCardState(gameController, islandScreen,
-				gameModel, selectedCard, WaterRiseState.this));
+		return new UseShoreUpCardState(gameController, islandScreen, gameModel, selectedCard, WaterRiseState.this);
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
+	public GameState buttonPressed(ButtonAction action) {
 		// TODO change to OK
 		if (action == ButtonAction.NEXT_TURN) {
-			gameController.setGameState(fromState.createGameState());
+			return fromState.createGameState();
 		}
+		return null;
 	}
 
 	@Override
@@ -81,11 +77,9 @@ public class WaterRiseState implements GameState {
 	}
 
 	@Override
-	public void start() {
+	public GameState start() {
 		if (gameModel.checkLooseCondition() != null) {
-			gameController.setGameState(new GameLostState(gameController, islandScreen, gameModel,
-					this));
-			return;
+			return new GameLostState(gameController, islandScreen, gameModel, this);
 		}
 		boolean shoreUpCardsExist = false;
 		for (Player player : gameModel.getPlayers()) {
@@ -98,21 +92,21 @@ public class WaterRiseState implements GameState {
 		}
 		boolean floodTileExist = false;
 		for (Island island : gameModel.getIslands())
-			if (island.isFlooded() && !island.isSunk()){
+			if (island.isFlooded() && !island.isSunk()) {
 				floodTileExist = true;
 				break;
-		}
+			}
 		if (shoreUpCardsExist && floodTileExist) {
-			islandScreen
-					.c_showMessagePanel("Select a SANDBAG card and save an Island \nClick OK when ready");
+			islandScreen.c_showMessagePanel("Select a SANDBAG card and save an Island \nClick OK when ready");
 		} else {
-			gameController.setGameState(fromState.createGameState());
+			return fromState.createGameState();
 		}
+		return null;
 	}
 
 	@Override
 	public GameState createGameState() {
-		return new WaterRiseState(gameController, islandScreen, gameModel, 	getFromState());
+		return new WaterRiseState(gameController, islandScreen, gameModel, getFromState());
 	}
 
 }

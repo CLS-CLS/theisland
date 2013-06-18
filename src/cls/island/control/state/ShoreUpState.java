@@ -1,7 +1,5 @@
 package cls.island.control.state;
 
-import java.util.List;
-
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +11,6 @@ import cls.island.model.player.EngineerPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.IslandView;
-import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.screen.IslandComponent;
 import cls.island.view.screen.IslandScreen;
 
@@ -31,41 +28,39 @@ public class ShoreUpState implements GameState {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
+	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
-			goToNormalState();
-			return;
+			return normalState();
 		}
 		final IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event
 				.getTarget());
 		if (!(islandComponent instanceof IslandView))
-			return;
+			return null;
 		IslandView islandView = (IslandView) islandComponent;
 		if (!islandView.getParentModel().isFlooded() || islandView.getParentModel().isSunk())
-			return;
+			return null;
 
 		// primary button pressed on flooded island
 		Player player = gameModel.getCurrentTurnPlayer();
 		
 		//and is a valid shore-up.
-		if (! player.isValidShoreUp(player.getPiece().getIsland(), islandView.getParentModel(),
+		if (!player.isValidShoreUp(player.getPiece().getIsland(), islandView.getParentModel(),
 				gameModel.getIslandGrid())) {
-			return;
+			return null;
 		}
 		player.shoreUp(islandView.getParentModel());
 		islandView.unFlood();
-		goToNormalState();
-
+		return normalState();
 	}
 
-	private void goToNormalState() {
+	private GameState normalState() {
 		islandScreen.c_hideMessagePanel();
-		gameController.setGameState(new NormalState(gameController, islandScreen, gameModel));
+		return new NormalState(gameController, islandScreen, gameModel);
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
-		// TODO Auto-generated method stub
+	public GameState buttonPressed(ButtonAction action) {
+		return null;
 
 	}
 
@@ -75,19 +70,15 @@ public class ShoreUpState implements GameState {
 	}
 
 	@Override
-	public void start() {
+	public GameState start() {
 		Player currentPlayer = gameModel.getCurrentTurnPlayer();
-		if (currentPlayer instanceof EngineerPlayer){
-			if (!((EngineerPlayer)currentPlayer).canShoreUp())return;
-		}else if (!currentPlayer.hasAction()) {
-			gameController.setGameState(new NormalState(gameController, islandScreen, gameModel));
-			return;
+		if (currentPlayer instanceof EngineerPlayer && !((EngineerPlayer)currentPlayer).canShoreUp())return null;
+		if (!currentPlayer.hasAction()) {
+			return new NormalState(gameController, islandScreen, gameModel);
 		}
-		List<TreasuryCard> cards = currentPlayer.getTreasuryCards();
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
-		islandScreen.c_setAnimationInProgress(false);
-
+		return null;
 	}
 
 	@Override
