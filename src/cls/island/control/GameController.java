@@ -10,7 +10,7 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE; // OK when shore up is completed
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD; // OK when shore up is completed
 												// after water rise card is
 												// drawn
 	}
@@ -29,11 +29,12 @@ public class GameController {
 	}
 
 	public void buttonPressed(final ButtonAction action) {
+		islandScreen.c_setAnimationInProgress(true);
 		new Thread(new Runnable() {
 	
 			@Override
 			public void run() {
-				gameState.buttonPressed(action);
+				setGameState(gameState.buttonPressed(action));
 			}
 		}).start();
 	}
@@ -43,15 +44,18 @@ public class GameController {
 
 			@Override
 			public void run() {
-				gameState.mouseClicked(event);
+				setGameState(gameState.mouseClicked(event));
 			}
 		}).start();
 
 	}
 
-	public void setGameState(GameState state) {
+	private void setGameState(GameState state) {
 		this.gameState = state;
-		gameState.start();
+		GameState newState = gameState.start();
+		if (newState != null){
+			setGameState(newState);
+		}
 	}
 
 	public void backToMainScreen() {

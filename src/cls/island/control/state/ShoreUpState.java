@@ -86,6 +86,7 @@ public class ShoreUpState implements GameState {
 		List<TreasuryCard> cards = currentPlayer.getTreasuryCards();
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
+		islandScreen.c_setAnimationInProgress(false);
 
 	}
 

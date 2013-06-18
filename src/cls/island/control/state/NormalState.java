@@ -29,13 +29,6 @@ public class NormalState implements GameState {
 		this.gameModel = gameModel;
 	}
 
-	private void checkForOverloadedTreasuryCards() {
-		if (gameModel.getCurrentTurnPlayer().getTreasuryCards().size() > GameModel.MAX_CARDS_ALLOWED_IN_HAND) {
-			gameController.setGameState(new ChooseDiscardCardState(gameController, islandScreen,
-					gameModel, this));
-		}
-
-	}
 
 	public void mouseClickedOnIslandTile(Island island) {
 		PieceView movingPiece = gameModel.getCurrentTurnPlayer().getPiece().getComponent();
@@ -109,6 +102,7 @@ public class NormalState implements GameState {
 		case COLLECT_TREASURE:
 			gameController.setGameState(new CollectTreasureState(gameController, islandScreen, gameModel, this));
 		default:
+			islandScreen.c_setAnimationInProgress(false);
 			break;
 		}
 	}
@@ -126,7 +120,10 @@ public class NormalState implements GameState {
 
 	@Override
 	public void start() {
-		checkForOverloadedTreasuryCards();
+		if (gameModel.getCurrentTurnPlayer().getTreasuryCards().size() > GameModel.MAX_CARDS_ALLOWED_IN_HAND) {
+			gameController.setGameState(new ChooseDiscardCardState(gameController, islandScreen,
+					gameModel, this));
+		}
 	}
 
 	@Override

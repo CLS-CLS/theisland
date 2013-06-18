@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import cls.island.control.Config;
 import cls.island.control.MainController;
 import cls.island.utils.LocCalculator;
-import cls.island.utils.SignaledRunnable;
 import cls.island.utils.concurrent.AutoReentrantLock;
 import cls.island.view.screen.popup.PopUpInternal;
 import cls.island.view.screen.popup.PopUpWrapper;
@@ -32,8 +31,17 @@ public abstract class AbstractScreen extends Group {
 		addDisableButtonPressFilter();
 	}
 
-	public synchronized void setAnimationInProgress(boolean inProgress) {
-		this.animationInProgress = inProgress;
+	public  void c_setAnimationInProgress(final boolean inProgress) {
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				synchronized (AbstractScreen.this) {
+					AbstractScreen.this.animationInProgress = inProgress;
+				}
+			}
+		});
+		
 	}
 
 	private void addDisableButtonPressFilter() {

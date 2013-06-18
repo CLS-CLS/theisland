@@ -28,36 +28,36 @@ public class CollectTreasureState implements GameState {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
+	public GameState mouseClicked(MouseEvent event) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void buttonPressed(ButtonAction action) {
+	public GameState buttonPressed(ButtonAction action) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public GameState getFromState() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void start() {
+	public GameState start() {
 		Player currentPlayer = gameModel.getCurrentTurnPlayer();
 		List<TreasuryCard> collectionCards = currentPlayer.getTreasureCollection();
 		Type treasureOnIsland = currentPlayer.getPiece().getIsland().getTreasure();
 		if (!currentPlayer.hasAction() || collectionCards.size() == 0
 				|| !collectionCards.get(0).getType().equals(treasureOnIsland)
 				|| gameModel.getTreasureBag().isTreasureCollected(collectionCards.get(0).getType())) {
-			gameController.setGameState(fromState.createGameState());
-			return;
+			return fromState.createGameState();
 		}
 		
 		gameModel.collectTreasure(collectionCards);
 		for (TreasuryCard card : collectionCards) {
 			islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(), card.getComponent());
 		}
-		gameController.setGameState(fromState.createGameState());
+		return fromState.createGameState();
 
 	}
 

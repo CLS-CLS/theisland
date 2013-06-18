@@ -140,14 +140,7 @@ public class MainController {
 		stage.show();
 	}
 
-	public boolean isAnimationInProgress() {
-		return animationInProgress;
-	}
-
-	public void setAnimationInProgress(boolean progress) {
-		animationInProgress = progress;
-	}
-
+	
 	public Options getOptions() {
 		return options;
 	}

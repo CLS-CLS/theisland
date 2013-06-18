@@ -38,51 +38,7 @@ public class DrawCardState implements GameState {
 		this(1, gameController, islandScreen, gameModel, false);
 	}
 
-	private void drawCard() {
-
-		if (numberOfDrawCards > GameModel.DRAW_CARDS_PER_TURN) {
-			if (waterRised){
-				waterRised = false;
-				gameController.setGameState(new WaterRiseState(gameController, islandScreen, gameModel, DrawCardState.this));
-			}else {
-				gameController.setGameState(new IslandTurnState(gameController, islandScreen,
-						gameModel, DrawCardState.this));
-				
-			}
-			return;
-		}
-
-		islandScreen.setAnimationInProgress(true);
-
-		final TreasuryCard treasuryCard = getTopPileCard();
-
-		if (treasuryCard.getType() == Type.WATER_RISE) {
-			islandScreen.setAnimationInProgress(false);
-			islandScreen.c_WaterCardDrawnPopUp();
-			waterRised = true;
-			gameModel.discardCard(currentPlayer, treasuryCard);
-			gameModel.increaseFloodMeter();
-			islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
-					treasuryCard.getComponent());
-			gameModel.shuffleDiscardedAndPutBackToNormalPile();
-			gameModel.getTreasuryPile().getComponent().rearrangePiles();
-			
-			
-//			gameController.setGameState(new WaterRiseState(gameController, islandScreen, gameModel,
-//					treasuryCard, DrawCardState.this));
-			gameController.setGameState(createGameState());
-
-		} else if (currentPlayer.getTreasuryCards().size() > 5) {
-			islandScreen.setAnimationInProgress(false);
-			gameController.setGameState(new ChooseDiscardCardState(gameController, islandScreen,
-					gameModel, DrawCardState.this));
-
-		} else {
-			islandScreen.setAnimationInProgress(false);
-			gameController.setGameState(DrawCardState.this.createGameState());
-		}
-
-	}
+	
 
 	private TreasuryCard getTopPileCard() {
 		final TreasuryPile treasuryPile = gameModel.getTreasuryPile();
@@ -118,8 +74,46 @@ public class DrawCardState implements GameState {
 	}
 
 	@Override
-	public void start() {
-		drawCard();
+	public GameState start() {
+		if (numberOfDrawCards > GameModel.DRAW_CARDS_PER_TURN) {
+			if (waterRised){
+				waterRised = false;
+				return new WaterRiseState(gameController, islandScreen, gameModel, DrawCardState.this);
+			}else {
+				return new IslandTurnState(gameController, islandScreen,
+						gameModel, DrawCardState.this);
+				
+			}
+			return null;
+		}
+
+		islandScreen.c_setAnimationInProgress(true);
+
+		final TreasuryCard treasuryCard = getTopPileCard();
+
+		if (treasuryCard.getType() == Type.WATER_RISE) {
+			islandScreen.c_setAnimationInProgress(false);
+			islandScreen.c_WaterCardDrawnPopUp();
+			waterRised = true;
+			gameModel.discardCard(currentPlayer, treasuryCard);
+			gameModel.increaseFloodMeter();
+			islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
+					treasuryCard.getComponent());
+			gameModel.shuffleDiscardedAndPutBackToNormalPile();
+			gameModel.getTreasuryPile().getComponent().rearrangePiles();
+
+			return createGameState();
+
+		} else if (currentPlayer.getTreasuryCards().size() > 5) {
+			islandScreen.c_setAnimationInProgress(false);
+			return (new ChooseDiscardCardState(gameController, islandScreen,
+					gameModel, DrawCardState.this));
+
+		} else {
+			islandScreen.c_setAnimationInProgress(false);
+			return DrawCardState.this.createGameState();
+		}
+		
 	}
 
 	@Override

@@ -5,13 +5,13 @@ import cls.island.control.GameController.ButtonAction;
 
 public interface GameState {
 	
-	public void mouseClicked(MouseEvent event);
+	public GameState mouseClicked(MouseEvent event);
 	
-	public void buttonPressed(ButtonAction action);
+	public GameState buttonPressed(ButtonAction action);
 	
 	public GameState getFromState();
 	
-	public void start();
+	public GameState start();
 	
 	/**
 	 * Creates a new gameState from the provided one. 
