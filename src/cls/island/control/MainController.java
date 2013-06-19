@@ -52,7 +52,7 @@ public class MainController {
 	public void goToIslandScreen() {
 		options.setPlayers(selectPlayerScreen.getSelectedPlayers());
 		gameModel = new GameModel(options, config);
-		gameModel.setUpNewGame();
+		gameModel.newGame();
 		islandScreen = new IslandScreen(this, config, gameModel);
 		gameController = new GameController(this, gameModel, islandScreen);
 		islandScreen.setGameController(gameController);
@@ -98,7 +98,7 @@ public class MainController {
 		options.setPlayers(Arrays.asList(new PlayerAndColor[] { new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
 				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN) }));
 		gameModel = new GameModel(options, config);
-		gameModel.setUpNewGame();
+		gameModel.newGame();
 		islandScreen = new IslandScreen(MainController.this, config, gameModel);
 		gameController = new GameController(MainController.this, gameModel, islandScreen);
 		islandScreen.setGameController(gameController);
@@ -110,7 +110,7 @@ public class MainController {
 
 	private void initScene() {
 		scene = new Scene(root);
-		scene.setCursor(new ImageCursor(config.getCursorImg()));
+		scene.setCursor(new ImageCursor(config.cursorImg));
 		scene.getStylesheets().add(config.getStyleSheetPath());
 	}
 

@@ -26,50 +26,36 @@ public class Config {
 	private Rectangle2D fullScreenRes;
 	private double scaleFactor;
 
-	private Image background;
-	private Image cursorImg;
-	private Image diverImage;
-	private Image explorerImage;
-	private Image randomPlayerImage;
-	private Image tickImage;
-	private Image pieceWhite;
-	private Image playerCardHolder;
-	private Image islandCard;
-	private Image islandBackCard;
+	public final Image background;
+	public final Image cursorImg;
+	public final Image diverImage;
+	public final Image explorerImage;
+	public final Image randomPlayerImage;
+	public final Image tickImage;
+	public final Image pieceWhite;
+	public final Image playerCardHolder;
+	public final Image islandCard;
+	public final Image islandBackCard;
 	private Map<String, Image> islandTiles = new HashMap<>();
-	private Image waterRiseCard;
-	private Image treasuryCardUseImg;
-	private Image treasuryCardDiscardImg;
-	private Image sandBagsCard;
-	private Image fireCard;
-	private Image earthCard;
-	private Image windCard;
-	private Image chaliceCard;
-	private Image heliCard;
-	private Image waterLevelImage;
-	private Image waterLevelMarkerImage;
-	private Image pieceRed;
-	private Image pieceGreen;
+	public final Image waterRiseCard;
+	public final Image treasuryCardUseImg;
+	public final Image treasuryCardDiscardImg;
+	public final Image sandBagsCard;
+	public final Image fireCard;
+	public final Image earthCard;
+	public final Image windCard;
+	public final Image chaliceCard;
+	public final Image heliCard;
+	public final Image waterLevelImage;
+	public final Image waterLevelMarkerImage;
+	public final Image pieceRed;
+	public final Image pieceGreen;
+	public Image earth;
+	public Image chalice;
+	public Image fire;
+	public Image wind;
 
 	public Config() {
-		loadImages();
-		loadIslandTileImages();
-		fullScreenRes = Screen.getPrimary().getBounds();
-		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(), getFullScreenRes().getHeight()
-				/ getDefaultRes().getHeight());
-
-		loadCursorImg();
-	}
-
-	public Image getSandBagsCard() {
-		return sandBagsCard;
-	}
-
-	private void loadCursorImg() {
-		cursorImg = new Image("images/other/mouse.png", 32, 32, false, true);
-	}
-
-	private void loadImages() {
 		background = new Image("images/other/startScreen.png", false);
 		diverImage = new Image("images/other/card.png", 160, 125, true, false);
 		explorerImage = new Image("images/other/card.png", 160, 125, true, false);
@@ -90,16 +76,19 @@ public class Config {
 		heliCard = new Image("images/other/flycard.png", 70, 100, false, true);
 		treasuryCardUseImg = new Image("images/other/gear.png", 25, 25, false, true);
 		treasuryCardDiscardImg = new Image("images/other/cancel.png", 25, 25, false, true);
-		waterLevelImage = new Image("images/other/WaterLevelMarker.png",86, 246,false,true);
-		waterLevelMarkerImage =new Image("images/other/WaterMarker.png",28, 16,false,true);
-	}
+		waterLevelImage = new Image("images/other/WaterLevelMarker.png", 86, 246, false, true);
+		waterLevelMarkerImage = new Image("images/other/WaterMarker.png", 28, 16, false, true);
+		loadIslandTileImages();
+		fullScreenRes = Screen.getPrimary().getBounds();
+		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(),
+				getFullScreenRes().getHeight() / getDefaultRes().getHeight());
 
-	public Image getHeliCard() {
-		return heliCard;
-	}
+		cursorImg = new Image("images/other/mouse.png", 32, 32, false, true);
+		earth = new Image("images/other/earth.png", 55, 70, false, true);
+		chalice = new Image("images/other/chalice.png", 55, 70, false, true);
+		fire = new Image("images/other/fire.png", 55, 70, false, true);
+		wind = new Image("images/other/wind.png", 55, 70, false, true);
 
-	public Image getTreasureIslandImgBack() {
-		return islandBackCard;
 	}
 
 	public Image getTreasureIslandImgFront(Type type) {
@@ -123,19 +112,11 @@ public class Config {
 		}
 	}
 
-	public Image getPlayerCardHolder() {
-		return playerCardHolder;
-	}
-
 	public Rectangle2D getFullScreenRes() {
 		// return fullScreenRes;
 		// TODO
 		return new Rectangle2D(0, 0, 1366, 768);
-//		 return defaultRes;
-	}
-
-	public Image getBackground() {
-		return background;
+		// return defaultRes;
 	}
 
 	public Rectangle2D getDefaultRes() {
@@ -146,36 +127,8 @@ public class Config {
 		return scaleFactor;
 	}
 
-	public Image getCursorImg() {
-		return cursorImg;
-	}
-
 	public String getStyleSheetPath() {
 		return STYLESHEET_PATH;
-	}
-
-	public Image getDiverImage() {
-		return diverImage;
-	}
-
-	public Image getTickImage() {
-		return tickImage;
-	}
-
-	public Image getExplorerImage() {
-		return explorerImage;
-	}
-
-	public Image getRandomPlayerImage() {
-		return randomPlayerImage;
-	}
-
-	public Image getPieceWhite() {
-		return pieceWhite;
-	}
-
-	public Image getLolImagePlayer() {
-		return explorerImage;
 	}
 
 	public Map<String, Image> getIslandTilesImages() {
@@ -187,31 +140,16 @@ public class Config {
 		URL base = this.getClass().getClassLoader().getResource(".");
 		String isladTileImageDir = base.getPath().substring(1) + ISLAND_TILES_IMAGE_PATH;
 		try {
-			dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(isladTileImageDir));
+			dirStream = Files.newDirectoryStream(FileSystems.getDefault()
+					.getPath(isladTileImageDir));
 		} catch (IOException e) {
 			throw new RuntimeException("Error initializing the island images", e);
 		}
 		for (Path imgPath : dirStream) {
 			String fileName = imgPath.getFileName().toString();
-			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/" + fileName, 120, 120, true,
-					true));
+			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/"
+					+ fileName, 120, 120, true, true));
 		}
-	}
-
-	public Image getTreasuryCardUseImg() {
-		return treasuryCardUseImg;
-	}
-
-	public Image getTreasuryCardDiscardImg() {
-		return treasuryCardDiscardImg;
-	}
-
-	public Image getWaterLevelImage() {
-		return waterLevelImage;
-	}
-
-	public Image getWaterLevelMarkerImage() {
-		return waterLevelMarkerImage;
 	}
 
 	public Image getPieceImage(PieceColor color) {

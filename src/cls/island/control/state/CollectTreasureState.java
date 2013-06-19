@@ -51,7 +51,8 @@ public class CollectTreasureState implements GameState {
 			return fromState.createGameState();
 		}
 		
-		gameModel.collectTreasure(collectionCards);
+		Type collectedType = gameModel.collectTreasure(collectionCards);
+		gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
 		for (TreasuryCard card : collectionCards) {
 			islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(), card.getComponent());
 		}

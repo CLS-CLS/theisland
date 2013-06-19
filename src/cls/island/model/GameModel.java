@@ -80,7 +80,7 @@ public class GameModel {
 	}
 
 	private void initTreasuryBag() {
-		setTreasureBag(new TreasureBag());
+		this.treasureBag  = new TreasureBag(config.earth, config.chalice, config.fire, config.wind);
 
 	}
 
@@ -107,9 +107,9 @@ public class GameModel {
 		}
 	}
 
-	public void setUpNewGame() {
+	public void newGame() {
 		setUpRandomTiles();
-		Collections.shuffle(treasuryCards);
+//		Collections.shuffle(treasuryCards);
 
 		// ensure the the first n*2 cards(where n the number of players )are not
 		// flood cards. 1)Remove the flood cards if any in the first n*2
@@ -124,15 +124,16 @@ public class GameModel {
 		}
 		int minimumAddIndex = getPlayers().size() * DRAW_CARDS_PER_TURN;
 		for (TreasuryCard card : removedCards) {
-			treasuryCards.add(ViewUtils.getRandomInt(0, treasuryCards.size() - minimumAddIndex), card);
+			treasuryCards.add(ViewUtils.getRandomInt(0, treasuryCards.size() - minimumAddIndex),
+					card);
 		}
 
 		for (TreasuryCard treasuryCard : treasuryCards) {
 			treasuryPile.addToPile(treasuryCard, PileType.NORMAL);
 		}
 
-		waterLevel = new WaterLevel(options.getFloodStartingLevel(), config.getWaterLevelImage(),
-				config.getWaterLevelMarkerImage());
+		waterLevel = new WaterLevel(options.getFloodStartingLevel(), config.waterLevelImage,
+				config.waterLevelMarkerImage);
 
 		for (Player player : players) {
 			player.setToIsland(colorToIsland.get(player.getPiece().getColor()));
@@ -140,19 +141,19 @@ public class GameModel {
 
 		islandsToFlood.addAll(islands);
 		Collections.shuffle(islandsToFlood);
-		
+
 		actionsLeft.setPlayer(getCurrentTurnPlayer());
 	}
 
 	private void initPlayers(List<PlayerAndColor> players) {
 		int index = 0;
 		for (PlayerAndColor playerType : options.getPlayers()) {
-			Image playerBaseImg = config.getPlayerCardHolder();
-			Image playerImg = config.getLolImagePlayer();
-			this.players.add(PlayerFactory.createPlayer(
-					playerType.getPlayer(),
-					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer().name(), playerType
-							.getColor()), new PlayerBase(playerType, playerBaseImg, playerImg, index)));
+			Image playerBaseImg = config.playerCardHolder;
+			Image playerImg = config.diverImage;
+			this.players.add(PlayerFactory.createPlayer(playerType.getPlayer(),
+					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer()
+							.name(), playerType.getColor()), new PlayerBase(playerType,
+							playerBaseImg, playerImg, index)));
 			index++;
 		}
 	}
@@ -175,8 +176,8 @@ public class GameModel {
 			}
 			for (int i = 0; i < repeats; i++) {
 				treasuryCards.add(new TreasuryCard(config.getTreasureIslandImgFront(type),
-						config.getTreasureIslandImgBack(), new TreasuryCard.Model(type, ViewStatus.FACE_UP), config
-								.getTreasuryCardUseImg(), config.getTreasuryCardDiscardImg()));
+						config.islandBackCard, new TreasuryCard.Model(type, ViewStatus.FACE_UP),
+						config.treasuryCardUseImg, config.treasuryCardDiscardImg));
 			}
 		}
 	}
@@ -203,8 +204,9 @@ public class GameModel {
 			if (name == IslandName.TempleOfTheSun)
 				treasure = Type.EARTH_STONE;
 
-			islands.add(new Island(config.getIslandTilesImages().get(name.name()), new Island.Model(new Grid(0, 0),
-					new Piece[4], treasure, false, name.name(), false, false, LocCalculator.getInstance())));
+			islands.add(new Island(config.getIslandTilesImages().get(name.name()),
+					new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name.name(),
+							false, false, LocCalculator.getInstance())));
 		}
 	}
 
@@ -246,7 +248,8 @@ public class GameModel {
 	}
 
 	public boolean isAdjacentIslands(Island from, Island to) {
-		Direction[] directions = new Direction[] { Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN };
+		Direction[] directions = new Direction[] { Direction.LEFT, Direction.UP, Direction.RIGHT,
+				Direction.DOWN };
 		return islandGrid.isAdjacent(from, to, directions);
 	}
 
@@ -278,7 +281,7 @@ public class GameModel {
 	 */
 	public Player nextTurn() {
 		currentTurn = (currentTurn == players.size() - 1) ? 0 : currentTurn + 1;
-		Player currentPlayer =  players.get(currentTurn);
+		Player currentPlayer = players.get(currentTurn);
 		actionsLeft.setPlayer(currentPlayer);
 		return currentPlayer;
 	}
@@ -390,7 +393,8 @@ public class GameModel {
 		for (Type remainingTreasure : remainingTreasures) {
 			int sinked = 0;
 			for (Island island : islands) {
-				if (island.hasTreasure() && island.getTreasure() == remainingTreasure && island.isSunk()) {
+				if (island.hasTreasure() && island.getTreasure() == remainingTreasure
+						&& island.isSunk()) {
 					sinked++;
 				}
 			}
@@ -410,21 +414,21 @@ public class GameModel {
 	}
 
 	/**
-	 * Collects a treasure for the current turn player.
-	 * 1)discards all the collection cards from the player hand 
-	 * 2)Adds the collected treasure to the treasure bug
-	 * 3)decreases the actions of the  player by 1.
+	 * Collects a treasure for the current turn player. 1)discards all the
+	 * collection cards from the player hand 2)Adds the collected treasure to
+	 * the treasure bug 3)decreases the actions of the player by 1.
 	 * 
-	 * @param collectionCards
-	 *            the cards that form the collection.
+	 * @param collectionCards the cards that form the collection.
+	 * @return the type of the treasure collected.
 	 */
-	public void collectTreasure(List<TreasuryCard> collectionCards) {
+	public Type collectTreasure(List<TreasuryCard> collectionCards) {
 		Player currentPlayer = getCurrentTurnPlayer();
 		getTreasureBag().addTreasure(collectionCards.get(0).getType());
 		currentPlayer.decreaseActionLeft();
 		for (TreasuryCard card : collectionCards) {
 			discardCard(currentPlayer, card);
 		}
+		return collectionCards.get(0).getType();
 	}
 
 }

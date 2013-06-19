@@ -72,8 +72,7 @@ public class ShoreUpState implements GameState {
 	@Override
 	public GameState start() {
 		Player currentPlayer = gameModel.getCurrentTurnPlayer();
-		if (currentPlayer instanceof EngineerPlayer && !((EngineerPlayer)currentPlayer).canShoreUp())return null;
-		if (!currentPlayer.hasAction()) {
+		if (!currentPlayer.hasAction() && (!(currentPlayer instanceof EngineerPlayer) ||!((EngineerPlayer)currentPlayer).canShoreUp())) {
 			return new NormalState(gameController, islandScreen, gameModel);
 		}
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"

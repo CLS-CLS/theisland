@@ -11,7 +11,7 @@ public class Root extends AbstractScreen {
 	
 	public Root(final MainController mainController, final Config config) {
 		super(mainController, config);
-		this.imageView =  new ImageView(config.getBackground());
+		this.imageView =  new ImageView(config.background);
 		getChildren().add(imageView);
 		getTransforms().add(
 				new Scale(config.getScaleFactor(), config.getScaleFactor()));

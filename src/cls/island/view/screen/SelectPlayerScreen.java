@@ -46,16 +46,16 @@ public class SelectPlayerScreen extends AbstractScreen {
 		Group main = new Group();
 		this.getChildren().add(root);
 		this.getChildren().add(main);
-		randomNode = new ComboRandom(new ImageView(config.getRandomPlayerImage()),
+		randomNode = new ComboRandom(new ImageView(config.randomPlayerImage),
 				Options.PlayerType.RANDOM.name());
 
-		final Combo diverNode = new Combo(new ImageView(config.getDiverImage()),
+		final Combo diverNode = new Combo(new ImageView(config.diverImage),
 				randomNode.rndCombo, Options.PlayerType.DIVER.name());
-		final Combo explorerNode = new Combo(new ImageView(config.getExplorerImage()),
+		final Combo explorerNode = new Combo(new ImageView(config.explorerImage),
 				randomNode.rndCombo, Options.PlayerType.EXPLORER.name());
-		final Combo pilotNode = new Combo(new ImageView(config.getDiverImage()),
+		final Combo pilotNode = new Combo(new ImageView(config.diverImage),
 				randomNode.rndCombo, Options.PlayerType.PILOT.name());
-		final Combo lol2Node = new Combo(new ImageView(config.getDiverImage()),
+		final Combo lol2Node = new Combo(new ImageView(config.diverImage),
 				randomNode.rndCombo, Options.PlayerType.MESSANGER.name());
 
 		randomNode.rndCombo.selected.addListener(new ChangeListener<Boolean>() {
@@ -137,7 +137,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 
 	private class Combo extends VBox {
 		private ImageView imageView;
-		private Label selectedNode = new Label("", new ImageView(config.getTickImage()));
+		private Label selectedNode = new Label("", new ImageView(config.tickImage));
 		private BooleanProperty selected = new SimpleBooleanProperty(false);
 		private Effect unselectedEffect = new ColorAdjust(0, -1, 0, 0);
 		private Combo random;

@@ -5,8 +5,8 @@ import java.util.List;
 
 public enum Type {
 	WATER_RISE(Ability.DANGER), EARTH_STONE(Ability.TREASURE), STATUE_OF_WIND(Ability.TREASURE), CRYSTAL_OF_FIRE(
-			Ability.TREASURE), OCEAN_CHALICE(Ability.TREASURE), HELICOPTER(Ability.AID), SANDBAGS(
-			Ability.AID);
+			Ability.TREASURE),  HELICOPTER(Ability.AID), SANDBAGS(
+			Ability.AID),OCEAN_CHALICE(Ability.TREASURE);
 
 	public enum Ability {
 		TREASURE, DANGER, AID;

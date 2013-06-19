@@ -40,6 +40,7 @@ import cls.island.view.component.island.IslandView;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.piece.PieceView;
 import cls.island.view.component.player.base.PlayerBaseView;
+import cls.island.view.component.treasurebag.TreasuryBagView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 import cls.island.view.component.treasury.pile.TreasuryPile;
@@ -67,8 +68,10 @@ public class IslandScreen extends AbstractScreen {
 	public IslandScreen(final MainController mainController, final Config config, GameModel model) {
 		super(mainController, config);
 		this.model = model;
-		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes().getHeight(), Color.DARKGRAY);
-		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980, false, true));
+		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
+				.getHeight(), Color.DARKGRAY);
+		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980,
+				false, true));
 
 		getChildren().add(0, background);
 		getChildren().add(1, background2);
@@ -80,17 +83,16 @@ public class IslandScreen extends AbstractScreen {
 			island.getComponent().relocate(location);
 			islandViewToDelete = island.getComponent();
 		}
-		
+
 		waterLevelView = model.getWaterLevel().getComponent();
-		waterLevelView.relocate(1030,30);
+		waterLevelView.relocate(1030, 30);
 		getChildren().add(waterLevelView);
-		
 
 		for (Player player : model.getPlayers()) {
 			getChildren().add(player.getPiece().getComponent());
 			Piece piece = player.getPiece();
 			Island island = piece.getIsland();
-			c_movePiece(piece.getComponent(),island.getComponent(),island.getPiecePosition(piece));
+			c_movePiece(piece.getComponent(), island.getComponent(), island.getPiecePosition(piece));
 			getChildren().add(player.getBase().getComponent());
 		}
 		model.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
@@ -113,8 +115,9 @@ public class IslandScreen extends AbstractScreen {
 			}
 		});
 
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Buttons
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		TreasuryBagView treasureBagView = model.getTreasureBag().getComponent();
+		getChildren().add(treasureBagView);
+		treasureBagView.relocate(620, 810);
 
 		moveButton = ButtonFactory.actionButton("Move");
 		shoreUpButton = ButtonFactory.actionButton("Shore \nUp");
@@ -127,7 +130,7 @@ public class IslandScreen extends AbstractScreen {
 		moveButton.relocate(1200, 300);
 		shoreUpButton.relocate(1310, 300);
 		tradeButton.relocate(1200, 410);
-		collectTreasureButton.relocate(1310,410);
+		collectTreasureButton.relocate(1310, 410);
 		nextTurnButton.relocate(1200, 520);
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
@@ -153,7 +156,7 @@ public class IslandScreen extends AbstractScreen {
 			@Override
 			public void handle(ActionEvent event) {
 				gameController.buttonPressed(GameController.ButtonAction.COLLECT_TREASURE);
-				
+
 			}
 		});
 		tradeButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -172,7 +175,7 @@ public class IslandScreen extends AbstractScreen {
 		});
 		getChildren().add(msgPanel);
 		msgPanel.relocate(600, 1000);
-//		addControls();
+		// addControls();
 	}
 
 	public List<TreasuryCard> c_getTreasuryCards() {
@@ -191,7 +194,8 @@ public class IslandScreen extends AbstractScreen {
 			public void handle(ActionEvent event) {
 				// TODO Fix It !! BAD CODE *** calls the model.. when it
 				// shouldn' t
-				SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel().getPiecesAndPositions();
+				SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel()
+						.getPiecesAndPositions();
 				for (int order : pieceZorder.keySet()) {
 					pieceZorder.get(order).getComponent().toFront();
 				}
@@ -200,10 +204,11 @@ public class IslandScreen extends AbstractScreen {
 		Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, null);
 	}
 
-	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard, PlayerBaseView playerBaseView) {
+	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard,
+			PlayerBaseView playerBaseView) {
 		treasuryCard.setFaceUp(true);
 		playerBaseView.moveToBase(treasuryCard);
-		
+
 	}
 
 	public void c_discardPlayerCard(PlayerBaseView playerBaseView, TreasuryCardView treasuryCard) {
@@ -215,10 +220,11 @@ public class IslandScreen extends AbstractScreen {
 		if (Platform.isFxApplicationThread())
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
-		
+
 		popUpwaitCondition = lock.newCondition();
 		lock.lock();
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(msgPanel.layoutYProperty(), 800)));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
+				msgPanel.layoutYProperty(), 800)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -239,16 +245,17 @@ public class IslandScreen extends AbstractScreen {
 		if (Platform.isFxApplicationThread())
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
-		
+
 		popUpwaitCondition = lock.newCondition();
 		lock.lock();
-		Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(msgPanel.layoutYProperty(), 1000)));
+		Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
+				msgPanel.layoutYProperty(), 1000)));
 		tmln.setOnFinished(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				popUpwaitCondition.signal();
-				
+
 			}
 		});
 		tmln.play();
@@ -266,8 +273,7 @@ public class IslandScreen extends AbstractScreen {
 	public void setGameController(GameController gameController) {
 		this.gameController = gameController;
 	}
-	
-	
+
 	// Use for debug purposes
 	public void addControls() {
 		int counter = 500;
@@ -288,11 +294,12 @@ public class IslandScreen extends AbstractScreen {
 			sdb.addListener(new ChangeListener<Number>() {
 
 				@Override
-				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-					text.setText(newValue+"");
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+						Number newValue) {
+					text.setText(newValue + "");
 				}
 			});
-			counter = counter +50;
+			counter = counter + 50;
 			hbox.getChildren().add(text);
 			getChildren().add(hbox);
 			hbox.relocate(50, counter);
@@ -302,7 +309,5 @@ public class IslandScreen extends AbstractScreen {
 	public void c_showLooseGamePopUp(LooseCondition checkLooseCondition) {
 		c_showPopup(new FloodCardDrawPopUp());
 	}
-	
-	
 
 }

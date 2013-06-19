@@ -8,7 +8,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
