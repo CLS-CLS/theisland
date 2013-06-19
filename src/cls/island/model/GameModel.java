@@ -109,7 +109,7 @@ public class GameModel {
 
 	public void newGame() {
 		setUpRandomTiles();
-//		Collections.shuffle(treasuryCards);
+		Collections.shuffle(treasuryCards);
 
 		// ensure the the first n*2 cards(where n the number of players )are not
 		// flood cards. 1)Remove the flood cards if any in the first n*2

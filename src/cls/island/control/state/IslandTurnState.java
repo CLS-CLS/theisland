@@ -47,7 +47,6 @@ public class IslandTurnState implements GameState {
 		Island island = gameModel.getNextIslantToFlood();
 		if (island.isFlooded()) {
 			gameModel.sinkIsland(island);
-			island.getComponent().unFlood();
 			island.getComponent().sink();
 		} else {
 			gameModel.floodIsland(island);

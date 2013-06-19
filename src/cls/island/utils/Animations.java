@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
+import javax.rmi.CORBA.Tie;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.application.Platform;
@@ -138,14 +140,17 @@ public class Animations {
 		timeline.play();
 	}
 
-	public static void floodTile(List<DoubleProperty> animateProps, boolean flood, final Condition signal) {
+	public static void floodTile(List<IslandView> islands , List<DoubleProperty> animateProps, boolean flood, final Condition signal) {
+		if (flood) {
+			shake(null, islands.toArray(new IslandView[islands.size()]));
+		}
 		double brightness = flood ? 0.37 : 0;
 		double contrast = flood ? 0.34 : 0;
 		double saturation = flood ? -1 : 0;
 		double opacity = flood ? 0.5 : 0;
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(
-				new KeyFrame(Duration.millis(1000), new KeyValue(animateProps.get(0), brightness)
+				new KeyFrame(Duration.millis(500), new KeyValue(animateProps.get(0), brightness)
 						,new KeyValue(animateProps.get(1), contrast)
 						,new KeyValue(animateProps.get(2), saturation)
 						,new KeyValue(animateProps.get(3),opacity))
@@ -161,6 +166,7 @@ public class Animations {
 	}
 
 	public static void sinkTile(IslandView islandView, final Condition condition) {
+		shake(null, islandView);
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(islandView.opacityProperty(), 0)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
@@ -196,6 +202,45 @@ public class Animations {
 				condition.signal();
 			}
 		});
+		timeline.play();
+	}
+	
+	public static void shake(final Condition condition, Node...nodes){
+		TimelineSingle timeline = new TimelineSingle();
+		double timeStep = 10D;
+		double moveStep = 2;
+		Duration totalDuration  = Duration.millis(0);
+		for (int j=0; j<10;j++){
+			totalDuration = new Duration(totalDuration.toMillis() + timeStep);
+			KeyValue[] keyValues = new KeyValue[nodes.length];
+			for (int i=0 ;i<nodes.length;i++){
+				keyValues[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty().getValue()-moveStep);
+			}
+			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues));
+			
+			totalDuration = new Duration(totalDuration.toMillis() + timeStep * 2);
+			KeyValue[] keyValues2 = new KeyValue[nodes.length];
+			for (int i=0 ;i<nodes.length;i++){
+				keyValues2[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty().getValue()+moveStep*2 );
+			}
+			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues2));
+			
+			totalDuration = new Duration(totalDuration.toMillis() + timeStep);
+			KeyValue[] keyValues3 = new KeyValue[nodes.length];
+			for (int i=0 ;i<nodes.length;i++){
+				keyValues3[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty().getValue()-moveStep);
+			}
+			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues3));
+		}
+		if (condition != null){
+			timeline.setOnFinished(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					condition.signal();
+				}
+			});
+		}
 		timeline.play();
 	}
 }

@@ -1,6 +1,7 @@
 package cls.island.view.component.island;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +150,7 @@ public class IslandView extends AbstractView<Island> {
 		animateProps.add(floodEffect.contrastProperty());
 		animateProps.add(floodEffect.saturationProperty());
 		animateProps.add(flood.opacityProperty());
-		Animations.floodTile(animateProps, floodBool, wait);
+		Animations.floodTile(Arrays.asList(new IslandView[]{this}),animateProps, floodBool, wait);
 		
 	}
 
