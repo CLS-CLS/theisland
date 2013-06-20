@@ -9,6 +9,8 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Light;
@@ -35,7 +37,7 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	private Timeline onExitedAnimation = new Timeline();
 	private T model;
 	protected volatile Condition wait = lock.newCondition();
-	private ValidEffectNode validToClick;
+	private OnOffEffectNode validToClick;
 	private Parent validNode = null;
 
 	private static final Effect defaultEffect() {
@@ -44,13 +46,19 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 		light.setElevation(60);
 		Lighting l = new Lighting();
 		l.setLight(light);
-		l.setSurfaceScale(5.5);
+		l.setSurfaceScale(1.0);
 		l.setDiffuseConstant(1.5);
+		l.setSpecularConstant(0);
 		DropShadow dr = new DropShadow();
+		dr.setInput(l);
 		return dr;
 	}
-
-	private ValidEffectNode createValidToClick() {
+	
+	/**
+	 * Override for custom effect
+	 * @return
+	 */
+	protected OnOffEffectNode createValidToClick() {
 		return new ValidEffectNode(getLayoutBounds().getWidth(), getLayoutBounds()
 				.getHeight(), validNode);
 	}
@@ -82,7 +90,7 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	}
 	
 		
-	public void enableValidToCkickEffect(final boolean on){
+	public void setValidToCkickEffect(final boolean on){
 		if (validToClick == null){
 			validToClick = createValidToClick();
 		}

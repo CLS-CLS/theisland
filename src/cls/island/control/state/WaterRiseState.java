@@ -10,6 +10,7 @@ import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
+import cls.island.view.component.treasurebag.TreasuryBagView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 import cls.island.view.component.treasury.card.Type;
@@ -23,7 +24,8 @@ public class WaterRiseState implements GameState {
 	private final GameState fromState;
 	private final GameModel gameModel;
 
-	public WaterRiseState(GameController gameController, IslandScreen islandScreen, GameModel gameModel, GameState fromState) {
+	public WaterRiseState(GameController gameController, IslandScreen islandScreen,
+			GameModel gameModel, GameState fromState) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
@@ -32,20 +34,27 @@ public class WaterRiseState implements GameState {
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
-		// check left click
-		if (event.getButton() != MouseButton.PRIMARY)
+		// Cancel if Right- Click
+
+		if (event.getButton() == MouseButton.SECONDARY) {
+			return cancel();
+		}
+		// Do nothing for others clicks except primary
+		if (event.getButton() != MouseButton.PRIMARY) {
 			return null;
-		// check clicked on treasy card
+		}
+
+		// check clicked on treasury card and that this card belongs to a player
+		TreasuryCard selectedCard = null;
 		IslandComponent component = ViewUtils.findIslandComponent((Node) event.getTarget());
-		if (component == null || !(component instanceof TreasuryCardView))
-			return null;
-		final TreasuryCard selectedCard = ((TreasuryCardView) component).getParentModel();
 
-		// check that is a sandbag
-		if (Type.SANDBAGS != selectedCard.getType())
+		if (component != null && component instanceof TreasuryBagView) {
+			selectedCard = ((TreasuryCardView) component).getParentModel();
+		}
+		if (selectedCard == null || Type.SANDBAGS != selectedCard.getType()) {
 			return null;
+		}
 
-		// check that it belongs to a player
 		boolean belongsToPlayer = false;
 		for (Player player : gameModel.getPlayers()) {
 			for (TreasuryCard card : player.getTreasuryCards()) {
@@ -55,20 +64,28 @@ public class WaterRiseState implements GameState {
 				}
 			}
 		}
-		if (!belongsToPlayer)
+		if (!belongsToPlayer) {
 			return null;
+		}
 
 		islandScreen.c_hideMessagePanel();
-		return new UseShoreUpCardState(gameController, islandScreen, gameModel, selectedCard, WaterRiseState.this);
+		return new UseShoreUpCardState(gameController, islandScreen, gameModel, selectedCard,
+				WaterRiseState.this);
+	}
+
+	private GameState cancel() {
+		islandScreen.c_hideMessagePanel();
+		return fromState.createGameState();
 	}
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
 		// TODO change to OK
+		GameState returnState = null;
 		if (action == ButtonAction.NEXT_TURN) {
-			return fromState.createGameState();
+			returnState = cancel();
 		}
-		return null;
+		return returnState;
 	}
 
 	@Override
@@ -78,9 +95,35 @@ public class WaterRiseState implements GameState {
 
 	@Override
 	public GameState start() {
+		GameState returnState = null;
+
 		if (gameModel.checkLooseCondition() != null) {
-			return new GameLostState(gameController, islandScreen, gameModel, this);
+			returnState = new GameLostState(gameController, islandScreen, gameModel, this);
+		} // game not lost
+
+		else if (!playerHasShoreUpCard() || !flooderIslandExists()) {
+			returnState = fromState.createGameState();
+		} // there is a shore up card and a flooded island
+
+		else {
+			islandScreen
+					.c_showMessagePanel("Save an Island with a Sandbag\nClick OK (or Right-Click) when ready");
 		}
+		return returnState;
+	}
+
+	private boolean flooderIslandExists() {
+		boolean floodTileExist = false;
+		for (Island island : gameModel.getIslands()) {
+			if (island.isFlooded() && !island.isSunk()) {
+				floodTileExist = true;
+				break;
+			}
+		}
+		return floodTileExist;
+	}
+
+	private boolean playerHasShoreUpCard() {
 		boolean shoreUpCardsExist = false;
 		for (Player player : gameModel.getPlayers()) {
 			for (TreasuryCard card : player.getTreasuryCards()) {
@@ -90,18 +133,7 @@ public class WaterRiseState implements GameState {
 				}
 			}
 		}
-		boolean floodTileExist = false;
-		for (Island island : gameModel.getIslands())
-			if (island.isFlooded() && !island.isSunk()) {
-				floodTileExist = true;
-				break;
-			}
-		if (shoreUpCardsExist && floodTileExist) {
-			islandScreen.c_showMessagePanel("Select a SANDBAG card and save an Island \nClick OK when ready");
-		} else {
-			return fromState.createGameState();
-		}
-		return null;
+		return shoreUpCardsExist;
 	}
 
 	@Override

@@ -9,10 +9,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class ValidEffectNode extends Parent {
+public class ValidEffectNode extends OnOffEffectNode{
 
-	private ColorAdjust effect;
-	Timeline timeline = new Timeline();
+	protected ColorAdjust effect;
+	protected Timeline timeline = new Timeline();
 
 	public ValidEffectNode(double width, double height, Parent node) {
 		effect = new ColorAdjust();

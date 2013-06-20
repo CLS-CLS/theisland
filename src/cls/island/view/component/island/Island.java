@@ -12,8 +12,6 @@ import cls.island.view.component.piece.Piece;
 import cls.island.view.component.treasury.card.Type;
 
 public class Island {
-	
-	
 
 	public static enum IslandName {
 		BreakersBridge, BronzeGate, CaveOfEmbers, CaveOfShadows, CliffsOfAbandon, CopperGate, CoralPalace, CrimsonForest, DunesOfDeception, FoolsLanding, GoldGate, HowlingGarden, IronGate, LostLagoon, MistyMarsh, Observatory, PhantomRock, SilverGate, TempleOfTheMoon, TempleOfTheSun, TidalPalace, TwilightHollow, Watchtower, WhisperingGarden;
@@ -30,8 +28,8 @@ public class Island {
 		protected boolean floodBorder;
 		protected Type treasure;
 
-		public Model(Grid grid, Piece[] pieceSpots, Type treasure, boolean flooded, String name, boolean sunk, boolean floodBorder,
-				LocCalculator locCalculator) {
+		public Model(Grid grid, Piece[] pieceSpots, Type treasure, boolean flooded, String name,
+				boolean sunk, boolean floodBorder, LocCalculator locCalculator) {
 			this.grid = grid;
 			this.pieceSpots = pieceSpots;
 			this.flooded = flooded;
@@ -168,7 +166,7 @@ public class Island {
 	 *             if the tile does not contain the piece.
 	 */
 	public int getPiecePosition(Piece piece) {
-		for (int i=0; i<4;i++){
+		for (int i = 0; i < 4; i++) {
 			if (model.pieceSpots[i].equals(piece))
 				return i;
 		}
@@ -229,14 +227,15 @@ public class Island {
 
 	@Override
 	public String toString() {
-		return "Island [name =" + model.name + " sunk =" + model.sunk + " isFlooded =" + model.isFlooded() + "]";
+		return "Island [name =" + model.name + " sunk =" + model.sunk + " isFlooded ="
+				+ model.isFlooded() + "]";
 	}
-	
-	public boolean hasTreasure(){
+
+	public boolean hasTreasure() {
 		return model.treasure != null;
 	}
-	
-	public Type getTreasure(){
+
+	public Type getTreasure() {
 		return model.treasure;
 	}
 

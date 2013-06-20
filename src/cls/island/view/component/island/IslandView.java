@@ -169,6 +169,10 @@ public class IslandView extends AbstractView<Island> {
 		});
 	}
 	
+	/**
+	 * returns the properties of the effect
+	 * @return
+	 */
 	public Map<String, DoubleProperty> exposeEffect(){
 		Map<String, DoubleProperty> list = new HashMap<>();
 		list.put("Brightness", floodEffect.brightnessProperty());

@@ -39,6 +39,7 @@ import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.piece.PieceView;
+import cls.island.view.component.player.base.PlayerBase;
 import cls.island.view.component.player.base.PlayerBaseView;
 import cls.island.view.component.treasurebag.TreasuryBagView;
 import cls.island.view.component.treasury.card.TreasuryCard;
@@ -89,8 +90,8 @@ public class IslandScreen extends AbstractScreen {
 		getChildren().add(waterLevelView);
 
 		for (Player player : model.getPlayers()) {
-			getChildren().add(player.getPiece().getComponent());
 			Piece piece = player.getPiece();
+			getChildren().add(piece.getComponent());
 			Island island = piece.getIsland();
 			c_movePiece(piece.getComponent(), island.getComponent(), island.getPiecePosition(piece));
 			getChildren().add(player.getBase().getComponent());

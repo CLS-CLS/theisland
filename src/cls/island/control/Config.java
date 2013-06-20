@@ -54,6 +54,7 @@ public class Config {
 	public Image chalice;
 	public Image fire;
 	public Image wind;
+	public Image pieceBlue;
 
 	public Config() {
 		background = new Image("images/other/startScreen.png", false);
@@ -64,6 +65,7 @@ public class Config {
 		pieceWhite = new Image("images/other/pieceWhite.png", 31, 52, true, true);
 		pieceGreen = new Image("images/other/pieceGreen.png", 31, 52, true, true);
 		pieceRed = new Image("images/other/pieceRed.png", 31, 52, true, true);
+		pieceBlue = new Image("images/other/pieceBlue.png", 31, 52, true, true);
 		playerCardHolder = new Image("images/other/playerCardHolder.png", 283, 220, false, true);
 		islandCard = new Image("images/other/islandCard.png", 70, 100, false, true);
 		islandBackCard = new Image("images/other/backcard.png", 70, 100, false, true);
@@ -158,10 +160,14 @@ public class Config {
 			return pieceRed;
 		case GREEN:
 			return pieceGreen;
+		case BLUE:
+			return pieceBlue;
+		case WHITE:
+			return pieceWhite;
 		default:
 			break;
 		}
-		return null;
+		return pieceRed;
 	}
 
 }

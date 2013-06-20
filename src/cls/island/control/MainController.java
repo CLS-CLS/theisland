@@ -95,8 +95,10 @@ public class MainController {
 		});
 
 		// goToMainScreen(null);
-		options.setPlayers(Arrays.asList(new PlayerAndColor[] { new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
-				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN) }));
+		options.setPlayers(Arrays.asList(new PlayerAndColor[] {
+				new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
+				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN), 
+				new PlayerAndColor(PlayerType.DIVER, PieceColor.BLUE)}));
 		gameModel = new GameModel(options, config);
 		gameModel.newGame();
 		islandScreen = new IslandScreen(MainController.this, config, gameModel);
@@ -118,7 +120,8 @@ public class MainController {
 		stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue) {
 				if (!newValue) {
 					stage.setIconified(true);
 				}
@@ -127,7 +130,8 @@ public class MainController {
 		stage.iconifiedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue) {
 				if (!newValue) {
 					stage.setFullScreen(true);
 				}
@@ -140,7 +144,6 @@ public class MainController {
 		stage.show();
 	}
 
-	
 	public Options getOptions() {
 		return options;
 	}

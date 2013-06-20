@@ -26,7 +26,8 @@ public class Player {
 	private static final int NUMBER_OF_PLAYER_ACTION = 3;
 	protected final PlayerType type;
 	protected final String playerId;
-	protected final ReadOnlyIntegerWrapper actionsLeft = new ReadOnlyIntegerWrapper(NUMBER_OF_PLAYER_ACTION);
+	protected final ReadOnlyIntegerWrapper actionsLeft = new ReadOnlyIntegerWrapper(
+			NUMBER_OF_PLAYER_ACTION);
 	protected final Piece piece;
 	protected final PlayerBase base;
 
@@ -59,18 +60,11 @@ public class Player {
 	}
 
 	/**
-	 * 
-	 * @param card
-	 *            the index of the card in the players hand
+	 * Convenient method
+	 * @param card the index of the card in the players hand
 	 */
 	public int addCard(TreasuryCard card) {
 		return base.addCard(card);
-	}
-
-	
-	public void giveCardToPlayer(TreasuryCard card, Player player) {
-		base.removeCard(card);
-		player.base.addCard(card);
 	}
 
 	public List<TreasuryCard> getTreasuryCards() {
@@ -97,8 +91,6 @@ public class Player {
 	public List<Island> validIslandsToMove(Island from, IslandGrid<Island> grid) {
 		throw new UnsupportedOperationException();
 	}
-	
-	
 
 	/**
 	 * Checks if the player make a valid standard move to the a island. Players
@@ -113,18 +105,18 @@ public class Player {
 		if (toIsland.isSunk())
 			return false;
 		boolean valid = false;
-		if (grid.isAdjacent(fromIsland, toIsland, Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT)) {
+		if (grid.isAdjacent(fromIsland, toIsland, Direction.UP, Direction.RIGHT, Direction.DOWN,
+				Direction.LEFT)) {
 			valid = true;
 		}
 		return valid;
 	}
-	
-		
+
 	/**
-	 * checks if the player can shore up the specific island. The checks are:
-	 * 1) if the island is adjacent to player 
-	 * 2) the island is not sunk. 
-	 * 3) the island is the same island the player is on
+	 * checks if the player can shore up the specific island. The checks are: 1)
+	 * if the island is adjacent to player 2) the island is not sunk. 3) the
+	 * island is the same island the player is on
+	 * 
 	 * @param fromIsland
 	 * @param toIsland
 	 * @param grid
@@ -133,11 +125,13 @@ public class Player {
 	public boolean isValidShoreUp(Island fromIsland, Island toIsland, IslandGrid<Island> grid) {
 		if (toIsland.isSunk())
 			return false;
-		if (fromIsland == toIsland)return true;
-		if (grid.isAdjacent(fromIsland, toIsland, Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT)) return true;
+		if (fromIsland == toIsland)
+			return true;
+		if (grid.isAdjacent(fromIsland, toIsland, Direction.UP, Direction.RIGHT, Direction.DOWN,
+				Direction.LEFT))
+			return true;
 		return false;
-		
-		
+
 	}
 
 	/**
@@ -177,8 +171,8 @@ public class Player {
 	}
 
 	/**
-	 * Shores up and island and updates the model.
-	 * Override this method for special shore up abilities.
+	 * Shores up and island and updates the model. Override this method for
+	 * special shore up abilities.
 	 * 
 	 * @param island
 	 */
@@ -186,47 +180,108 @@ public class Player {
 		actionsLeft.set(getActionsLeft() - 1);
 		island.unFlood();
 	}
-	
 
 	public ReadOnlyIntegerProperty actionsLeftProperty() {
 		return actionsLeft.getReadOnlyProperty();
 	}
 
 	/**
-	 * Convenient method. Finds all the cards that forms a collection of 
-	 * 4 cards of the same treasure type 
+	 * Convenient method. Finds all the cards that forms a collection of 4 cards
+	 * of the same treasure type
 	 * 
 	 * @return the cards forming the treasure collection
 	 */
 	public List<TreasuryCard> getTreasureCollection() {
 		ArrayList<TreasuryCard> collectionCards = new ArrayList<>();
 		int[] collectionQuantity = new int[10];
-		for (TreasuryCard card : getTreasuryCards()){
-			if (card.getType().getAbility()==Ability.TREASURE){
+		for (TreasuryCard card : getTreasuryCards()) {
+			if (card.getType().getAbility() == Ability.TREASURE) {
 				collectionQuantity[card.getType().ordinal()]++;
 			}
 		}
 		int index = -1;
-		for (int i=0;i<10;i++){
-			if (collectionQuantity[i]>=4){
+		for (int i = 0; i < 10; i++) {
+			if (collectionQuantity[i] >= 4) {
 				index = i;
 				break;
 			}
 		}
-		if (index !=-1){
-			for (TreasuryCard treasuryCard : getTreasuryCards()){
-				if (treasuryCard.getType() == Type.values()[index]){
+		if (index != -1) {
+			for (TreasuryCard treasuryCard : getTreasuryCards()) {
+				if (treasuryCard.getType() == Type.values()[index]) {
 					collectionCards.add(treasuryCard);
-					if (collectionCards.size()==4)break;
+					if (collectionCards.size() == 4)
+						break;
 				}
 			}
 		}
 		return collectionCards;
-		
+
 	}
 
 	public void decreaseActionLeft() {
-		actionsLeft.setValue(actionsLeft.getValue()-1);
+		actionsLeft.setValue(actionsLeft.getValue() - 1);
+	}
+
+	/**
+	 * Gives a treasure card (with ability TREASURE) to another player and
+	 * updates all the model attributes (Player' s actions left) according to
+	 * the game's rules. In case no model update (except the ownership update of
+	 * the card) is desired use the {@link setGiveCard} method.
+	 * 
+	 * The method does not validate the game rules, and gives the card
+	 * unconditionally. Use the {@link canGiveCard} method to ensure that game
+	 * rules are met
+	 * 
+	 * @param player
+	 *            the player to receice the card
+	 * @param card
+	 *            the card to give
+	 */
+	public void giveCard(Player player, TreasuryCard card) {
+		if (!this.getTreasuryCards().contains(card))
+			throw new IllegalArgumentException(this + " does not have tha card");
+		if (card.getType().getAbility() != Ability.TREASURE)
+			throw new IllegalArgumentException(card + " is not of type TREASURE");
+		setGiveCard(player, card);
+		this.decreaseActionLeft();
+
+	}
+
+	/**
+	 * Ensures that this player can give the provided card to his co-player
+	 * according to the game rules. Override this method in order to provide
+	 * specific game rules. As default a player can give to his co-player the
+	 * card when 1) they are at the same tile 2) the giver has actions
+	 * 
+	 * @param player
+	 *            the player to receice the card
+	 * @param card
+	 *            the card to give
+	 * @return true if the card can be given
+	 */
+	public boolean canGiveCard(Player player, TreasuryCard card) {
+		if (!this.getTreasuryCards().contains(card))
+			throw new IllegalArgumentException(this + " does not have tha card");
+		if (card.getType().getAbility() != Ability.TREASURE)
+			throw new IllegalArgumentException(card + " is not of type TREASURE");
+		if (actionsLeft.getValue() ==0) return false;
+		if (!this.getPiece().getIsland().equals(player.getPiece().getIsland()))return false;
+		return true;
+	}
+
+	/**
+	 * gives the specified card to the provided player unconditionally, and does
+	 * not apply any game rules.
+	 * 
+	 * @param player
+	 *            the player to receice the card
+	 * @param card
+	 *            the card to give
+	 */
+	public void setGiveCard(Player player, TreasuryCard card) {
+		this.getBase().removeCard(card);
+		player.addCard(card);
 	}
 
 }

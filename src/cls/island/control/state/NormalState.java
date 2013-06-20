@@ -95,6 +95,8 @@ public class NormalState implements GameState {
 			return new ShoreUpState(gameController, islandScreen, gameModel);
 		case COLLECT_TREASURE:
 			return new CollectTreasureState(gameController, islandScreen, gameModel, this);
+		case TRADE:
+			return new TradeCardState(gameController, islandScreen ,gameModel, this);
 		default:
 		}
 		return null;

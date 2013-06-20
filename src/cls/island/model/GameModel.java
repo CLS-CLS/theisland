@@ -122,7 +122,7 @@ public class GameModel {
 				removedCards.add(treasuryCards.remove(i));
 			}
 		}
-		int minimumAddIndex = getPlayers().size() * DRAW_CARDS_PER_TURN;
+		int minimumAddIndex = getPlayers().size() * DRAW_CARDS_PER_TURN + 1;
 		for (TreasuryCard card : removedCards) {
 			treasuryCards.add(ViewUtils.getRandomInt(0, treasuryCards.size() - minimumAddIndex),
 					card);

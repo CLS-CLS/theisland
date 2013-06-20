@@ -19,6 +19,8 @@ import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.SignaledRunnable;
 import cls.island.view.component.AbstractView;
+import cls.island.view.component.OnOffEffectNode;
+import cls.island.view.component.ValidEffectNode;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 
@@ -30,6 +32,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg,
 			Color color, LocCalculator locCalculator, int index) {
 		super(true, model);
+		setValidToCkickEffect(true);
 		Rectangle rect = new Rectangle(283,220,color);
 		getChildren().add(rect);
 		this.locCalculator = locCalculator;
@@ -42,6 +45,19 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		super.relocate(locCalculator.playerBasePositionToLoc(index));
 		rearrangeCards();
 	}
+	
+	@Override
+	protected OnOffEffectNode createValidToClick() {
+		class ValidTo extends ValidEffectNode{
+
+			public ValidTo() {
+				super(100, 100, PlayerBaseView.this);
+				relocate(17, 15);
+			}
+		
+		}
+		return new ValidTo();
+	};
 
 	public void moveToBase(final TreasuryCardView treasuryCard) {
 		execute(new SignaledRunnable() {
