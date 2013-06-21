@@ -14,6 +14,8 @@ public class PlayerFactory {
 			return new ExplorerPlayer(piece, base);
 		case ENGINEER:
 			return new EngineerPlayer(piece, base);
+		case DIVER:
+			return new DiverPlayer(piece, base);
 		default:
 			return new Player(type, piece, base);
 		}

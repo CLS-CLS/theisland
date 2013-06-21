@@ -9,8 +9,6 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Light;
@@ -23,6 +21,7 @@ import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.SignaledRunnable;
 import cls.island.utils.concurrent.AutoReentrantLock;
+import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
 public class AbstractView<T> extends Parent implements IslandComponent {
@@ -37,8 +36,7 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	private Timeline onExitedAnimation = new Timeline();
 	private T model;
 	protected volatile Condition wait = lock.newCondition();
-	private OnOffEffectNode validToClick;
-	private Parent validNode = null;
+	private volatile OnOffEffectNode validToClick;
 
 	private static final Effect defaultEffect() {
 		Light.Distant light = new Light.Distant();
@@ -55,22 +53,16 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	}
 	
 	/**
-	 * Override for custom effect
+	 * Override to add custom valid to click effect.
+	 * 
 	 * @return
 	 */
 	protected OnOffEffectNode createValidToClick() {
 		return new ValidEffectNode(getLayoutBounds().getWidth(), getLayoutBounds()
-				.getHeight(), validNode);
+				.getHeight(), null);
 	}
 	
-	/**
-	 * Override this to set custom validTOclick node shape
-	 * @param node
-	 */
-	protected void setValidToClick(Parent node){
-		this.validNode = node;
-	}
-
+		
 	public AbstractView(boolean enableDefaultEffect, T model) {
 		if (enableDefaultEffect) {
 			setEffect(defaultEffect());
@@ -91,15 +83,20 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	
 		
 	public void setValidToCkickEffect(final boolean on){
-		if (validToClick == null){
-			validToClick = createValidToClick();
-		}
+		
 		Platform.runLater(new Runnable() {
 			
 			@Override
 			public void run() {
+				if (validToClick == null){
+					validToClick = createValidToClick();
+				}
 				if (on && !getChildren().contains(validToClick)){
-					getChildren().add(0, validToClick);
+					if (validToClick.getRelativePosition() == RelativePosition.TOP){
+						getChildren().add(validToClick);
+					}else{
+						getChildren().add(0, validToClick);
+					}
 					validToClick.switchEffectOn();
 					validToClick.relocate(-3,-3);
 				}else if (!on){
@@ -207,17 +204,6 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void enableValidToClick() {
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				getChildren().add(0, validToClick);
-
-			}
-		});
 	}
 
 }

@@ -9,6 +9,7 @@ import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
+import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.screen.IslandComponent;
@@ -34,6 +35,10 @@ public class UseShoreUpCardState implements GameState {
 	 * discardCard && drawCard)
 	 */
 	private GameState changeState() {
+		for (Island island : gameModel.getIslands()){
+			island.getComponent().setValidToCkickEffect(false);
+		}
+		selectedTreasureCard.getComponent().setValidToCkickEffect(false);
 		islandScreen.c_hideMessagePanel();
 		if (fromState instanceof ChooseDiscardCardState) {
 			ChooseDiscardCardState discardState = (ChooseDiscardCardState) fromState;
@@ -75,6 +80,10 @@ public class UseShoreUpCardState implements GameState {
 	}
 
 	private GameState cancel() {
+		for (Island island : gameModel.getIslands()){
+			island.getComponent().setValidToCkickEffect(false);
+		}
+		selectedTreasureCard.getComponent().setValidToCkickEffect(false);
 		islandScreen.c_hideMessagePanel();
 		return fromState.createGameState();
 	}
@@ -92,6 +101,11 @@ public class UseShoreUpCardState implements GameState {
 
 	@Override
 	public GameState start() {
+		for (Island island : gameModel.getIslands()){
+			if (island.isFlooded() && !island.isSunk()){
+				island.getComponent().setValidToCkickEffect(true);
+			}
+		}
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
 		return null;

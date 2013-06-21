@@ -46,7 +46,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	}
 	
 	@Override
-	protected OnOffEffectNode createValidToClick() {
+	protected ValidEffectNode createValidToClick() {
 		class ValidTo extends ValidEffectNode{
 
 			public ValidTo() {

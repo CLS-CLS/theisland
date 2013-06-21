@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
-import javax.rmi.CORBA.Tie;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.application.Platform;

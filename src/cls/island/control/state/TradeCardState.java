@@ -47,6 +47,8 @@ public class TradeCardState implements GameState {
 		TreasuryCardView cardView = null;
 		if (islandComponent instanceof TreasuryCardView) {
 			cardView = (TreasuryCardView) islandComponent;
+		}else {
+			return null;
 		}
 		if (!eligibleCards.contains(cardView.getParentModel()))return null;
 		

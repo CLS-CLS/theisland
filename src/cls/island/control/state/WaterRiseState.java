@@ -1,5 +1,8 @@
 package cls.island.control.state;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -10,7 +13,6 @@ import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
-import cls.island.view.component.treasurebag.TreasuryBagView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 import cls.island.view.component.treasury.card.Type;
@@ -48,7 +50,7 @@ public class WaterRiseState implements GameState {
 		TreasuryCard selectedCard = null;
 		IslandComponent component = ViewUtils.findIslandComponent((Node) event.getTarget());
 
-		if (component != null && component instanceof TreasuryBagView) {
+		if (component != null && component instanceof TreasuryCardView) {
 			selectedCard = ((TreasuryCardView) component).getParentModel();
 		}
 		if (selectedCard == null || Type.SANDBAGS != selectedCard.getType()) {
@@ -69,11 +71,24 @@ public class WaterRiseState implements GameState {
 		}
 
 		islandScreen.c_hideMessagePanel();
+		disableClickableEffect(selectedCard.getComponent());
 		return new UseShoreUpCardState(gameController, islandScreen, gameModel, selectedCard,
 				WaterRiseState.this);
 	}
 
+	private void disableClickableEffect(TreasuryCardView...excludedCards) {
+		List<TreasuryCardView> excludedCardsAsList = Arrays.asList(excludedCards);
+		for (Player player : gameModel.getPlayers()){
+			for (TreasuryCard card : player.getTreasuryCards()){
+				if (card.getType() == Type.SANDBAGS && !excludedCardsAsList.contains(card.getComponent())){
+					card.getComponent().setValidToCkickEffect(false);
+				}
+			}
+		}
+	}
+
 	private GameState cancel() {
+		disableClickableEffect();
 		islandScreen.c_hideMessagePanel();
 		return fromState.createGameState();
 	}
@@ -108,8 +123,19 @@ public class WaterRiseState implements GameState {
 		else {
 			islandScreen
 					.c_showMessagePanel("Save an Island with a Sandbag\nClick OK (or Right-Click) when ready");
+			enableClickableEffect();
 		}
 		return returnState;
+	}
+
+	private void enableClickableEffect() {
+		for (Player player : gameModel.getPlayers()){
+			for (TreasuryCard card : player.getTreasuryCards()){
+				if (card.getType() == Type.SANDBAGS){
+					card.getComponent().setValidToCkickEffect(true);
+				}
+			}
+		}
 	}
 
 	private boolean flooderIslandExists() {

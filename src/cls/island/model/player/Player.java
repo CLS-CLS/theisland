@@ -93,13 +93,13 @@ public class Player {
 	}
 
 	/**
-	 * Checks if the player make a valid standard move to the a island. Players
+	 * Checks if the player can make a valid standard move. Players
 	 * with special move abilities should override this method.
 	 * 
-	 * @param fromIsland
-	 * @param toIsland
-	 * @param grid
-	 * @return
+	 * @param fromIsland the island the player is going to move from 
+	 * @param toIsland the island the player will go
+	 * @param grid the island grids
+	 * @return true if it is valid move
 	 */
 	public boolean isValidMove(Island fromIsland, Island toIsland, IslandGrid<Island> grid) {
 		if (toIsland.isSunk())

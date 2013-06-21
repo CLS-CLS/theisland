@@ -22,14 +22,13 @@ public class ValidEffectNode extends OnOffEffectNode{
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		
 		if (node == null){ 
-			Rectangle rect = new Rectangle(width + 6, height + 6, Color.BLUE);
+			Rectangle rect = new Rectangle(width + 6, height + 6, Color.VIOLET);
 			getChildren().add(rect);
 			rect.setEffect(effect);
 		}else {
 			node.setEffect(effect);
 			getChildren().add(0, node);
 		}
-
 	}
 
 	public void switchEffectOn() {
@@ -39,6 +38,11 @@ public class ValidEffectNode extends OnOffEffectNode{
 	public void switchEffectOff() {
 		this.setEffect(null);
 		timeline.stop();
+	}
+
+	@Override
+	public RelativePosition getRelativePosition() {
+		return RelativePosition.BOTTOM;
 	}
 
 }

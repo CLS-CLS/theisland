@@ -125,6 +125,12 @@ public class IslandGrid<E> {
 	}
 	
 	
+	/**
+	 * finds the adjacent element of the given element in the provided direction.
+	 * @param element
+	 * @param direction
+	 * @return null if there is not an adjacent element in the provided direction.
+	 */
 	public E getAdjacent(E element, Direction direction) {
 		Grid grid = findGridOfElemet(element);
 		if (grid == null || !isValidGrid(grid))
