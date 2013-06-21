@@ -32,7 +32,6 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg,
 			Color color, LocCalculator locCalculator, int index) {
 		super(true, model);
-		setValidToCkickEffect(true);
 		Rectangle rect = new Rectangle(283,220,color);
 		getChildren().add(rect);
 		this.locCalculator = locCalculator;
