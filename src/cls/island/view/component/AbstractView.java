@@ -98,7 +98,6 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 						getChildren().add(0, validToClick);
 					}
 					validToClick.switchEffectOn();
-					validToClick.relocate(-3,-3);
 				}else if (!on){
 					getChildren().remove(validToClick);
 					validToClick.switchEffectOff();

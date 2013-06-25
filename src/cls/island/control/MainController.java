@@ -61,7 +61,7 @@ public class MainController {
 	}
 
 	public void init() {
-		config = new Config();
+		config = Config.getInstance();
 		root = new Root(MainController.this, config);
 		options = new Options();
 		selectPlayerScreen = new SelectPlayerScreen(MainController.this, config);

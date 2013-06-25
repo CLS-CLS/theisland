@@ -36,7 +36,9 @@ public class IslandTurnState implements GameState {
 
 		if (numberOfDrawCards > gameModel.getNumberOfIslandsToSink()) {
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(false);
+			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(false);
 			gameModel.nextTurn();
+			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(true);
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
 			return new NormalState(gameController, islandScreen, gameModel);
 			

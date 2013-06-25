@@ -16,7 +16,10 @@ import cls.island.view.component.piece.PieceColor;
 import cls.island.view.component.treasury.card.Type;
 
 public class Config {
-
+	private static Config INSTANCE = new Config();
+	public static Config getInstance(){
+		return INSTANCE;
+	}
 	private static final String STYLESHEET_PATH = "style.css";
 	private static final String ISLAND_TILES_IMAGE_PATH = "images/tiles";
 	private static final double DEFAULT_WIDTH = 1440D;
@@ -56,7 +59,7 @@ public class Config {
 	public Image wind;
 	public Image pieceBlue;
 
-	public Config() {
+	private Config() {
 		background = new Image("images/other/startScreen.png", false);
 		diverImage = new Image("images/other/card.png", 160, 125, true, false);
 		explorerImage = new Image("images/other/card.png", 160, 125, true, false);

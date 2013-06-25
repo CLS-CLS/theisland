@@ -110,6 +110,9 @@ public class NormalState implements GameState {
 
 	private void updateActionButtons(){
 		islandScreen.enableButtons();
+		if (!gameModel.getCurrentTurnPlayer().hasAction()){
+			islandScreen.disableButtons(ButtonAction.MOVE);
+		}
 		if (!gameModel.canTrade()){
 			islandScreen.disableButtons(ButtonAction.TRADE);
 		}
