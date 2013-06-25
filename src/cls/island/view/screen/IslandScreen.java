@@ -1,6 +1,7 @@
 package cls.island.view.screen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -15,8 +16,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +30,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.control.GameController;
+import cls.island.control.GameController.ButtonAction;
 import cls.island.control.MainController;
 import cls.island.model.GameModel;
 import cls.island.model.LooseCondition;
@@ -39,7 +44,6 @@ import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.piece.PieceView;
-import cls.island.view.component.player.base.PlayerBase;
 import cls.island.view.component.player.base.PlayerBaseView;
 import cls.island.view.component.treasurebag.TreasuryBagView;
 import cls.island.view.component.treasury.card.TreasuryCard;
@@ -47,6 +51,7 @@ import cls.island.view.component.treasury.card.TreasuryCardView;
 import cls.island.view.component.treasury.pile.TreasuryPile;
 import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
 import cls.island.view.component.waterlevel.WaterLevelView;
+import cls.island.view.control.Action;
 import cls.island.view.screen.popup.FloodCardDrawPopUp;
 
 public class IslandScreen extends AbstractScreen {
@@ -56,17 +61,22 @@ public class IslandScreen extends AbstractScreen {
 	private TreasuryPile treasuryBase;
 	private MessagePanel msgPanel = new MessagePanel();
 	private GameController gameController;
-	private Button moveButton;
+	/**
+	 * hold all the available buttons for easy iteration.
+	 */
+	private List<ButtonBase> buttons = new ArrayList<>();
+	private ToggleGroup toggleGroup = new ToggleGroup();
+	private ToggleButton moveButton;
 	private Button nextTurnButton;
-	private Button shoreUpButton;
-	private Button tradeButton;
+	private ToggleButton shoreUpButton;
+	private ToggleButton tradeButton;
 	private List<TreasuryCardView> floodCards = new ArrayList<>();
 	private final GameModel model;
 	private IslandView islandViewToDelete;
 	private WaterLevelView waterLevelView;
 	private Button collectTreasureButton;
 
-	public IslandScreen(final MainController mainController, final Config config, GameModel model) {
+	public IslandScreen(final MainController mainController, final GameController gameController, final Config config, GameModel model) {
 		super(mainController, config);
 		this.model = model;
 		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
@@ -120,11 +130,22 @@ public class IslandScreen extends AbstractScreen {
 		getChildren().add(treasureBagView);
 		treasureBagView.relocate(620, 810);
 
-		moveButton = ButtonFactory.actionButton("Move");
-		shoreUpButton = ButtonFactory.actionButton("Shore \nUp");
-		tradeButton = ButtonFactory.actionButton("Trade");
-		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure");
-		nextTurnButton = ButtonFactory.actionButton("Next \n Turn");
+		moveButton = ButtonFactory.actionToggleButton("Move", ButtonAction.MOVE, gameController);
+		moveButton.setToggleGroup(toggleGroup);
+		buttons.add(moveButton);
+		shoreUpButton = ButtonFactory.actionToggleButton("Shore \nUp", ButtonAction.SHORE_UP,
+				gameController);
+		shoreUpButton.setToggleGroup(toggleGroup);
+		buttons.add(shoreUpButton);
+		tradeButton = ButtonFactory.actionToggleButton("Trade", ButtonAction.TRADE, gameController);
+		tradeButton.setToggleGroup(toggleGroup);
+		buttons.add(tradeButton);
+		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure",
+				ButtonAction.COLLECT_TREASURE, gameController);
+		buttons.add(collectTreasureButton);
+		nextTurnButton = ButtonFactory.actionButton("Next \n Turn", ButtonAction.NEXT_TURN,
+				gameController);
+		buttons.add(nextTurnButton);
 		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
 		getChildren().add(actionsLeft);
 		actionsLeft.relocate(400, 810);
@@ -138,42 +159,6 @@ public class IslandScreen extends AbstractScreen {
 		getChildren().add(collectTreasureButton);
 		getChildren().add(tradeButton);
 		getChildren().add(nextTurnButton);
-		moveButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.MOVE);
-			}
-		});
-		shoreUpButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.SHORE_UP);
-			}
-		});
-		collectTreasureButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.COLLECT_TREASURE);
-
-			}
-		});
-		tradeButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.TRADE);
-			}
-		});
-		nextTurnButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.NEXT_TURN);
-			}
-		});
 		getChildren().add(msgPanel);
 		msgPanel.relocate(600, 1000);
 		// addControls();
@@ -271,10 +256,6 @@ public class IslandScreen extends AbstractScreen {
 		c_showPopup(new FloodCardDrawPopUp());
 	}
 
-	public void setGameController(GameController gameController) {
-		this.gameController = gameController;
-	}
-
 	// Use for debug purposes
 	public void addControls() {
 		int counter = 500;
@@ -309,6 +290,36 @@ public class IslandScreen extends AbstractScreen {
 
 	public void c_showLooseGamePopUp(LooseCondition checkLooseCondition) {
 		c_showPopup(new FloodCardDrawPopUp());
+	}
+
+	/**
+	 * disables the action buttons. If not exclusions parameter is provided all the action buttons
+	 * will be disabled.
+	 * @param exclusions the buttons to be excluded (will not be disabled)
+	 */
+	public void disableButtons(ButtonAction... exclusions) {
+		setButtonsDisabled(true, exclusions);
+	}
+	
+	/**
+	 * Enables the action buttons. If not exclusions parameter is provided all the action buttons
+	 * will be enabled.
+	 * @param exclusions the buttons to be excluded (will not be enabled)
+	 */
+	public void enableButtons(ButtonAction... exclusions) {
+		setButtonsDisabled(false, exclusions);
+	}
+
+	private void setButtonsDisabled(boolean disabled, ButtonAction... exclusions) {
+		List<ButtonAction> exclusionList = Arrays.asList(exclusions);
+		for (ButtonBase button : buttons) {
+			if (button instanceof Action) {
+				if (exclusionList.contains(((Action) button).getButtonAction())) {
+					continue;
+				}
+				button.setDisable(disabled);
+			}
+		}
 	}
 
 }

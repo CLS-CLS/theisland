@@ -51,12 +51,7 @@ public class MainController {
 
 	public void goToIslandScreen() {
 		options.setPlayers(selectPlayerScreen.getSelectedPlayers());
-		gameModel = new GameModel(options, config);
-		gameModel.newGame();
-		islandScreen = new IslandScreen(this, config, gameModel);
-		gameController = new GameController(this, gameModel, islandScreen);
-		islandScreen.setGameController(gameController);
-		Animations.transtition(selectPlayerScreen, islandScreen, root);
+//		Animations.transtition(selectPlayerScreen, islandScreen, root);
 		gameController.startNewGame();
 
 	}
@@ -101,9 +96,9 @@ public class MainController {
 				new PlayerAndColor(PlayerType.DIVER, PieceColor.BLUE)}));
 		gameModel = new GameModel(options, config);
 		gameModel.newGame();
-		islandScreen = new IslandScreen(MainController.this, config, gameModel);
-		gameController = new GameController(MainController.this, gameModel, islandScreen);
-		islandScreen.setGameController(gameController);
+		gameController = new GameController(MainController.this, gameModel);
+		islandScreen = new IslandScreen(MainController.this, gameController, config, gameModel);
+		gameController.setIslandScreen(islandScreen);
 		root.clear();
 		root.getChildren().add(islandScreen);
 		gameController.startNewGame();

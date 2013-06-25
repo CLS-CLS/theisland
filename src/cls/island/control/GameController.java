@@ -10,14 +10,7 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD; // OK
-																				// when
-																				// shore
-																				// up
-																				// is
-																				// completed
-		// after water rise card is
-		// drawn
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD;
 	}
 
 	volatile private GameState gameState;
@@ -25,11 +18,9 @@ public class GameController {
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
 
-	public GameController(MainController mainController, GameModel gameModel, IslandScreen islandScreen) {
+	public GameController(MainController mainController, GameModel gameModel) {
 		this.mainController = mainController;
 		this.gameModel = gameModel;
-		this.islandScreen = islandScreen;
-		gameState = new NormalState(this, islandScreen, gameModel);
 	}
 
 	public void buttonPressed(final ButtonAction action) {
@@ -54,7 +45,7 @@ public class GameController {
 				GameState state = gameState.mouseClicked(event);
 				if (state != null) {
 					setGameState(state);
-				}else{
+				} else {
 					islandScreen.c_setAnimationInProgress(false);
 				}
 
@@ -81,15 +72,22 @@ public class GameController {
 	}
 
 	public void startNewGame() {
+		if (islandScreen == null)
+			throw new RuntimeException("IslandScrren should not be null");
+		gameState = new NormalState(this, islandScreen, gameModel);
 		for (Player player : gameModel.getPlayers()) {
 			for (int i = 0; i < 2; i++) {
 				TreasuryPile treasuryPile = gameModel.getTreasuryPile();
 				TreasuryCard treasuryCard = treasuryPile.getTopPileCard();
 				gameModel.giveCardToPlayerFromTreasurePile(player, treasuryCard);
-				islandScreen
-						.c_moveTreasuryCardFromPileToPlayer(treasuryCard.getComponent(), player.getBase().getComponent());
+				islandScreen.c_moveTreasuryCardFromPileToPlayer(treasuryCard.getComponent(), player
+						.getBase().getComponent());
 			}
 		}
+	}
+
+	public void setIslandScreen(IslandScreen islandScreen) {
+		this.islandScreen = islandScreen;
 	}
 
 	public GameState getGameState() {
