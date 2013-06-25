@@ -15,7 +15,7 @@ import cls.island.view.screen.IslandScreen;
 public class CollectTreasureState implements GameState {
 
 	private final IslandScreen islandScreen;
-	private final GameModel gameModel;
+	public final GameModel gameModel;
 	private final GameState fromState;
 
 	public CollectTreasureState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
@@ -43,19 +43,15 @@ public class CollectTreasureState implements GameState {
 	@Override
 	public GameState start() {
 		Player currentPlayer = gameModel.getCurrentTurnPlayer();
-		List<TreasuryCard> collectionCards = currentPlayer.getTreasureCollection();
-		Type treasureOnIsland = currentPlayer.getPiece().getIsland().getTreasure();
-		if (!currentPlayer.hasAction() || collectionCards.size() == 0
-				|| !collectionCards.get(0).getType().equals(treasureOnIsland)
-				|| gameModel.getTreasureBag().isTreasureCollected(collectionCards.get(0).getType())) {
-			return fromState.createGameState();
+		List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
+		if (gameModel.canCollectTreasure(currentPlayer, collectionCards)){
+			Type collectedType = gameModel.collectTreasure(collectionCards);
+			gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
+			for (TreasuryCard card : collectionCards) {
+				islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(), card.getComponent());
+			}
 		}
 		
-		Type collectedType = gameModel.collectTreasure(collectionCards);
-		gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
-		for (TreasuryCard card : collectionCards) {
-			islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(), card.getComponent());
-		}
 		return fromState.createGameState();
 
 	}

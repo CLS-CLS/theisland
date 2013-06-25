@@ -185,39 +185,7 @@ public class Player {
 		return actionsLeft.getReadOnlyProperty();
 	}
 
-	/**
-	 * Convenient method. Finds all the cards that forms a collection of 4 cards
-	 * of the same treasure type
-	 * 
-	 * @return the cards forming the treasure collection
-	 */
-	public List<TreasuryCard> getTreasureCollection() {
-		ArrayList<TreasuryCard> collectionCards = new ArrayList<>();
-		int[] collectionQuantity = new int[10];
-		for (TreasuryCard card : getTreasuryCards()) {
-			if (card.getType().getAbility() == Ability.TREASURE) {
-				collectionQuantity[card.getType().ordinal()]++;
-			}
-		}
-		int index = -1;
-		for (int i = 0; i < 10; i++) {
-			if (collectionQuantity[i] >= 4) {
-				index = i;
-				break;
-			}
-		}
-		if (index != -1) {
-			for (TreasuryCard treasuryCard : getTreasuryCards()) {
-				if (treasuryCard.getType() == Type.values()[index]) {
-					collectionCards.add(treasuryCard);
-					if (collectionCards.size() == 4)
-						break;
-				}
-			}
-		}
-		return collectionCards;
-
-	}
+	
 
 	public void decreaseActionLeft() {
 		actionsLeft.setValue(actionsLeft.getValue() - 1);
@@ -265,7 +233,7 @@ public class Player {
 			throw new IllegalArgumentException(this + " does not have tha card");
 		if (card.getType().getAbility() != Ability.TREASURE)
 			throw new IllegalArgumentException(card + " is not of type TREASURE");
-		if (actionsLeft.getValue() ==0) return false;
+		if (actionsLeft.getValue() == 0) return false;
 		if (!this.getPiece().getIsland().equals(player.getPiece().getIsland()))return false;
 		return true;
 	}

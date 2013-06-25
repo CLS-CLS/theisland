@@ -74,7 +74,7 @@ public class GameController {
 	public void startNewGame() {
 		if (islandScreen == null)
 			throw new RuntimeException("IslandScrren should not be null");
-		gameState = new NormalState(this, islandScreen, gameModel);
+		setGameState(new NormalState(this, islandScreen, gameModel));
 		for (Player player : gameModel.getPlayers()) {
 			for (int i = 0; i < 2; i++) {
 				TreasuryPile treasuryPile = gameModel.getTreasuryPile();

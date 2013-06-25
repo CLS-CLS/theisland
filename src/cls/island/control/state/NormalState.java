@@ -115,6 +115,7 @@ public class NormalState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.enableButtons();
 		if (gameModel.getCurrentTurnPlayer().getTreasuryCards().size() > GameModel.MAX_CARDS_ALLOWED_IN_HAND) {
 			return new ChooseDiscardCardState(gameController, islandScreen,
 					gameModel, this);

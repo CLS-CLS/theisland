@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import cls.island.control.Config;
 import cls.island.control.Options;
 import cls.island.control.PlayerAndColor;
+import cls.island.control.state.CollectTreasureState;
 import cls.island.model.IslandGrid.Direction;
 import cls.island.model.player.Player;
 import cls.island.model.player.PlayerFactory;
@@ -429,6 +430,84 @@ public class GameModel {
 			discardCard(currentPlayer, card);
 		}
 		return collectionCards.get(0).getType();
+	}
+	
+	/**
+	 * finds all the cards which the current player can trade, and the available players the player can 
+	 * trade with.
+	 * @param cards a list that will be  filled with the cards that can be traded.
+	 * @param players list that will be filled with the players the current player can trade with.
+	 */
+	public void findCurrentPlayerEligibleCardsAndPlayersToTrade(List<TreasuryCard> cards, List<Player> players){
+		for (TreasuryCard card : getCurrentTurnPlayer().getTreasuryCards()) {
+			if (card.getType().getAbility() == Ability.TREASURE) {
+				cards.add(card);
+			}
+		}
+		if (cards.size() == 0){
+			return;
+		}
+		//Tests for an eligible card which player are can receive the card
+		for (Player player : getPlayers()) {
+			if (player.equals(getCurrentTurnPlayer()))
+				continue;
+			if (getCurrentTurnPlayer().canGiveCard(player, cards.get(0))) {
+				players.add(player);
+			}
+		}
+	}
+	
+	/**
+	 * Checks if the treasure can be collected by the specified player. A treasure can be collected
+	 * when  : 
+	 * 1) the player has actions left 
+	 * 2) the player has a treasure set 
+	 * 3) is on the island containing the same treasure with his treasure set.
+	 * @param player the player the check will be performed against
+	 * @return
+	 */
+	public boolean canCollectTreasure(Player player, List<TreasuryCard> collectionCards) {
+		boolean canCollect = true;
+		Type treasureOnIsland = player.getPiece().getIsland().getTreasure();
+		if (!player.hasAction() || collectionCards.size() == 0
+				|| !collectionCards.get(0).getType().equals(treasureOnIsland)
+				||getTreasureBag().isTreasureCollected(collectionCards.get(0).getType())) {
+			canCollect = false;
+		}
+		return canCollect;
+	}
+	
+	/**
+	 * Finds all the cards that forms a collection of 4 cards
+	 * of the same treasure type
+	 * @param player the player holding the cards to check.
+	 * @return the cards forming the treasure collection
+	 */
+	public List<TreasuryCard> getTreasureCollection(Player player) {
+		ArrayList<TreasuryCard> collectionCards = new ArrayList<>();
+		int[] collectionQuantity = new int[10];
+		for (TreasuryCard card : player.getTreasuryCards()) {
+			if (card.getType().getAbility() == Ability.TREASURE) {
+				collectionQuantity[card.getType().ordinal()]++;
+			}
+		}
+		int index = -1;
+		for (int i = 0; i < 10; i++) {
+			if (collectionQuantity[i] >= 4) {
+				index = i;
+				break;
+			}
+		}
+		if (index != -1) {
+			for (TreasuryCard treasuryCard : player.getTreasuryCards()) {
+				if (treasuryCard.getType() == Type.values()[index]) {
+					collectionCards.add(treasuryCard);
+					if (collectionCards.size() == 4)
+						break;
+				}
+			}
+		}
+		return collectionCards;
 	}
 
 }

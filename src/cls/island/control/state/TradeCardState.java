@@ -14,7 +14,6 @@ import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
-import cls.island.view.component.treasury.card.Type.Ability;
 import cls.island.view.screen.IslandComponent;
 import cls.island.view.screen.IslandScreen;
 
@@ -34,7 +33,11 @@ public class TradeCardState implements GameState {
 		this.gameModel = gameModel;
 		this.fromState = fromState;
 	}
-
+	
+	/**
+	 * if there is exactly one player eligible the selected card is given
+	 * automatically to that player
+	 */
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
@@ -81,36 +84,18 @@ public class TradeCardState implements GameState {
 	
 	/**
 	 * starts the state if 
-	 * 1)the player has action
+	 * 1)the player has at least one action
 	 * 2)there are eligible cards to give
 	 * 3)there are eligible players to receive cards
-	 * if there is exactly one player eligible the card to be selected is given
-	 * automatically to that player
-	 */
+	  */
 	@Override
 	public GameState start() {
-		Player currentPlayer = gameModel.getCurrentTurnPlayer();
-		if (!currentPlayer.hasAction()) {
-			return fromState.createGameState();
-		}
+		islandScreen.disableButtons();
 		eligiblePlayers = new ArrayList<>();
 		eligibleCards = new ArrayList<>();
-
-		for (TreasuryCard card : currentPlayer.getTreasuryCards()) {
-			if (card.getType().getAbility() == Ability.TREASURE) {
-				eligibleCards.add(card);
-			}
-		}
+		gameModel.findCurrentPlayerEligibleCardsAndPlayersToTrade(eligibleCards, eligiblePlayers);
 		if (eligibleCards.size() == 0){
 			return fromState.createGameState();
-		}
-		//Tests for an eligible card which player are can receive the card
-		for (Player player : gameModel.getPlayers()) {
-			if (player.equals(currentPlayer))
-				continue;
-			if (currentPlayer.canGiveCard(player, eligibleCards.get(0))) {
-				eligiblePlayers.add(player);
-			}
 		}
 		if (eligiblePlayers.size() == 0){
 			return fromState.createGameState();
