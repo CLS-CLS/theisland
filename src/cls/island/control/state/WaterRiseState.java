@@ -110,9 +110,10 @@ public class WaterRiseState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.disableButtons();
 		GameState returnState = null;
 
-		if (gameModel.checkLooseCondition() != null) {
+		if (gameModel.findLooseCondition() != null) {
 			returnState = new GameLostState(gameController, islandScreen, gameModel, this);
 		} // game not lost
 

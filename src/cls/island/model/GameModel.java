@@ -81,7 +81,7 @@ public class GameModel {
 	}
 
 	private void initTreasuryBag() {
-		this.treasureBag  = new TreasureBag(config.earth, config.chalice, config.fire, config.wind);
+		this.treasureBag = new TreasureBag(config.earth, config.chalice, config.fire, config.wind);
 
 	}
 
@@ -176,7 +176,7 @@ public class GameModel {
 				repeats = SANDBAG_CARD_QUANTITY;
 			}
 			for (int i = 0; i < repeats; i++) {
-				treasuryCards.add(new TreasuryCard(config.getTreasureIslandImgFront(type),
+				treasuryCards.add(new TreasuryCard(config.getTreasureCard(type),
 						config.islandBackCard, new TreasuryCard.Model(type, ViewStatus.FACE_UP),
 						config.treasuryCardUseImg, config.treasuryCardDiscardImg));
 			}
@@ -204,10 +204,15 @@ public class GameModel {
 				treasure = Type.EARTH_STONE;
 			if (name == IslandName.TempleOfTheSun)
 				treasure = Type.EARTH_STONE;
-
-			islands.add(new Island(config.getIslandTilesImages().get(name.name()),
-					new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name.name(),
-							false, false, LocCalculator.getInstance())));
+			if (treasure == null) {
+				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
+						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false,
+								name.name(), false, false, LocCalculator.getInstance())));
+			}else {
+				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
+						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false,
+								name.name(), false, false, LocCalculator.getInstance()), config.getTreasureImage(treasure)));
+			}
 		}
 	}
 
@@ -382,7 +387,7 @@ public class GameModel {
 	 * @return the kind of the loose condition. <code> null </code> if none is
 	 *         met.
 	 */
-	public LooseCondition checkLooseCondition() {
+	public LooseCondition findLooseCondition() {
 
 		// Lost because of water level
 		if (waterLevel.getWaterLevel() >= MAX_WATER_LEVEL) {
@@ -431,23 +436,24 @@ public class GameModel {
 		}
 		return collectionCards.get(0).getType();
 	}
-	
+
 	/**
 	 * finds all the cards which the current player can trade, and the available players the player can 
 	 * trade with.
 	 * @param cards a list that will be  filled with the cards that can be traded.
 	 * @param players list that will be filled with the players the current player can trade with.
 	 */
-	public void findCurrentPlayerEligibleCardsAndPlayersToTrade(List<TreasuryCard> cards, List<Player> players){
+	public void findCurrentPlayerEligibleCardsAndPlayersToTrade(List<TreasuryCard> cards,
+			List<Player> players) {
 		for (TreasuryCard card : getCurrentTurnPlayer().getTreasuryCards()) {
 			if (card.getType().getAbility() == Ability.TREASURE) {
 				cards.add(card);
 			}
 		}
-		if (cards.size() == 0){
+		if (cards.size() == 0) {
 			return;
 		}
-		//Tests for an eligible card which player are can receive the card
+		// Tests for an eligible card which player are can receive the card
 		for (Player player : getPlayers()) {
 			if (player.equals(getCurrentTurnPlayer()))
 				continue;
@@ -456,7 +462,20 @@ public class GameModel {
 			}
 		}
 	}
-	
+
+	/**
+	 * Convenient method. Checks if the current turn player can give cards to another player. 
+	 * The method uses the {@link findCurrentPlayerEligibleCardsAndPlayersToTrade} to 
+	 * find all the players and cards that can be traded.
+	 * @return 
+	 */
+	public boolean canTrade() {
+		List<TreasuryCard> cards = new ArrayList<>();
+		List<Player> players = new ArrayList<>();
+		findCurrentPlayerEligibleCardsAndPlayersToTrade(cards, players);
+		return cards.size() > 0 && players.size() > 0;
+	}
+
 	/**
 	 * Checks if the treasure can be collected by the specified player. A treasure can be collected
 	 * when  : 
@@ -466,17 +485,18 @@ public class GameModel {
 	 * @param player the player the check will be performed against
 	 * @return
 	 */
-	public boolean canCollectTreasure(Player player, List<TreasuryCard> collectionCards) {
+	public boolean canCollectTreasure(Player player) {
 		boolean canCollect = true;
+		List<TreasuryCard> collectionCards = getTreasureCollection(player);
 		Type treasureOnIsland = player.getPiece().getIsland().getTreasure();
 		if (!player.hasAction() || collectionCards.size() == 0
 				|| !collectionCards.get(0).getType().equals(treasureOnIsland)
-				||getTreasureBag().isTreasureCollected(collectionCards.get(0).getType())) {
+				|| getTreasureBag().isTreasureCollected(collectionCards.get(0).getType())) {
 			canCollect = false;
 		}
 		return canCollect;
 	}
-	
+
 	/**
 	 * Finds all the cards that forms a collection of 4 cards
 	 * of the same treasure type

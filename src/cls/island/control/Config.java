@@ -93,7 +93,21 @@ public class Config {
 
 	}
 
-	public Image getTreasureIslandImgFront(Type type) {
+	public Image getTreasureImage(Type type) {
+		switch (type) {
+		case CRYSTAL_OF_FIRE:
+			return fire;
+		case EARTH_STONE:
+			return earth;
+		case STATUE_OF_WIND:
+			return wind;
+		case OCEAN_CHALICE:
+			return chalice;
+		}
+		return null;
+	}
+
+	public Image getTreasureCard(Type type) {
 		switch (type) {
 		case WATER_RISE:
 			return waterRiseCard;

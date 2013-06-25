@@ -88,6 +88,7 @@ public class TradeCardStateStepTwo implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.c_setSelectedActionButton(ButtonAction.TRADE);
 		islandScreen.c_showMessagePanel("Choose a Player to give the card\nRight-Click to cancel");
 		selectedCard.getComponent().setValidToCkickEffect(true);
 		for (Player player : eligiblePlayers) {

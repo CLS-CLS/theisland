@@ -113,6 +113,7 @@ public class ChooseDiscardCardState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.disableButtons();
 		for (TreasuryCard treasuryCard : gameModel.getCurrentTurnPlayer().getTreasuryCards()) {
 			if (treasuryCard.getType().getAbility() == Type.Ability.AID) {
 				treasuryCard.getComponent().enableUseDiscard(new UseHandler(treasuryCard),

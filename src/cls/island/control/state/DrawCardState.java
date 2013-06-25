@@ -107,6 +107,7 @@ public class DrawCardState implements GameState {
 
 	@Override
 	public GameState createGameState() {
+		islandScreen.disableButtons();
 		return new DrawCardState(getNumberOfDrawCards() + 1, gameController, islandScreen, gameModel, waterRised);
 
 	}

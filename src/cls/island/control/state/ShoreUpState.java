@@ -7,7 +7,6 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
-import cls.island.model.player.EngineerPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.IslandView;
@@ -60,6 +59,10 @@ public class ShoreUpState implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
+		if (action == ButtonAction.SHORE_UP){
+			return normalState();
+		}
+		
 		return null;
 
 	}
@@ -71,8 +74,10 @@ public class ShoreUpState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.c_setSelectedActionButton(ButtonAction.SHORE_UP);
+		islandScreen.disableAllButtonsExcluding(ButtonAction.SHORE_UP);
 		Player currentPlayer = gameModel.getCurrentTurnPlayer();
-		if (!currentPlayer.hasAction() && (!(currentPlayer instanceof EngineerPlayer) ||!((EngineerPlayer)currentPlayer).canShoreUp())) {
+		if (!currentPlayer.canShoreUp()) {
 			return new NormalState(gameController, islandScreen, gameModel);
 		}
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"

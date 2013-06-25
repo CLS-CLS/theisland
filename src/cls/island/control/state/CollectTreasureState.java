@@ -42,9 +42,10 @@ public class CollectTreasureState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.disableButtons();
 		Player currentPlayer = gameModel.getCurrentTurnPlayer();
 		List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
-		if (gameModel.canCollectTreasure(currentPlayer, collectionCards)){
+		if (gameModel.canCollectTreasure(currentPlayer)){
 			Type collectedType = gameModel.collectTreasure(collectionCards);
 			gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
 			for (TreasuryCard card : collectionCards) {

@@ -71,6 +71,11 @@ public class Island {
 
 	private final Model model;
 	private IslandView islandView;
+	
+	public Island(Image tileImage, Model model, Image treasureImage){
+		this.model = model;
+		islandView = new IslandView(tileImage, model, this,treasureImage);
+	}
 
 	public Island(Image tileImage, Model model) {
 		this.model = model;

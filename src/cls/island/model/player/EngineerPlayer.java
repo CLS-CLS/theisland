@@ -49,6 +49,7 @@ public class EngineerPlayer extends Player {
 	 * shore up one more card.  
 	 * @return true if the engineer is allowed to shore up a card.
 	 */
+	@Override
 	public boolean canShoreUp() {
 		if (actionsLeft.getValue() > 0)
 			return true;

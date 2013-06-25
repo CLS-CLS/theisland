@@ -80,6 +80,7 @@ public class IslandTurnState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.disableButtons();
 		return drawCard();
 	}
 

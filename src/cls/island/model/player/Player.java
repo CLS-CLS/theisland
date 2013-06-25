@@ -133,6 +133,16 @@ public class Player {
 		return false;
 
 	}
+	
+	/**
+	 * Check if the player can perform a shore up. By default a player can perform a shore up
+	 * if he has at least one action left. Override this method for specific checks.
+	 * @return true if the player can perform a shore up.
+	 */
+	public boolean canShoreUp() {
+		return actionsLeft.getValue() > 0;
+		
+	}
 
 	/**
 	 * Moves the player to an island and updates all the model attributes

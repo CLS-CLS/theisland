@@ -35,13 +35,19 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	private Rectangle flood;
-	private ImageView islandView;
+	private ImageView islandImage;
 	private double width;
 	private double height;
 	private Node savedNode;
+	private ImageView treasureImageView;
 	final ColorAdjust floodEffect;
+	
 
 	public IslandView(Image tileImage, Model model, Island component) {
+		this(tileImage, model, component, null);
+	}
+	
+	public IslandView(Image tileImage, Model model, Island component, Image treasureImg) {
 		super(true, component);
 		floodEffect = new ColorAdjust(0, 0, 0, 0);
 		init(tileImage);
@@ -54,12 +60,18 @@ public class IslandView extends AbstractView<Island> {
 		if (model.isSunk()) {
 			sink();
 		}
+		if (treasureImg != null){
+			treasureImageView = new ImageView(treasureImg);
+			getChildren().add(treasureImageView);
+			treasureImageView.relocate(0, 50);
+		}
 	}
+	
 
 	private void init(Image tileImage) {
 		width = tileImage.getRequestedWidth();
 		height = tileImage.getRequestedHeight();
-		islandView = new ImageView(tileImage);
+		islandImage = new ImageView(tileImage);
 		savedNode = createBorder();
 //		if (new Random().nextBoolean()){
 			flood = new Rectangle(width, height, Color.BLUE);
@@ -67,16 +79,13 @@ public class IslandView extends AbstractView<Island> {
 			flood.setBlendMode(BlendMode.OVERLAY);
 //		}
 		
-		islandView.setEffect(floodEffect);
-		getChildren().add(islandView);
+		islandImage.setEffect(floodEffect);
+		getChildren().add(islandImage);
 		if (flood !=null)getChildren().add(flood);
 	}
 
 	private Node createBorder() {
-//		return new ImageView(new Image("images/other/border.png", 128, 128, false, true));
-//		return new ImageView(new Image("images/other/exclamation.png", 20, 20, false, true));
 		return new ImageView(new Image("images/other/saved.png", 20,20,false,true));
-
 	}
 
 	public void activateSavedNode() {

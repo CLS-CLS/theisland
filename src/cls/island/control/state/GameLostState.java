@@ -27,7 +27,7 @@ public class GameLostState implements GameState {
 
 	@Override
 	public GameState start() {
-		islandScreen.c_showLooseGamePopUp(gameModel.checkLooseCondition());
+		islandScreen.c_showLooseGamePopUp(gameModel.findLooseCondition());
 
 		// Go to back to main Screen. Ensure that from now we are in FX-Thread
 		// as

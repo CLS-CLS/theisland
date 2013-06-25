@@ -29,7 +29,6 @@ public class NormalState implements GameState {
 		this.gameModel = gameModel;
 	}
 
-
 	public void mouseClickedOnIslandTile(Island island) {
 		PieceView movingPiece = gameModel.getCurrentTurnPlayer().getPiece().getComponent();
 		Island from = movingPiece.getParentModel().getIsland();
@@ -38,16 +37,14 @@ public class NormalState implements GameState {
 			return;
 		if (island.isSunk())
 			return;
-		
-		if (!gameModel.getCurrentTurnPlayer().isValidMove(from, island,
-						gameModel.getIslandGrid())) {
+
+		if (!gameModel.getCurrentTurnPlayer().isValidMove(from, island, gameModel.getIslandGrid())) {
 			return;
 		}
 		int addedIndex = gameModel.getCurrentTurnPlayer().moveToIsland(island);
 		islandScreen.c_movePiece(movingPiece, island.getComponent(), addedIndex);
+		updateActionButtons();
 	}
-
-	
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
@@ -69,7 +66,7 @@ public class NormalState implements GameState {
 		// check that the treasury card belongs to one player
 		boolean playerHasit = false;
 		for (Player player : gameModel.getPlayers()) {
-			if (player.getTreasuryCards().contains(card)){
+			if (player.getTreasuryCards().contains(card)) {
 				playerHasit = true;
 				break;
 			}
@@ -77,11 +74,9 @@ public class NormalState implements GameState {
 		if (!playerHasit)
 			return null;
 		if (card.getType().equals(Type.SANDBAGS)) {
-			return new UseShoreUpCardState(gameController, islandScreen,
-					gameModel, card, this);
+			return new UseShoreUpCardState(gameController, islandScreen, gameModel, card, this);
 		} else if (card.getType().equals(Type.HELICOPTER)) {
-			return new UseHelicopterCardState(gameController, islandScreen,
-					gameModel, card, this);
+			return new UseHelicopterCardState(gameController, islandScreen, gameModel, card, this);
 		}
 		return null;
 	}
@@ -96,7 +91,7 @@ public class NormalState implements GameState {
 		case COLLECT_TREASURE:
 			return new CollectTreasureState(gameController, islandScreen, gameModel, this);
 		case TRADE:
-			return new TradeCardState(gameController, islandScreen ,gameModel, this);
+			return new TradeCardState(gameController, islandScreen, gameModel, this);
 		default:
 		}
 		return null;
@@ -113,12 +108,27 @@ public class NormalState implements GameState {
 		return null;
 	}
 
+	private void updateActionButtons(){
+		islandScreen.enableButtons();
+		if (!gameModel.canTrade()){
+			islandScreen.disableButtons(ButtonAction.TRADE);
+		}
+		if (!gameModel.getCurrentTurnPlayer().canShoreUp()){
+			islandScreen.disableButtons(ButtonAction.SHORE_UP);
+		}
+		if (!gameModel.canCollectTreasure(gameModel.getCurrentTurnPlayer())){
+			islandScreen.disableButtons(ButtonAction.COLLECT_TREASURE);
+		}
+			
+		
+	}
+
 	@Override
 	public GameState start() {
-		islandScreen.enableButtons();
+		updateActionButtons();
+		islandScreen.c_setSelectedActionButton(ButtonAction.MOVE);
 		if (gameModel.getCurrentTurnPlayer().getTreasuryCards().size() > GameModel.MAX_CARDS_ALLOWED_IN_HAND) {
-			return new ChooseDiscardCardState(gameController, islandScreen,
-					gameModel, this);
+			return new ChooseDiscardCardState(gameController, islandScreen, gameModel, this);
 		}
 		return null;
 	}

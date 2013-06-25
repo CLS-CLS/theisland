@@ -101,6 +101,7 @@ public class UseShoreUpCardState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.disableButtons();
 		for (Island island : gameModel.getIslands()){
 			if (island.isFlooded() && !island.isSunk()){
 				island.getComponent().setValidToCkickEffect(true);

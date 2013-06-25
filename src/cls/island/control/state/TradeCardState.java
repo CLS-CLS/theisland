@@ -73,7 +73,9 @@ public class TradeCardState implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		// TODO Auto-generated method stub
+		if (action == ButtonAction.TRADE){
+			return previousState();
+		}
 		return null;
 	}
 
@@ -90,7 +92,8 @@ public class TradeCardState implements GameState {
 	  */
 	@Override
 	public GameState start() {
-		islandScreen.disableButtons();
+		islandScreen.c_setSelectedActionButton(ButtonAction.TRADE);
+		islandScreen.disableAllButtonsExcluding(ButtonAction.TRADE);
 		eligiblePlayers = new ArrayList<>();
 		eligibleCards = new ArrayList<>();
 		gameModel.findCurrentPlayerEligibleCardsAndPlayersToTrade(eligibleCards, eligiblePlayers);

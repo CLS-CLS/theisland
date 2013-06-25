@@ -293,32 +293,66 @@ public class IslandScreen extends AbstractScreen {
 	}
 
 	/**
-	 * disables the action buttons. If not exclusions parameter is provided all the action buttons
-	 * will be disabled.
-	 * @param exclusions the buttons to be excluded (will not be disabled)
+	 * disables the action buttons with the specific actions. If no
+	 * actions are provided all the buttons are disabled
+	 * @param actions
 	 */
-	public void disableButtons(ButtonAction... exclusions) {
-		setButtonsDisabled(true, exclusions);
+	public void disableButtons(ButtonAction... actions) {
+		setButtonsDisabled(true,false, actions);
 	}
 	
+	
 	/**
-	 * Enables the action buttons. If not exclusions parameter is provided all the action buttons
-	 * will be enabled.
-	 * @param exclusions the buttons to be excluded (will not be enabled)
+	 * enables the action buttons with the specific actions. If no
+	 * actions are provided all the buttons are enabled
+	 * @param actions
 	 */
-	public void enableButtons(ButtonAction... exclusions) {
-		setButtonsDisabled(false, exclusions);
+	public void enableButtons(ButtonAction... actions) {
+		setButtonsDisabled(false,false, actions);
+	}
+	
+	public void disableAllButtonsExcluding(ButtonAction... actions) {
+		setButtonsDisabled(true,true, actions);
+	}
+	
+	public void enableAllButtonsExluding(ButtonAction... actions) {
+		setButtonsDisabled(false,true, actions);
+	}
+	
+	
+	private void setButtonsDisabled(boolean disabled, boolean isExcludeList, ButtonAction... buttonActions) {
+		List<ButtonAction> actionList = Arrays.asList(buttonActions);
+		for (ButtonBase button : buttons) {
+			if (!(button instanceof Action))continue;
+			Action actionButton = (Action)button;
+			if (buttonActions.length ==0){
+				button.setDisable(disabled);
+			}else {
+				if (isExcludeList && !actionList.contains(actionButton.getButtonAction())){
+					button.setDisable(disabled);
+				}
+				if (!isExcludeList && actionList.contains(actionButton.getButtonAction())){
+					button.setDisable(disabled);
+				}
+			}
+		
+		}
 	}
 
-	private void setButtonsDisabled(boolean disabled, ButtonAction... exclusions) {
-		List<ButtonAction> exclusionList = Arrays.asList(exclusions);
-		for (ButtonBase button : buttons) {
-			if (button instanceof Action) {
-				if (exclusionList.contains(((Action) button).getButtonAction())) {
-					continue;
-				}
-				button.setDisable(disabled);
-			}
+	public void c_setSelectedActionButton(final ButtonAction action) {
+		
+		switch (action) {
+		case MOVE:
+			moveButton.setSelected(true);
+			break;
+		case SHORE_UP:
+			shoreUpButton.setSelected(true);
+			break;
+		case TRADE:
+			tradeButton.setSelected(true);
+			break;
+		default:
+			break;
 		}
 	}
 

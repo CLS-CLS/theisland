@@ -92,6 +92,7 @@ public class UseHelicopterCardState implements GameState {
 
 	@Override
 	public GameState start() {
+		islandScreen.disableButtons();
 		islandScreen.c_showMessagePanel("Select an Island to Fly to!\nRight Click to cancel");
 		return null;
 	}
