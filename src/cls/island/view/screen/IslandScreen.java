@@ -19,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -93,6 +94,10 @@ public class IslandScreen extends AbstractScreen {
 			Loc location = locCalculator.gridToCoords(island.getGrid());
 			island.getComponent().relocate(location);
 			islandViewToDelete = island.getComponent();
+			if (island.isFlooded()){
+				island.getComponent().setFlood();
+			}
+			//TODO same for sinked.
 		}
 
 		waterLevelView = model.getWaterLevel().getComponent();
@@ -136,6 +141,16 @@ public class IslandScreen extends AbstractScreen {
 		shoreUpButton = ButtonFactory.actionToggleButton("Shore \nUp", ButtonAction.SHORE_UP,
 				gameController);
 		shoreUpButton.setToggleGroup(toggleGroup);
+		toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+				if (newValue == null){
+					toggleGroup.selectToggle(moveButton);
+				}
+				
+			}
+		});
 		buttons.add(shoreUpButton);
 		tradeButton = ButtonFactory.actionToggleButton("Trade", ButtonAction.TRADE, gameController);
 		tradeButton.setToggleGroup(toggleGroup);
@@ -355,5 +370,16 @@ public class IslandScreen extends AbstractScreen {
 			break;
 		}
 	}
-
+	
+	public void c_setCursorImage(ButtonAction action){
+		switch (action){
+		case SHORE_UP:
+			mainController.setCursorImage(config.shoreUpCursorImg);
+			break;
+		case MOVE:
+			mainController.setCursorImage(config.cursorImg);
+		}
+	
+		
+	}
 }

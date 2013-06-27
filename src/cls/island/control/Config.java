@@ -17,9 +17,11 @@ import cls.island.view.component.treasury.card.Type;
 
 public class Config {
 	private static Config INSTANCE = new Config();
-	public static Config getInstance(){
+
+	public static Config getInstance() {
 		return INSTANCE;
 	}
+
 	private static final String STYLESHEET_PATH = "style.css";
 	private static final String ISLAND_TILES_IMAGE_PATH = "images/tiles";
 	private static final double DEFAULT_WIDTH = 1440D;
@@ -31,6 +33,7 @@ public class Config {
 
 	public final Image background;
 	public final Image cursorImg;
+	public final Image shoreUpCursorImg;
 	public final Image diverImage;
 	public final Image explorerImage;
 	public final Image randomPlayerImage;
@@ -85,9 +88,10 @@ public class Config {
 		waterLevelMarkerImage = new Image("images/other/WaterMarker.png", 28, 16, false, true);
 		loadIslandTileImages();
 		fullScreenRes = Screen.getPrimary().getBounds();
-		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(),
-				getFullScreenRes().getHeight() / getDefaultRes().getHeight());
+		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(), getFullScreenRes().getHeight()
+				/ getDefaultRes().getHeight());
 
+		shoreUpCursorImg = new Image("images/other/dig.png", 32, 32, false, true);
 		cursorImg = new Image("images/other/mouse.png", 32, 32, false, true);
 		earth = new Image("images/other/earth.png", 55, 70, false, true);
 		chalice = new Image("images/other/chalice.png", 55, 70, false, true);
@@ -132,9 +136,9 @@ public class Config {
 	}
 
 	public Rectangle2D getFullScreenRes() {
-		// return fullScreenRes;
+		return fullScreenRes;
 		// TODO
-		return new Rectangle2D(0, 0, 1366, 768);
+		// return new Rectangle2D(0, 0, 1366, 768);
 		// return defaultRes;
 	}
 
@@ -159,15 +163,14 @@ public class Config {
 		URL base = this.getClass().getClassLoader().getResource(".");
 		String isladTileImageDir = base.getPath().substring(1) + ISLAND_TILES_IMAGE_PATH;
 		try {
-			dirStream = Files.newDirectoryStream(FileSystems.getDefault()
-					.getPath(isladTileImageDir));
+			dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(isladTileImageDir));
 		} catch (IOException e) {
 			throw new RuntimeException("Error initializing the island images", e);
 		}
 		for (Path imgPath : dirStream) {
 			String fileName = imgPath.getFileName().toString();
-			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/"
-					+ fileName, 120, 120, true, true));
+			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/" + fileName, 120, 120, true,
+					true));
 		}
 	}
 

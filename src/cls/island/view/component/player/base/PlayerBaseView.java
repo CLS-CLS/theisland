@@ -45,19 +45,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		rearrangeCards();
 	}
 	
-	@Override
-	protected ValidEffectNode createValidToClick() {
-		class ValidTo extends ValidEffectNode{
-
-			public ValidTo() {
-				super(100, 100, PlayerBaseView.this);
-				relocate(17, 15);
-			}
-		
-		}
-		return new ValidTo();
-	};
-
+	
 	public void moveToBase(final TreasuryCardView treasuryCard) {
 		execute(new SignaledRunnable() {
 

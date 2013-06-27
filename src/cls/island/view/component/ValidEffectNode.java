@@ -14,20 +14,20 @@ public class ValidEffectNode extends OnOffEffectNode{
 	protected ColorAdjust effect;
 	protected Timeline timeline = new Timeline();
 
-	public ValidEffectNode(double width, double height, Parent node) {
+	public ValidEffectNode(double width, double height, Parent effectNode) {
 		effect = new ColorAdjust();
 		effect.setSaturation(-0.3D);
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new KeyValue(effect.saturationProperty(), -0.8)));
 		timeline.setAutoReverse(true);
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		
-		if (node == null){ 
+		if (effectNode == null){ 
 			Rectangle rect = new Rectangle(width + 6, height + 6, Color.VIOLET);
 			getChildren().add(rect);
 			rect.setEffect(effect);
 		}else {
-			node.setEffect(effect);
-			getChildren().add(0, node);
+			effectNode.setEffect(effect);
+			getChildren().add(0, effectNode);
 		}
 	}
 

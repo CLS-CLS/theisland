@@ -49,11 +49,13 @@ public class ShoreUpState implements GameState {
 		}
 		player.shoreUp(islandView.getParentModel());
 		islandView.unFlood();
-		return normalState();
+		if (!player.canShoreUp()) return normalState();
+		return null;
 	}
 
 	private GameState normalState() {
 		islandScreen.c_hideMessagePanel();
+		islandScreen.c_setCursorImage(ButtonAction.MOVE);
 		return new NormalState(gameController, islandScreen, gameModel);
 	}
 
@@ -82,6 +84,7 @@ public class ShoreUpState implements GameState {
 		}
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
+		islandScreen.c_setCursorImage(ButtonAction.SHORE_UP);
 		return null;
 	}
 

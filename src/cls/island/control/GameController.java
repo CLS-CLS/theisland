@@ -85,7 +85,7 @@ public class GameController {
 			}
 		}
 	}
-
+	
 	public void setIslandScreen(IslandScreen islandScreen) {
 		this.islandScreen = islandScreen;
 	}

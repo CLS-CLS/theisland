@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import cls.island.control.Options.PlayerType;
@@ -141,6 +142,11 @@ public class MainController {
 
 	public Options getOptions() {
 		return options;
+	}
+
+	public void setCursorImage(Image cursorImg) {
+		scene.setCursor(new ImageCursor(cursorImg));
+		
 	}
 
 }

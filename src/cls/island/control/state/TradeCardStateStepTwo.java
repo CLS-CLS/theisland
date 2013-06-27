@@ -61,6 +61,10 @@ public class TradeCardStateStepTwo implements GameState {
 		gameModel.getCurrentTurnPlayer().giveCard(selectedPlayer, selectedCard);
 		selectedPlayer.getBase().getComponent().moveToBase(selectedCard.getComponent());
 		islandScreen.c_hideMessagePanel();
+		selectedCard.getComponent().setValidToCkickEffect(false);
+		for (Player player : eligiblePlayers) {
+			player.getBase().getComponent().setValidToCkickEffect(false);
+		}
 		return new NormalState(gameController, islandScreen, gameModel);
 		
 	}

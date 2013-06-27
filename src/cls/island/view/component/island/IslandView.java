@@ -135,6 +135,34 @@ public class IslandView extends AbstractView<Island> {
 			}
 		});
 	}
+	
+	/**
+	 * make an island flooded without anim.
+	 */
+	public void setFlood(){
+		//TODO Fix this ugly code.. same properties are in animation .. yack!!
+		final double brightness =  0.37;
+		final double contrast = 0.34;
+		final double saturation =  -1;
+		final double opacity  = 0.5 ;
+		
+		execute(new SignaledRunnable() {
+			
+			@Override
+			public boolean willSignal() {
+				return false;
+			}
+			
+			@Override
+			public void run() {
+				floodEffect.setBrightness(brightness);
+				floodEffect.setContrast(contrast);
+				floodEffect.setSaturation(saturation);
+				flood.setOpacity(opacity);
+				
+			}
+		});
+	}
 
 	public void flood() {
 		execute(new SignaledRunnable() {

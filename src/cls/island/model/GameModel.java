@@ -144,6 +144,14 @@ public class GameModel {
 		Collections.shuffle(islandsToFlood);
 
 		actionsLeft.setPlayer(getCurrentTurnPlayer());
+		
+		//draw six  flood cards
+		for (int i=0; i <6; i++){
+			Island island = getNextIslantToFlood();
+			floodIsland(island);
+		}
+		
+		
 	}
 
 	private void initPlayers(List<PlayerAndColor> players) {
@@ -319,7 +327,11 @@ public class GameModel {
 		Island toFloodIsland = islandsToFlood.get(islandsToFlood.size() - 1);
 		return toFloodIsland;
 	}
-
+	
+	/**
+	 * floods an island and updates the floodlist 
+	 * @param island
+	 */
 	public void floodIsland(Island island) {
 		if (island.isFlooded())
 			throw new IllegalStateException(island + " is already flooded");
