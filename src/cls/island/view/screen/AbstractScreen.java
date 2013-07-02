@@ -69,8 +69,14 @@ public abstract class AbstractScreen extends Group {
 	public Config getConfig() {
 		return config;
 	}
-
-	public <T> T c_showPopup(PopUpInternal<T> popUpInternal) {
+	
+	/**
+	 * Shows the pop up on top of this screen. Makes the thread that 
+	 * requested this pop-up to wait until the pop-up is closed.
+	 * @param popUpInternal
+	 * @return
+	 */
+	protected <T> T c_showPopup(PopUpInternal<T> popUpInternal) {
 		if (Platform.isFxApplicationThread())
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
@@ -97,7 +103,12 @@ public abstract class AbstractScreen extends Group {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * closes the pop-up and resumes the paused thread which requested the 
+	 * pop-up to open.
+	 * @param popUp
+	 */
 	public void closePopup(final PopUpWrapper<?> popUp) {
 		getChildren().remove(popUp);
 		c_setAnimationInProgress(animationInProgressOriginal);

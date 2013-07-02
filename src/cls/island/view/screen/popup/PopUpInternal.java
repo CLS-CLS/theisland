@@ -2,7 +2,14 @@ package cls.island.view.screen.popup;
 
 import javafx.scene.Group;
 
-
+/**
+ * The actual view of the pop-up. Extend this class to provide the look and feel of the 
+ * pop-up, its view and the return result. Use in combination with {@link PopUpWrapper}
+ * 
+ * @author lytsikas
+ *
+ * @param <T>
+ */
 public abstract class PopUpInternal<T> extends Group {
 	
 	private PopUpWrapper<T> popupScreen = null;
