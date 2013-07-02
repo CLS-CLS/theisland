@@ -40,6 +40,7 @@ public class IslandTurnState implements GameState {
 			gameModel.nextTurn();
 			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(true);
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
+			islandScreen.c_setUpButtonsForPlayer(gameModel.getCurrentTurnPlayer());
 			return new NormalState(gameController, islandScreen, gameModel);
 			
 		}

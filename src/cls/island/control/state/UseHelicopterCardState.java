@@ -7,7 +7,6 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
-import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
@@ -23,8 +22,8 @@ public class UseHelicopterCardState implements GameState {
 	private final GameState fromState;
 	private final GameController gameController;
 
-	public UseHelicopterCardState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
-			TreasuryCard card, GameState fromState) {
+	public UseHelicopterCardState(GameController gameController, IslandScreen islandScreen,
+			GameModel gameModel, TreasuryCard card, GameState fromState) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
@@ -48,37 +47,23 @@ public class UseHelicopterCardState implements GameState {
 
 	private GameState handleClickOnIsland(IslandView islandComponent) {
 		final Island island = islandComponent.getParentModel();
-		if (island.isSunk())
+		if (island.isSunk()) {
 			return null;
-		// cannot fly to the island that he already is
-		if (island == gameModel.getCurrentTurnPlayer().getPiece().getIsland())
-			return null;;
-		Player playerWithHeliCard = ViewUtils.findPlayerHoldingCard(gameModel, card);
-		if (playerWithHeliCard == null)
+		}
+		if (island.getPieces().size() == 0) {
 			return null;
-
-		// move player to selected island
-		int moveIndex = gameModel.getCurrentTurnPlayer().setToIsland(island);
-		islandScreen.c_movePiece(gameModel.getCurrentTurnPlayer().getPiece().getComponent(), island.getComponent(),
-				moveIndex);
-
-		// discard the card from the players hand
-
-		gameModel.discardCard(playerWithHeliCard, card);
-		islandScreen.c_discardPlayerCard(playerWithHeliCard.getBase().getComponent(), card.getComponent());
-
-		return goToNextState();
-
+		}
+		removeEffects();
+		return new UseHelicopterCardStepTwoState(gameController, islandScreen, gameModel, card,
+				island, this);
 	}
 
-	private GameState goToNextState() {
+	private void removeEffects() {
 		islandScreen.c_hideMessagePanel();
-		if (fromState instanceof ChooseDiscardCardState) {
-			return fromState.getFromState().createGameState();
-		} else {
-			return fromState.createGameState();
+		card.getComponent().setValidToCkickEffect(false);
+		for (Island island : gameModel.getIslands()) {
+			island.getComponent().setValidToCkickEffect(false);
 		}
-
 	}
 
 	@Override
@@ -94,20 +79,23 @@ public class UseHelicopterCardState implements GameState {
 
 	@Override
 	public GameState start() {
-		if (gameModel.hasWon()){
+		if (gameModel.hasWon()) {
 			return new WinGameState(gameController, gameModel, islandScreen);
 		}
-		//Check for win condition
-		
-		
+		card.getComponent().setValidToCkickEffect(true);
+		for (Island island : gameModel.getIslands()) {
+			if (island.getPieces().size() > 0) {
+				island.getComponent().setValidToCkickEffect(true);
+			}
+		}
 		islandScreen.disableButtons();
-		islandScreen.c_showMessagePanel("Select an Island to Fly to!\nRight Click to cancel");
+		islandScreen.c_showMessagePanel("Select an Island to Fly from!\nRight Click to cancel");
 		return null;
 	}
 
 	@Override
 	public GameState createGameState() {
-		throw new UnsupportedOperationException("no need to support it!!");
+		return new UseHelicopterCardState(gameController, islandScreen, gameModel, card, fromState);
 	}
 
 }

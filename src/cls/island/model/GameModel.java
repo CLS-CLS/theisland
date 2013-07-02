@@ -86,22 +86,22 @@ public class GameModel {
 
 	private void initColorToIslandMap() {
 		for (Island island : islands) {
-			if (island.getName().equals(Island.IslandName.SilverGate.name())) {
+			if (island.getName().equals(Island.IslandName.SilverGate)) {
 				colorToIsland.put(PieceColor.WHITE, island);
 			}
-			if (island.getName().equals(Island.IslandName.BronzeGate.name())) {
+			if (island.getName().equals(Island.IslandName.BronzeGate)) {
 				colorToIsland.put(PieceColor.RED, island);
 			}
-			if (island.getName().equals(Island.IslandName.CopperGate.name())) {
+			if (island.getName().equals(Island.IslandName.CopperGate)) {
 				colorToIsland.put(PieceColor.GREEN, island);
 			}
-			if (island.getName().equals(Island.IslandName.FoolsLanding.name())) {
+			if (island.getName().equals(Island.IslandName.FoolsLanding)) {
 				colorToIsland.put(PieceColor.BLUE, island);
 			}
-			if (island.getName().equals(Island.IslandName.GoldGate.name())) {
+			if (island.getName().equals(Island.IslandName.GoldGate)) {
 				colorToIsland.put(PieceColor.YELLOW, island);
 			}
-			if (island.getName().equals(Island.IslandName.IronGate.name())) {
+			if (island.getName().equals(Island.IslandName.IronGate)) {
 				colorToIsland.put(PieceColor.BROWN, island);
 			}
 		}

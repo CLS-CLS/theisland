@@ -12,7 +12,6 @@ import cls.island.view.component.island.Island;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.player.base.PlayerBase;
 import cls.island.view.component.treasury.card.TreasuryCard;
-import cls.island.view.component.treasury.card.Type;
 import cls.island.view.component.treasury.card.Type.Ability;
 
 /**
@@ -145,13 +144,14 @@ public class Player {
 	}
 
 	/**
-	 * Moves the player to an island and updates all the model attributes
-	 * (Player' s actions left) according to the game's rules. Players with
+	 * Moves the player to an island and updates the actions left
+	 * according to the game's rules. The island should not be sunk. Players with 
 	 * specific move abilities should override this method. In case the model
 	 * update (except the location update) is not desired use the
 	 * <code>setToIsland</code> method.
 	 * 
 	 * @param island
+	 * @return the exact position in the island model.
 	 */
 	public int moveToIsland(Island island) {
 		if (island.isSunk())
@@ -171,6 +171,7 @@ public class Player {
 	 * @param island
 	 */
 	public final int setToIsland(final Island island) {
+		if (island == null )throw new IllegalArgumentException("Island should not be null");
 		if (piece.getIsland() != null) {
 			Island islandTileFrom = piece.getIsland();
 			islandTileFrom.removePiece(piece);
@@ -199,6 +200,8 @@ public class Player {
 
 	public void decreaseActionLeft() {
 		actionsLeft.setValue(actionsLeft.getValue() - 1);
+		if (actionsLeft.get() <0 ) throw 
+			new RuntimeException("negative number after decreasing the actions");
 	}
 
 	/**

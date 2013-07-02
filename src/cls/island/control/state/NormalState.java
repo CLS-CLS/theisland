@@ -6,6 +6,7 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
+import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
@@ -92,6 +93,8 @@ public class NormalState implements GameState {
 			return new CollectTreasureState(gameController, islandScreen, gameModel, this);
 		case TRADE:
 			return new TradeCardState(gameController, islandScreen, gameModel, this);
+		case FLY:
+			return new FlyState(gameController, islandScreen, gameModel, this);
 		default:
 		}
 		return null;
@@ -110,20 +113,27 @@ public class NormalState implements GameState {
 
 	private void updateActionButtons(){
 		islandScreen.enableButtons();
-		if (!gameModel.getCurrentTurnPlayer().hasAction()){
+		Player currentTurnPlayer = gameModel.getCurrentTurnPlayer();
+		if (!currentTurnPlayer.hasAction()){
 			islandScreen.disableButtons(ButtonAction.MOVE);
+			if (currentTurnPlayer instanceof PilotPlayer){
+				islandScreen.disableButtons(ButtonAction.FLY);
+			}
 		}
 		if (!gameModel.canTrade()){
 			islandScreen.disableButtons(ButtonAction.TRADE);
 		}
-		if (!gameModel.getCurrentTurnPlayer().canShoreUp()){
+		if (!currentTurnPlayer.canShoreUp()){
 			islandScreen.disableButtons(ButtonAction.SHORE_UP);
 		}
-		if (!gameModel.canCollectTreasure(gameModel.getCurrentTurnPlayer())){
+		if (!gameModel.canCollectTreasure(currentTurnPlayer)){
 			islandScreen.disableButtons(ButtonAction.COLLECT_TREASURE);
 		}
-			
-		
+		if (currentTurnPlayer instanceof PilotPlayer){
+			if (!((PilotPlayer)currentTurnPlayer).canFly()){
+				islandScreen.disableButtons(ButtonAction.FLY);
+			}
+		}
 	}
 
 	@Override

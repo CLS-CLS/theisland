@@ -94,7 +94,7 @@ public class MainController {
 		options.setPlayers(Arrays.asList(new PlayerAndColor[] {
 				new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
 				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN), 
-				new PlayerAndColor(PlayerType.DIVER, PieceColor.BLUE)}));
+				new PlayerAndColor(PlayerType.PILOT, PieceColor.BLUE)}));
 		gameModel = new GameModel(options, config);
 		gameModel.newGame();
 		gameController = new GameController(MainController.this, gameModel);

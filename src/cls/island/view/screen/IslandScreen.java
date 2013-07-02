@@ -3,6 +3,7 @@ package cls.island.view.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 import javafx.animation.KeyFrame;
@@ -35,6 +36,7 @@ import cls.island.control.GameController.ButtonAction;
 import cls.island.control.MainController;
 import cls.island.model.GameModel;
 import cls.island.model.LooseCondition;
+import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
@@ -54,6 +56,7 @@ import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
 import cls.island.view.component.waterlevel.WaterLevelView;
 import cls.island.view.control.Action;
 import cls.island.view.screen.popup.FloodCardDrawPopUp;
+import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 
 public class IslandScreen extends AbstractScreen {
 
@@ -71,6 +74,7 @@ public class IslandScreen extends AbstractScreen {
 	private Button nextTurnButton;
 	private ToggleButton shoreUpButton;
 	private ToggleButton tradeButton;
+	private ToggleButton flyButton;
 	private List<TreasuryCardView> floodCards = new ArrayList<>();
 	private final GameModel model;
 	private IslandView islandViewToDelete;
@@ -161,6 +165,9 @@ public class IslandScreen extends AbstractScreen {
 		nextTurnButton = ButtonFactory.actionButton("Next \n Turn", ButtonAction.NEXT_TURN,
 				gameController);
 		buttons.add(nextTurnButton);
+		flyButton = ButtonFactory.actionToggleButton("Fly", ButtonAction.FLY, gameController);
+		flyButton.setToggleGroup(toggleGroup);
+		buttons.add(flyButton);
 		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
 		getChildren().add(actionsLeft);
 		actionsLeft.relocate(400, 810);
@@ -169,11 +176,16 @@ public class IslandScreen extends AbstractScreen {
 		tradeButton.relocate(1200, 410);
 		collectTreasureButton.relocate(1310, 410);
 		nextTurnButton.relocate(1200, 520);
+		flyButton.relocate(1310, 520);
+
+		
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
 		getChildren().add(collectTreasureButton);
 		getChildren().add(tradeButton);
 		getChildren().add(nextTurnButton);
+		getChildren().add(flyButton);
+		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		getChildren().add(msgPanel);
 		msgPanel.relocate(600, 1000);
 		// addControls();
@@ -317,6 +329,11 @@ public class IslandScreen extends AbstractScreen {
 	}
 	
 	
+	public List<Piece> c_showSelectPieceToFlyPopUp(List<Piece> piecesToMove){
+		return c_showPopup(new SelectPieceToFlyPopup(piecesToMove));
+		
+	}
+	
 	/**
 	 * enables the action buttons with the specific actions. If no
 	 * actions are provided all the buttons are enabled
@@ -379,7 +396,12 @@ public class IslandScreen extends AbstractScreen {
 		case MOVE:
 			mainController.setCursorImage(config.cursorImg);
 		}
+	}
 	
-		
+	public void c_setUpButtonsForPlayer(Player player){
+		flyButton.setOpacity(0);
+		if (player instanceof PilotPlayer){
+			flyButton.setOpacity(1);
+		}
 	}
 }

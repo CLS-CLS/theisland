@@ -136,10 +136,10 @@ public class Config {
 	}
 
 	public Rectangle2D getFullScreenRes() {
-		return fullScreenRes;
+//		return fullScreenRes;
 		// TODO
-		// return new Rectangle2D(0, 0, 1366, 768);
-		// return defaultRes;
+		 return new Rectangle2D(0, 0, 1366, 768);
+//		 return defaultRes;
 	}
 
 	public Rectangle2D getDefaultRes() {

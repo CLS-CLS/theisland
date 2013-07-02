@@ -22,6 +22,7 @@ public abstract class AbstractScreen extends Group {
 	final protected MainController mainController;
 	final protected Config config;
 	private volatile boolean animationInProgress;
+	private volatile boolean animationInProgressOriginal;
 
 	protected Condition popUpwaitCondition;
 
@@ -83,6 +84,9 @@ public abstract class AbstractScreen extends Group {
 			public void run() {
 				getChildren().add(popUp);
 				popUp.show();
+				animationInProgressOriginal = animationInProgress;
+				c_setAnimationInProgress(false);
+				
 			}
 		});
 		try {
@@ -96,6 +100,7 @@ public abstract class AbstractScreen extends Group {
 
 	public void closePopup(final PopUpWrapper<?> popUp) {
 		getChildren().remove(popUp);
+		c_setAnimationInProgress(animationInProgressOriginal);
 		popUpwaitCondition.signal();
 
 	}

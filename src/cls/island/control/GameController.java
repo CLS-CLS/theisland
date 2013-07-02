@@ -4,13 +4,14 @@ import javafx.scene.input.MouseEvent;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
+import cls.island.view.component.piece.Piece;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.pile.TreasuryPile;
 import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD;
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY;
 	}
 
 	volatile private GameState gameState;
@@ -96,5 +97,21 @@ public class GameController {
 
 	public MainController getMainController() {
 		return mainController;
+	}
+	
+	/**
+	 * Finds the player who owns the provided piece
+	 * @param piece
+	 * @return
+	 */
+	public Player getPlayerWithPiece(Piece piece) {
+		Player resultPlayer = null;
+		for (Player player : gameModel.getPlayers()){
+			if (player.getPiece().equals(piece)){
+				resultPlayer = player;
+				break;
+			}
+		}
+		return resultPlayer;
 	}
 }
