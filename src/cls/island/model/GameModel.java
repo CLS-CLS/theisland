@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import cls.island.control.Config;
 import cls.island.control.Options;
 import cls.island.control.PlayerAndColor;
-import cls.island.control.state.CollectTreasureState;
 import cls.island.model.IslandGrid.Direction;
 import cls.island.model.player.Player;
 import cls.island.model.player.PlayerFactory;
@@ -33,8 +32,8 @@ import cls.island.view.component.treasury.pile.TreasuryPile;
 import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
 import cls.island.view.component.waterlevel.WaterLevel;
 
-public class GameModel {
 
+public class GameModel {
 	private Map<PieceColor, Island> colorToIsland = new HashMap<>();
 	private static final int SANDBAG_CARD_QUANTITY = 2;
 	private static final int HELICOPTER_CARD_QUANTITY = 3;
@@ -215,11 +214,11 @@ public class GameModel {
 			if (treasure == null) {
 				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
 						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false,
-								name.name(), false, false, LocCalculator.getInstance())));
+								name, false, false, LocCalculator.getInstance())));
 			}else {
 				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
 						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false,
-								name.name(), false, false, LocCalculator.getInstance()), config.getTreasureImage(treasure)));
+								name, false, false, LocCalculator.getInstance()), config.getTreasureImage(treasure)));
 			}
 		}
 	}
@@ -540,6 +539,20 @@ public class GameModel {
 			}
 		}
 		return collectionCards;
+	}
+	
+	/**
+	 * Checks if the player has met the win conditions
+	 * @return true if the player has won, false otherwise
+	 */
+	public boolean hasWon() {
+		Island island = getCurrentTurnPlayer().getPiece().getIsland();
+		if (island.getName() == IslandName.FoolsLanding
+				&& island.getPiecesAndPositions().keySet().size() == getPlayers().size()
+				&& getTreasureBag().getAcquiredTreaures().size() == 4){
+			return true;
+		}
+		return false;
 	}
 
 }

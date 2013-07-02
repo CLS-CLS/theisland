@@ -8,21 +8,35 @@ import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.view.screen.IslandScreen;
 
-/**
- * Game is over. Shows final pop-up screen and goes back to main menu. 
- *
- */
-public class GameLostState implements GameState {
-
+public class WinGameState implements GameState {
+	
 	private final IslandScreen islandScreen;
-	private final GameController gameController;
 	private final GameModel gameModel;
+	private final GameController gameController;
 
-	public GameLostState(GameController gameController, IslandScreen islandScreen,
-			GameModel gameModel, GameState fromState) {
+	public WinGameState(GameController gameController, GameModel gameModel, IslandScreen islandScreen) {
 		this.gameController = gameController;
-		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
+		this.islandScreen = islandScreen;
+		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public GameState mouseClicked(MouseEvent event) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GameState buttonPressed(ButtonAction action) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GameState getFromState() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -36,7 +50,7 @@ public class GameLostState implements GameState {
 			@Override
 			public void run() {
 				gameController.backToMainScreen();
-				
+
 			}
 		});
 		return null;
@@ -44,24 +58,8 @@ public class GameLostState implements GameState {
 
 	@Override
 	public GameState createGameState() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public GameState mouseClicked(MouseEvent event) {
+		// TODO Auto-generated method stub
 		return null;
-
-	}
-
-	@Override
-	public GameState buttonPressed(ButtonAction action) {
-		return null;
-
-	}
-
-	@Override
-	public GameState getFromState() {
-		throw new UnsupportedOperationException();
 	}
 
 }

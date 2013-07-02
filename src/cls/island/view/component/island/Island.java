@@ -22,13 +22,13 @@ public class Island {
 		protected Grid grid;
 		protected Piece[] pieceSpots = new Piece[4];
 		protected boolean flooded;
-		protected final String name;
+		protected final IslandName name;
 		protected boolean sunk;
 		protected final LocCalculator locCalculator;
 		protected boolean floodBorder;
 		protected Type treasure;
 
-		public Model(Grid grid, Piece[] pieceSpots, Type treasure, boolean flooded, String name,
+		public Model(Grid grid, Piece[] pieceSpots, Type treasure, boolean flooded, IslandName name,
 				boolean sunk, boolean floodBorder, LocCalculator locCalculator) {
 			this.grid = grid;
 			this.pieceSpots = pieceSpots;
@@ -52,7 +52,7 @@ public class Island {
 			return flooded;
 		}
 
-		public String getName() {
+		public IslandName getName() {
 			return name;
 		}
 
@@ -82,7 +82,7 @@ public class Island {
 		islandView = new IslandView(tileImage, model, this);
 	}
 
-	public String getName() {
+	public IslandName getName() {
 		return model.name;
 	}
 

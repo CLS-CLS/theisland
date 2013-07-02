@@ -21,9 +21,11 @@ public class UseHelicopterCardState implements GameState {
 	private final GameModel gameModel;
 	private final TreasuryCard card;
 	private final GameState fromState;
+	private final GameController gameController;
 
 	public UseHelicopterCardState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
 			TreasuryCard card, GameState fromState) {
+		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.card = card;
@@ -92,6 +94,12 @@ public class UseHelicopterCardState implements GameState {
 
 	@Override
 	public GameState start() {
+		if (gameModel.hasWon()){
+			return new WinGameState(gameController, gameModel, islandScreen);
+		}
+		//Check for win condition
+		
+		
 		islandScreen.disableButtons();
 		islandScreen.c_showMessagePanel("Select an Island to Fly to!\nRight Click to cancel");
 		return null;
