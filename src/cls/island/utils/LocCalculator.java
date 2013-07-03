@@ -1,5 +1,7 @@
 package cls.island.utils;
 
+import cls.island.utils.LocCalculator.Loc;
+
 public class LocCalculator {
 
 	private static final int BASE_Y = 30;
@@ -96,6 +98,10 @@ public class LocCalculator {
 	public Loc markerLocation(float waterLevel) {
 		return new Loc(-10, 195 - 21 * waterLevel);
 
+	}
+
+	public Loc pieceLocInSelectPiecePopUp(int i) {
+		return new Loc(20 + i*30, 20);
 	}
 
 }

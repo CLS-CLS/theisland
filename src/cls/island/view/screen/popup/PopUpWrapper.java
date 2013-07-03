@@ -2,6 +2,9 @@ package cls.island.view.screen.popup;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -32,6 +35,16 @@ public class PopUpWrapper<T> extends AbstractScreen {
 				.getDefaultRes().getHeight(), Color.BLACK);
 		rectangle.setOpacity(0.5);
 		getChildren().add(rectangle);
+		rectangle.addEventHandler(Event.ANY, new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				event.consume();
+			}
+		});
+
+			
+		
 		if (internal != null) {
 			internal.registerToPopUp(this);
 

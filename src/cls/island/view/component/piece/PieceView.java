@@ -12,10 +12,19 @@ import cls.island.view.component.OnOffEffectNode;
 
 public class PieceView extends AbstractView<Piece> {
 	
+	private final Image image;
+
+
 	public PieceView(Image image, Piece model) {
 		super(false, model);
+		this.image = image;
 		getChildren().add(new ImageView(image));
 		setSelectable(false);
+	}
+	
+
+	public Image getImage() {
+		return image;
 	}
 	
 	
@@ -24,7 +33,7 @@ public class PieceView extends AbstractView<Piece> {
 		return new PieceValidToClickEffect();
 	}
 	
-	
+
 	class PieceValidToClickEffect extends OnOffEffectNode{
 		ImageView image;
 		private Timeline timeline = new Timeline();

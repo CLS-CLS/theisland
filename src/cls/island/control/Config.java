@@ -61,6 +61,12 @@ public class Config {
 	public Image fire;
 	public Image wind;
 	public Image pieceBlue;
+	private Image pieceRedLarge;
+	private Image pieceGreenLarge;
+	private Image pieceBlueLarge;
+	private Image pieceWhiteLarge;
+	public Image checkBoxImg;
+	public Image checkBoxWithTick;
 
 	private Config() {
 		background = new Image("images/other/startScreen.png", false);
@@ -72,6 +78,10 @@ public class Config {
 		pieceGreen = new Image("images/other/pieceGreen.png", 31, 52, true, true);
 		pieceRed = new Image("images/other/pieceRed.png", 31, 52, true, true);
 		pieceBlue = new Image("images/other/pieceBlue.png", 31, 52, true, true);
+		pieceWhiteLarge = new Image("images/other/pieceWhite.png", 31 * 2, 52 * 2, true, true);
+		pieceGreenLarge = new Image("images/other/pieceGreen.png", 31 * 2, 52 * 2, true, true);
+		pieceRedLarge = new Image("images/other/pieceRed.png", 31 * 2, 52 * 2, true, true);
+		pieceBlueLarge = new Image("images/other/pieceBlue.png", 31 * 2, 52 * 2, true, true);
 		playerCardHolder = new Image("images/other/playerCardHolder.png", 283, 220, false, true);
 		islandCard = new Image("images/other/islandCard.png", 70, 100, false, true);
 		islandBackCard = new Image("images/other/backcard.png", 70, 100, false, true);
@@ -88,8 +98,8 @@ public class Config {
 		waterLevelMarkerImage = new Image("images/other/WaterMarker.png", 28, 16, false, true);
 		loadIslandTileImages();
 		fullScreenRes = Screen.getPrimary().getBounds();
-		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(), getFullScreenRes().getHeight()
-				/ getDefaultRes().getHeight());
+		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(),
+				getFullScreenRes().getHeight() / getDefaultRes().getHeight());
 
 		shoreUpCursorImg = new Image("images/other/dig.png", 32, 32, false, true);
 		cursorImg = new Image("images/other/mouse.png", 32, 32, false, true);
@@ -97,6 +107,9 @@ public class Config {
 		chalice = new Image("images/other/chalice.png", 55, 70, false, true);
 		fire = new Image("images/other/fire.png", 55, 70, false, true);
 		wind = new Image("images/other/wind.png", 55, 70, false, true);
+
+		checkBoxImg = new Image("images/other/checkbox.png", 50, 50, false, true);
+		checkBoxWithTick = new Image("images/other/checkboxwithtick.png", 50, 50, false, true);
 
 	}
 
@@ -136,10 +149,10 @@ public class Config {
 	}
 
 	public Rectangle2D getFullScreenRes() {
-//		return fullScreenRes;
+		// return fullScreenRes;
 		// TODO
-		 return new Rectangle2D(0, 0, 1366, 768);
-//		 return defaultRes;
+		return new Rectangle2D(0, 0, 1366, 768);
+		// return defaultRes;
 	}
 
 	public Rectangle2D getDefaultRes() {
@@ -163,14 +176,15 @@ public class Config {
 		URL base = this.getClass().getClassLoader().getResource(".");
 		String isladTileImageDir = base.getPath().substring(1) + ISLAND_TILES_IMAGE_PATH;
 		try {
-			dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(isladTileImageDir));
+			dirStream = Files.newDirectoryStream(FileSystems.getDefault()
+					.getPath(isladTileImageDir));
 		} catch (IOException e) {
 			throw new RuntimeException("Error initializing the island images", e);
 		}
 		for (Path imgPath : dirStream) {
 			String fileName = imgPath.getFileName().toString();
-			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/" + fileName, 120, 120, true,
-					true));
+			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/"
+					+ fileName, 120, 120, true, true));
 		}
 	}
 
@@ -188,6 +202,22 @@ public class Config {
 			break;
 		}
 		return pieceRed;
+	}
+
+	public Image getPieceImageLarge(PieceColor color) {
+		switch (color) {
+		case RED:
+			return pieceRedLarge;
+		case GREEN:
+			return pieceGreenLarge;
+		case BLUE:
+			return pieceBlueLarge;
+		case WHITE:
+			return pieceWhiteLarge;
+		default:
+			break;
+		}
+		return pieceRedLarge;
 	}
 
 }
