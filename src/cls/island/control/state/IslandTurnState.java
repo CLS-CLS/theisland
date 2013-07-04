@@ -32,35 +32,6 @@ public class IslandTurnState implements GameState {
 		this.fromState = fromState;
 	}
 
-	private GameState drawCard() {
-
-		if (numberOfDrawCards > gameModel.getNumberOfIslandsToSink()) {
-			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(false);
-			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(false);
-			gameModel.nextTurn();
-			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(true);
-			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
-			islandScreen.c_setUpButtonsForPlayer(gameModel.getCurrentTurnPlayer());
-			return new NormalState(gameController, islandScreen, gameModel);
-			
-		}
-		if (!gameModel.hasIslandToFlood()) {
-			gameModel.shuffleDiscardedAndPutBackToNormalPile();
-		}
-		Island island = gameModel.getNextIslantToFlood();
-		if (island.isFlooded()) {
-			gameModel.sinkIsland(island);
-			island.getComponent().sink();
-		} else {
-			gameModel.floodIsland(island);
-			island.getComponent().flood();
-
-		}
-		return new IslandTurnState(numberOfDrawCards + 1, gameController,
-				islandScreen, gameModel, fromState);
-
-	}
-
 	public IslandTurnState(GameController gameController, IslandScreen islandScreen,
 			GameModel gameModel, GameState fromState) {
 		this(1, gameController, islandScreen, gameModel, fromState);
@@ -84,12 +55,38 @@ public class IslandTurnState implements GameState {
 	@Override
 	public GameState start() {
 		islandScreen.disableButtons();
-		return drawCard();
+		if (numberOfDrawCards > gameModel.getNumberOfIslandsToSink()) {
+			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(false);
+			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(false);
+			gameModel.nextTurn();
+			gameModel.getCurrentTurnPlayer().getPiece().getComponent().setValidToCkickEffect(true);
+			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
+			islandScreen.c_setUpButtonsForPlayer(gameModel.getCurrentTurnPlayer());
+			return new NormalState(gameController, islandScreen, gameModel);
+			
+		}
+		if (!gameModel.hasIslandToFlood()) {
+			gameModel.shuffleDiscardedAndPutBackToNormalPile();
+		}
+		Island island = gameModel.getNextIslantToFlood();
+		if (island.isFlooded()) {
+			gameModel.sinkIsland(island);
+			island.getComponent().sink();
+			if (island.getPieces().size() > 0){
+				return new SwimToAdjacentIslandState(island, gameController, islandScreen, gameModel, fromState);
+			}
+		} else {
+			gameModel.floodIsland(island);
+			island.getComponent().flood();
+
+		}
+		return new IslandTurnState(numberOfDrawCards + 1, gameController,
+				islandScreen, gameModel, fromState);
 	}
 
 	@Override
 	public GameState createGameState() {
-		return new IslandTurnState(gameController, islandScreen, gameModel, getFromState());
+		return new IslandTurnState(numberOfDrawCards +1, gameController, islandScreen, gameModel, fromState);
 	}
 
 }

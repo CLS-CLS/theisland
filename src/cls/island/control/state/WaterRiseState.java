@@ -10,6 +10,7 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
+import cls.island.model.LooseCondition;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
@@ -112,9 +113,9 @@ public class WaterRiseState implements GameState {
 	public GameState start() {
 		islandScreen.disableButtons();
 		GameState returnState = null;
-
-		if (gameModel.findLooseCondition() != null) {
-			returnState = new GameLostState(gameController, islandScreen, gameModel, this);
+		LooseCondition looseCondition = null;
+		if ((looseCondition = gameModel.findLooseCondition()) != null) {
+			returnState = new GameLostState(looseCondition, gameController, islandScreen, gameModel, this);
 		} // game not lost
 
 		else if (!playerHasShoreUpCard() || !flooderIslandExists()) {
