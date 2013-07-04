@@ -71,11 +71,6 @@
 		radial-gradient(center 50% -40%, radius 200%, #c2c2c2 45%, #393939 50%);
 }
 
-.big-check-box {
-	-fx-scale-x: 2.5;
-	-fx-scale-y: 2.5;
-}
-
 
 .action-toggle-button: selected {
 	-fx-effect: innershadow( three-pass-box , white , 10, 0.5 , -1 , -1);

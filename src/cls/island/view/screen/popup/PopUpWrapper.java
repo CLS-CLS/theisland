@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -42,8 +41,6 @@ public class PopUpWrapper<T> extends AbstractScreen {
 				event.consume();
 			}
 		});
-
-			
 		
 		if (internal != null) {
 			internal.registerToPopUp(this);

@@ -19,8 +19,6 @@ import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.SignaledRunnable;
 import cls.island.view.component.AbstractView;
-import cls.island.view.component.OnOffEffectNode;
-import cls.island.view.component.ValidEffectNode;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 
