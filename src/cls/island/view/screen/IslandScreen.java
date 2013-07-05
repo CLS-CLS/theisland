@@ -56,6 +56,7 @@ import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
 import cls.island.view.component.waterlevel.WaterLevelView;
 import cls.island.view.control.Action;
 import cls.island.view.screen.popup.FloodCardDrawPopUp;
+import cls.island.view.screen.popup.GameLostPopUp;
 import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 
 public class IslandScreen extends AbstractScreen {
@@ -315,8 +316,8 @@ public class IslandScreen extends AbstractScreen {
 		}
 	}
 
-	public void c_showLooseGamePopUp(LooseCondition checkLooseCondition) {
-		c_showPopup(new FloodCardDrawPopUp());
+	public void c_showLooseGamePopUp(LooseCondition looseCondition) {
+		c_showPopup(new GameLostPopUp(looseCondition));
 	}
 
 	/**
