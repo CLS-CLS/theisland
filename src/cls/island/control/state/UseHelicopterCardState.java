@@ -34,8 +34,7 @@ public class UseHelicopterCardState implements GameState {
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
-			islandScreen.c_hideMessagePanel();
-			return fromState.createGameState();
+			cancel();
 		}
 		IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event.getTarget());
 		if (islandComponent != null && islandComponent instanceof IslandView) {
@@ -45,6 +44,17 @@ public class UseHelicopterCardState implements GameState {
 
 	}
 
+	
+	private GameState cancel(){
+		for (Island island :gameModel.getIslands()){
+			island.getComponent().setValidToCkickEffect(false);
+		}
+		islandScreen.c_hideMessagePanel();
+		return fromState.createGameState();
+		
+	}
+	
+	
 	private GameState handleClickOnIsland(IslandView islandComponent) {
 		final Island island = islandComponent.getParentModel();
 		if (island.isSunk()) {
