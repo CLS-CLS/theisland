@@ -5,6 +5,7 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
+import cls.island.model.LooseCondition;
 import cls.island.view.component.island.Island;
 import cls.island.view.screen.IslandScreen;
 
@@ -72,6 +73,13 @@ public class IslandTurnState implements GameState {
 		if (island.isFlooded()) {
 			gameModel.sinkIsland(island);
 			island.getComponent().sink();
+			Object[] infos = new Object[1];
+			if (gameModel.checkLooseCondition(LooseCondition.TREASURE_SUNK, infos)){
+				return new GameLostState(LooseCondition.TREASURE_SUNK, gameController, islandScreen, gameModel, this, infos);
+			}
+			if (gameModel.checkLooseCondition(LooseCondition.FOOLS_LANDING_LOST)){
+				return new GameLostState(LooseCondition.FOOLS_LANDING_LOST, gameController, islandScreen, gameModel, this);
+			}
 			if (island.getPieces().size() > 0){
 				return new SwimToAdjacentIslandState(island, gameController, islandScreen, gameModel, fromState);
 			}

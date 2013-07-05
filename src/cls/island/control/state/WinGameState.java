@@ -41,7 +41,8 @@ public class WinGameState implements GameState {
 
 	@Override
 	public GameState start() {
-		islandScreen.c_showLooseGamePopUp(gameModel.findLooseCondition());
+		//TODO change to win pop-up
+		islandScreen.c_WaterCardDrawnPopUp();
 
 		// Go to back to main Screen. Ensure that from now on we are in FX-Thread
 		// as the game is over and the main screens work on FX-Thread.

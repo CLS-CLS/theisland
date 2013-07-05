@@ -316,8 +316,8 @@ public class IslandScreen extends AbstractScreen {
 		}
 	}
 
-	public void c_showLooseGamePopUp(LooseCondition looseCondition) {
-		c_showPopup(new GameLostPopUp(looseCondition));
+	public void c_showLooseGamePopUp(LooseCondition looseCondition, Object... infos) {
+		c_showPopup(new GameLostPopUp(looseCondition, infos));
 	}
 
 	/**

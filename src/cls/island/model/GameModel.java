@@ -157,11 +157,10 @@ public class GameModel {
 		int index = 0;
 		for (PlayerAndColor playerType : options.getPlayers()) {
 			Image playerBaseImg = config.playerCardHolder;
-			Image playerImg = config.diverImage;
 			this.players.add(PlayerFactory.createPlayer(playerType.getPlayer(),
 					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer()
 							.name(), playerType.getColor()), new PlayerBase(playerType,
-							playerBaseImg, playerImg, index)));
+							playerBaseImg, config.getPlayerImage(playerType.getPlayer()), index)));
 			index++;
 		}
 	}
@@ -391,14 +390,51 @@ public class GameModel {
 	public IslandGrid<Island> getIslandGrid() {
 		return islandGrid;
 	}
+	
+	public boolean checkLooseCondition(LooseCondition type, Object... infos){
+		switch (type) {
+		case MAX_WATER_LEVEL_REACHED:
+			if (waterLevel.getWaterLevel() >= MAX_WATER_LEVEL) {
+				return true;
+			}
+		case FOOLS_LANDING_LOST:
+			for (Island island : getIslands()){
+				if (island.getName().equals(IslandName.FoolsLanding.name()) &&
+						island.isSunk()){
+					return true;
+				}
+			}
+		case TREASURE_SUNK:
+			List<Type> remainingTreasures = Type.getTypesWithAbility(Ability.TREASURE);
+			remainingTreasures.removeAll(getTreasureBag().getAcquiredTreaures());
+			for (Type remainingTreasure : remainingTreasures) {
+				int sinked = 0;
+				for (Island island : islands) {
+					if (island.hasTreasure() && island.getTreasure() == remainingTreasure
+							&& island.isSunk()) {
+						sinked++;
+					}
+				}
+				if (sinked == 2) {
+					if (infos.length >0){
+						infos[0] = remainingTreasure.name();
+					}
+					return true;
+				}
+			}
+		default:
+			break;
+		}
+		return false;
+	}
 
 	/**
 	 * checks if any of the loose condition is met.
-	 * 
+	 * @param infos object to store more information about the lost conditions
 	 * @return the kind of the loose condition. <code> null </code> if none is
 	 *         met.
 	 */
-	public LooseCondition findLooseCondition() {
+	public LooseCondition findLooseConditional(Object... infos) {
 
 		// Lost because of water level
 		if (waterLevel.getWaterLevel() >= MAX_WATER_LEVEL) {
@@ -416,6 +452,9 @@ public class GameModel {
 				}
 			}
 			if (sinked == 2) {
+				if (infos.length >0){
+					infos[0] = remainingTreasure.name();
+				}
 				return LooseCondition.TREASURE_SUNK;
 			}
 		}

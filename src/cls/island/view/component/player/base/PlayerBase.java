@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
 import cls.island.control.PlayerAndColor;
 import cls.island.control.Options.PlayerType;
 import cls.island.utils.LocCalculator;
@@ -23,7 +25,9 @@ public class PlayerBase {
 			int index) {
 		this.playerType = playerType.getPlayer();
 		this.treasuryCards.addAll(treasuryCards);
-		this.playerBaseView = new PlayerBaseView(this, playerBaseImg, playerImg, playerType.getColor().getColor(),LocCalculator.getInstance(), index);
+	
+		this.playerBaseView = new PlayerBaseView(this, playerBaseImg, playerImg, 
+				LinearGradient.valueOf("linear-gradient(to bottom right, beige, BURLYWOOD,white)"),LocCalculator.getInstance(), index);
 	}
 
 	public List<TreasuryCard> getTreasuryCards() {

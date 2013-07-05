@@ -12,6 +12,7 @@ import java.util.Map;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
+import cls.island.control.Options.PlayerType;
 import cls.island.view.component.piece.PieceColor;
 import cls.island.view.component.treasury.card.Type;
 
@@ -67,11 +68,17 @@ public class Config {
 	private Image pieceWhiteLarge;
 	public Image checkBoxImg;
 	public Image checkBoxWithTick;
+	private Image pilotImage;
+	private Image messengerImage;
+	private Image engineerImage;
 
 	private Config() {
 		background = new Image("images/other/startScreen.png", false);
-		diverImage = new Image("images/other/card.png", 160, 125, true, false);
-		explorerImage = new Image("images/other/card.png", 160, 125, true, false);
+		diverImage = new Image("images/other/diver.png", 120, 120, false, true);
+		explorerImage = new Image("images/other/explorer.png", 120, 120, false, true);
+		pilotImage = new Image("images/other/pilot.png", 120, 120, false, true);
+		messengerImage = new Image("images/other/messenger.png", 120, 120, false, true);
+		engineerImage = new Image("images/other/engineer.png", 120, 120, false, true);
 		randomPlayerImage = new Image("images/other/randomPlayer.png", 160, 125, true, true);
 		tickImage = new Image("images/other/tick.png", 40, 40, true, true);
 		pieceWhite = new Image("images/other/pieceWhite.png", 31, 52, true, true);
@@ -125,6 +132,24 @@ public class Config {
 			return chalice;
 		}
 		return null;
+	}
+	
+	public Image getPlayerImage(PlayerType player){
+		switch (player) {
+		case DIVER:
+			return diverImage;
+		case ENGINEER:
+			return engineerImage;
+		case EXPLORER: 
+			return explorerImage;
+		case MESSANGER:
+			return messengerImage;
+		case PILOT:
+			return pilotImage;
+		default:
+			return null;
+		}
+		
 	}
 
 	public Image getTreasureCard(Type type) {

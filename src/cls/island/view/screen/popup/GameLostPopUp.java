@@ -7,7 +7,7 @@ import cls.island.model.LooseCondition;
 
 public class GameLostPopUp extends PopUpInternal<Object> {
 
-	public GameLostPopUp(LooseCondition condition) {
+	public GameLostPopUp(LooseCondition condition, Object[] infos) {
 		Rectangle rect = new Rectangle(300, 200, Color.RED);
 		getChildren().add(rect);
 		Label label = new Label();
@@ -19,10 +19,10 @@ public class GameLostPopUp extends PopUpInternal<Object> {
 			label.setText("Max water level reached");
 			break;
 		case PLAYER_SUNK :
-			label.setText("A player was sunk");
+			label.setText(infos[0]+ " Player was drawn after the \nisland sunk") ;
 			break;
 		case TREASURE_SUNK:
-			label.setText("Treasure was sunk");
+			label.setText(infos[0] +" Treasure was lost");
 			break;
 			
 		default:

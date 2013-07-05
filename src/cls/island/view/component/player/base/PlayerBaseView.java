@@ -5,10 +5,12 @@ import java.util.List;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.InnerShadow;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -28,7 +30,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	private Node activeNode;
 
 	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg,
-			Color color, LocCalculator locCalculator, int index) {
+			Paint color, LocCalculator locCalculator, int index) {
 		super(true, model);
 		Rectangle rect = new Rectangle(283,220,color);
 		getChildren().add(rect);
@@ -38,7 +40,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		ImageView playerImage = new ImageView(playerImg);
 		playerImage.getTransforms().add(new Scale(0.7, 0.7));
 		getChildren().add(playerImage);
-		playerImage.relocate(17, 15);
+		playerImage.relocate(5, 15);
 		super.relocate(locCalculator.playerBasePositionToLoc(index));
 		rearrangeCards();
 	}
@@ -134,9 +136,16 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		Group group = new Group();
 		int yTextCoord = 30;
 		Rectangle rect = new Rectangle(270, 0, 20, 220);
-		rect.setEffect(new InnerShadow());
+		
+		rect.getStyleClass().add("active-rect");
+		DropShadow effect = new DropShadow();
+			        effect.setColor(Color.LIME);
+		       effect.setBlurType(BlurType.GAUSSIAN);
+			        effect.setSpread(0.5);
+			        effect.setRadius(25);
+		rect.setEffect(effect);
 		group.getChildren().add(rect);
-		rect.setFill(Color.GREEN);
+//		rect.setFill(Color.GREEN);
 		for (String s : "A C T I V E".split(" ")) {
 			Text t = new Text(s);
 			t.setFill(Color.WHITE);

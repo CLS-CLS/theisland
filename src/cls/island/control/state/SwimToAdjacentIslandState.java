@@ -30,8 +30,8 @@ public class SwimToAdjacentIslandState implements GameState {
 	private Player currentPlayer;
 	Map<Player, List<Island>> possibleMovePerPlayer = new HashMap<>();
 
-	public SwimToAdjacentIslandState(Island island, GameController gameController, IslandScreen islandScreen,
-			GameModel gameModel, GameState fromState) {
+	public SwimToAdjacentIslandState(Island island, GameController gameController,
+			IslandScreen islandScreen, GameModel gameModel, GameState fromState) {
 		this.sinkedIsland = island;
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
@@ -53,21 +53,24 @@ public class SwimToAdjacentIslandState implements GameState {
 		}
 		if (island.isSunk())
 			return null;
-		if (!currentPlayer.isValidMove(currentPlayer.getPiece().getIsland(), island, gameModel.getIslandGrid())){
+		if (!currentPlayer.isValidMove(currentPlayer.getPiece().getIsland(), island,
+				gameModel.getIslandGrid())) {
 			return null;
 		}
 		int index = currentPlayer.setToIsland(island);
-		islandScreen.c_movePiece(currentPlayer.getPiece().getComponent(), island.getComponent(), index);
+		islandScreen.c_movePiece(currentPlayer.getPiece().getComponent(), island.getComponent(),
+				index);
 		possibleMovePerPlayer.remove(currentPlayer);
 		currentPlayer = null;
 		for (Player player : possibleMovePerPlayer.keySet()) {
 			if (possibleMovePerPlayer.get(player).size() > 1) {
 				currentPlayer = player;
 				islandScreen.c_hideMessagePanel();
-				islandScreen.c_showMessagePanel("Move " + currentPlayer.getPiece().getColor() + " piece to an island");
+				islandScreen.c_showMessagePanel("Move " + currentPlayer.getPiece().getColor()
+						+ " piece to an island");
 			}
 		}
-		if (currentPlayer == null){
+		if (currentPlayer == null) {
 			islandScreen.c_hideMessagePanel();
 			return fromState.createGameState();
 		}
@@ -88,10 +91,6 @@ public class SwimToAdjacentIslandState implements GameState {
 
 	@Override
 	public GameState start() {
-		// check if all player can move to adjacent tile. If not the end
-		// if yes
-		// auto move players with one options, manual move player with more
-		// options
 		for (Piece piece : sinkedIsland.getPieces()) {
 			Player player = gameController.getPlayerWithPiece(piece);
 			List<Island> possibleMoves = new ArrayList<>();
@@ -103,7 +102,8 @@ public class SwimToAdjacentIslandState implements GameState {
 				}
 			}
 			if (possibleMoves.size() == 0) {
-				return new GameLostState(LooseCondition.PLAYER_SUNK, gameController, islandScreen, gameModel, fromState);
+				return new GameLostState(LooseCondition.PLAYER_SUNK, gameController, islandScreen,
+						gameModel, fromState, new Object[] { player.getPiece().getColor().name() });
 			}
 			possibleMovePerPlayer.put(player, possibleMoves);
 		}
@@ -113,7 +113,8 @@ public class SwimToAdjacentIslandState implements GameState {
 			if (possibleMovePerPlayer.get(player).size() == 1) {
 				Island toIsland = possibleMovePerPlayer.get(player).get(0);
 				int index = player.setToIsland(toIsland);
-				islandScreen.c_movePiece(player.getPiece().getComponent(), toIsland.getComponent(), index);
+				islandScreen.c_movePiece(player.getPiece().getComponent(), toIsland.getComponent(),
+						index);
 			} else {
 				manualMove = true;
 			}
@@ -129,7 +130,8 @@ public class SwimToAdjacentIslandState implements GameState {
 				break;
 			}
 		}
-		islandScreen.c_showMessagePanel("Move " + currentPlayer.getPiece().getColor() + " piece to an island");
+		islandScreen.c_showMessagePanel("Move " + currentPlayer.getPiece().getColor()
+				+ " piece to an island");
 		return null;
 	}
 

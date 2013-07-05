@@ -77,11 +77,12 @@ public class WaterRiseState implements GameState {
 				WaterRiseState.this);
 	}
 
-	private void disableClickableEffect(TreasuryCardView...excludedCards) {
+	private void disableClickableEffect(TreasuryCardView... excludedCards) {
 		List<TreasuryCardView> excludedCardsAsList = Arrays.asList(excludedCards);
-		for (Player player : gameModel.getPlayers()){
-			for (TreasuryCard card : player.getTreasuryCards()){
-				if (card.getType() == Type.SANDBAGS && !excludedCardsAsList.contains(card.getComponent())){
+		for (Player player : gameModel.getPlayers()) {
+			for (TreasuryCard card : player.getTreasuryCards()) {
+				if (card.getType() == Type.SANDBAGS
+						&& !excludedCardsAsList.contains(card.getComponent())) {
 					card.getComponent().setValidToCkickEffect(false);
 				}
 			}
@@ -113,16 +114,9 @@ public class WaterRiseState implements GameState {
 	public GameState start() {
 		islandScreen.disableButtons();
 		GameState returnState = null;
-		LooseCondition looseCondition = null;
-		if ((looseCondition = gameModel.findLooseCondition()) != null) {
-			returnState = new GameLostState(looseCondition, gameController, islandScreen, gameModel, this);
-		} // game not lost
-
-		else if (!playerHasShoreUpCard() || !flooderIslandExists()) {
+		if (!playerHasShoreUpCard() || !flooderIslandExists()) {
 			returnState = fromState.createGameState();
-		} // there is a shore up card and a flooded island
-
-		else {
+		} else {
 			islandScreen
 					.c_showMessagePanel("Save an Island with a Sandbag\nClick OK (or Right-Click) when ready");
 			enableClickableEffect();
@@ -131,9 +125,9 @@ public class WaterRiseState implements GameState {
 	}
 
 	private void enableClickableEffect() {
-		for (Player player : gameModel.getPlayers()){
-			for (TreasuryCard card : player.getTreasuryCards()){
-				if (card.getType() == Type.SANDBAGS){
+		for (Player player : gameModel.getPlayers()) {
+			for (TreasuryCard card : player.getTreasuryCards()) {
+				if (card.getType() == Type.SANDBAGS) {
 					card.getComponent().setValidToCkickEffect(true);
 				}
 			}

@@ -118,3 +118,11 @@
 	-fx-stroke: white;
 	-fx-stroke-width: 4;
 }
+
+.active-rect {
+	-fx-arc-height: 20;
+	-fx-arc-width: 50;
+	-fx-stroke: white;
+	-fx-fill: linear-gradient(to bottom right, lime, black);
+	-fx-stroke-width :2;
+}
