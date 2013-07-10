@@ -17,7 +17,7 @@ public class DrawCardState implements GameState {
 	private final GameController gameController;
 	private final IslandScreen islandScreen;
 	private final GameModel gameModel;
-	private final int numberOfDrawCards;
+	private int numberOfDrawCards;
 	private Player currentPlayer;
 	private boolean waterRised;
 
@@ -33,7 +33,7 @@ public class DrawCardState implements GameState {
 
 	public DrawCardState(GameController gameController, IslandScreen islandScreen,
 			GameModel gameModel) {
-		this(1, gameController, islandScreen, gameModel, false);
+		this(0, gameController, islandScreen, gameModel, false);
 	}
 
 	private TreasuryCard getTopPileCard() {
@@ -72,6 +72,7 @@ public class DrawCardState implements GameState {
 
 	@Override
 	public GameState start() {
+		numberOfDrawCards++;
 		if (numberOfDrawCards > GameModel.DRAW_CARDS_PER_TURN) {
 			if (waterRised) {
 				waterRised = false;
@@ -85,9 +86,8 @@ public class DrawCardState implements GameState {
 		final TreasuryCard treasuryCard = getTopPileCard();
 
 		if (treasuryCard.getType() == Type.WATER_RISE) {
-			islandScreen.c_setAnimationInProgress(false);
+			System.out.println("water rise : " + islandScreen.c_isAnimationInProgress());
 			islandScreen.c_WaterCardDrawnPopUp();
-			islandScreen.c_setAnimationInProgress(true);
 			waterRised = true;
 			gameModel.discardCard(currentPlayer, treasuryCard);
 			gameModel.increaseFloodMeter();
@@ -100,26 +100,15 @@ public class DrawCardState implements GameState {
 			gameModel.shuffleDiscardedAndPutBackToNormalPile();
 			gameModel.getTreasuryPile().getComponent().rearrangePiles();
 
-			return createGameState();
+			return this;
 
 		}
 		if (currentPlayer.getTreasuryCards().size() > 5) {
-			islandScreen.c_setAnimationInProgress(false);
-			return (new ChooseDiscardCardState(gameController, islandScreen, gameModel,
+			return (new UseOrDiscardCardState(gameController, islandScreen, gameModel,
 					DrawCardState.this));
 
 		}
-
-		islandScreen.c_setAnimationInProgress(false);
-		return DrawCardState.this.createGameState();
-
-	}
-
-	@Override
-	public GameState createGameState() {
-		islandScreen.disableButtons();
-		return new DrawCardState(getNumberOfDrawCards() + 1, gameController, islandScreen,
-				gameModel, waterRised);
+		return this;
 
 	}
 

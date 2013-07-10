@@ -1,6 +1,7 @@
 package cls.island.control.state;
 
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
@@ -28,17 +29,25 @@ public class FlyState implements GameState {
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
-		IslandComponent islandComponent = ViewUtils.findIslandComponent((Node)event.getTarget());
-		if (islandComponent == null)return null;
-		if (islandComponent instanceof IslandView){
-			Island island = ((IslandView)islandComponent).getParentModel();
-			if (island.isSunk()) return null;
-			if (island.equals(gameModel.getCurrentTurnPlayer().getPiece().getIsland())){
+		if (event.getButton() == MouseButton.SECONDARY){
+			return toNormalState();
+		}
+		if (event.getButton() != MouseButton.PRIMARY){
+			return null;
+		}
+		IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event.getTarget());
+		if (islandComponent == null)
+			return null;
+		if (islandComponent instanceof IslandView) {
+			Island island = ((IslandView) islandComponent).getParentModel();
+			if (island.isSunk())
+				return null;
+			if (island.equals(gameModel.getCurrentTurnPlayer().getPiece().getIsland())) {
 				return null;
 			}
-			int index = ((PilotPlayer)gameModel.getCurrentTurnPlayer()).fly(island);
-			islandScreen.c_movePiece(gameModel.getCurrentTurnPlayer().getPiece().
-					getComponent(), island.getComponent(), index);
+			int index = ((PilotPlayer) gameModel.getCurrentTurnPlayer()).fly(island);
+			islandScreen.c_movePiece(gameModel.getCurrentTurnPlayer().getPiece().getComponent(),
+					island.getComponent(), index);
 			return toNormalState();
 		}
 		return null;
@@ -46,7 +55,7 @@ public class FlyState implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		if (action == ButtonAction.FLY){
+		if (action == ButtonAction.FLY) {
 			return toNormalState();
 		}
 		return null;
@@ -54,7 +63,7 @@ public class FlyState implements GameState {
 
 	private GameState toNormalState() {
 		islandScreen.c_hideMessagePanel();
-		return fromState.createGameState();
+		return fromState;
 	}
 
 	@Override
@@ -64,18 +73,12 @@ public class FlyState implements GameState {
 
 	@Override
 	public GameState start() {
-		if (!((PilotPlayer)gameModel.getCurrentTurnPlayer()).canFly()){
-			return fromState.createGameState();
+		if (!((PilotPlayer) gameModel.getCurrentTurnPlayer()).canFly()) {
+			return fromState;
 		}
 		islandScreen.c_setSelectedActionButton(ButtonAction.FLY);
 		islandScreen.disableAllButtonsExcluding(ButtonAction.FLY);
 		islandScreen.c_showMessagePanel("Select tile to Fly\nRight Click to cancel");
-		return null;
-	}
-
-	@Override
-	public GameState createGameState() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

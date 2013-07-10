@@ -1,9 +1,11 @@
 package cls.island.control;
 
+import javafx.application.Platform;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
+import cls.island.utils.concurrent.ThreadUtil;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.pile.TreasuryPile;
@@ -25,7 +27,13 @@ public class GameController {
 	}
 
 	public void buttonPressed(final ButtonAction action) {
-		new Thread(new Runnable() {
+		if (islandScreen.c_isAnimationInProgress()){
+			return;
+		}
+		System.out.println("mouse Clicked animations is : " + islandScreen.c_isAnimationInProgress());
+		islandScreen.c_setAnimationInProgress(true);
+		
+		ThreadUtil.Runlater(new Runnable() {
 
 			@Override
 			public void run() {
@@ -33,30 +41,43 @@ public class GameController {
 				if (state != null) {
 					setGameState(state);
 				}
+				Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						islandScreen.c_setAnimationInProgress(false);
+
+					}
+				});
 			}
-		}).start();
+		});
 	}
 
 	public void mouseClicked(final MouseEvent event) {
+		System.out.println("mouse Clicked animations is : " + islandScreen.c_isAnimationInProgress());
 		islandScreen.c_setAnimationInProgress(true);
-		new Thread(new Runnable() {
+		ThreadUtil.Runlater(new Runnable() {
 
 			@Override
 			public void run() {
 				GameState state = gameState.mouseClicked(event);
 				if (state != null) {
 					setGameState(state);
-				} else {
-					islandScreen.c_setAnimationInProgress(false);
 				}
+				Platform.runLater(new Runnable() {
 
+					@Override
+					public void run() {
+						islandScreen.c_setAnimationInProgress(false);
+
+					}
+				});
 			}
-		}).start();
+		});
 
 	}
 
 	private void setGameState(GameState state) {
-		islandScreen.c_setAnimationInProgress(true);
 		if (state == null)
 			throw new IllegalArgumentException();
 		this.gameState = state;
@@ -64,7 +85,6 @@ public class GameController {
 		if (newState != null) {
 			setGameState(newState);
 		}
-		islandScreen.c_setAnimationInProgress(false);
 	}
 
 	public void backToMainScreen() {
@@ -86,7 +106,7 @@ public class GameController {
 			}
 		}
 	}
-	
+
 	public void setIslandScreen(IslandScreen islandScreen) {
 		this.islandScreen = islandScreen;
 	}
@@ -98,7 +118,7 @@ public class GameController {
 	public MainController getMainController() {
 		return mainController;
 	}
-	
+
 	/**
 	 * Finds the player who owns the provided piece
 	 * @param piece
@@ -106,8 +126,8 @@ public class GameController {
 	 */
 	public Player getPlayerWithPiece(Piece piece) {
 		Player resultPlayer = null;
-		for (Player player : gameModel.getPlayers()){
-			if (player.getPiece().equals(piece)){
+		for (Player player : gameModel.getPlayers()) {
+			if (player.getPiece().equals(piece)) {
 				resultPlayer = player;
 				break;
 			}

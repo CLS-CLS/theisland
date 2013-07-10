@@ -25,8 +25,9 @@ public class TradeCardStateStepTwo implements GameState {
 	private final GameState fromState;
 	private final List<Player> eligiblePlayers;
 
-	public TradeCardStateStepTwo(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
-			TreasuryCard selectedCard, List<Player> eligiblePlayers, GameState fromState) {
+	public TradeCardStateStepTwo(GameController gameController, IslandScreen islandScreen,
+			GameModel gameModel, TreasuryCard selectedCard, List<Player> eligiblePlayers,
+			GameState fromState) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
@@ -66,7 +67,7 @@ public class TradeCardStateStepTwo implements GameState {
 			player.getBase().getComponent().setValidToCkickEffect(false);
 		}
 		return new NormalState(gameController, islandScreen, gameModel);
-		
+
 	}
 
 	private GameState previousState() {
@@ -75,7 +76,7 @@ public class TradeCardStateStepTwo implements GameState {
 		for (Player player : eligiblePlayers) {
 			player.getBase().getComponent().setValidToCkickEffect(false);
 		}
-		return fromState.createGameState();
+		return fromState;
 	}
 
 	@Override
@@ -100,11 +101,6 @@ public class TradeCardStateStepTwo implements GameState {
 		}
 		return null;
 
-	}
-
-	@Override
-	public GameState createGameState() {
-		throw new UnsupportedOperationException();
 	}
 
 }

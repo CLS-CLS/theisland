@@ -3,6 +3,7 @@ package cls.island.view.component.player.base;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.BlurType;
@@ -29,10 +30,10 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	private final LocCalculator locCalculator;
 	private Node activeNode;
 
-	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg,
-			Paint color, LocCalculator locCalculator, int index) {
+	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg, Paint color,
+			LocCalculator locCalculator, int index) {
 		super(true, model);
-		Rectangle rect = new Rectangle(283,220,color);
+		Rectangle rect = new Rectangle(283, 220, color);
 		getChildren().add(rect);
 		this.locCalculator = locCalculator;
 		activeNode = createActiveNode();
@@ -44,8 +45,28 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		super.relocate(locCalculator.playerBasePositionToLoc(index));
 		rearrangeCards();
 	}
-	
-	
+
+//	/**
+//	 * rearrange cards withouts animation
+//	 */
+//	private void setUpCards() {
+//		List<TreasuryCard> treasuryCardsInBase = getParentModel().getTreasuryCards();
+//		for (int i = 0; i < treasuryCardsInBase.size(); i++) {
+//			treasuryCardsInBase.get(i).getComponent()
+//					.relocate(this.getLoc().add(locCalculator.cardLocationInCardHolder(i)));
+//		}
+//	}
+
+//	/**
+//	 * moveToBase without animation
+//	 */
+//	public void setToBase(TreasuryCardView treasuryCard) {
+//		int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
+//		treasuryCard.setSelectable(true);
+//		treasuryCard.relocate(PlayerBaseView.this.getLoc().add(
+//				locCalculator.cardLocationInCardHolder(index)));
+//	}
+
 	public void moveToBase(final TreasuryCardView treasuryCard) {
 		execute(new SignaledRunnable() {
 
@@ -59,7 +80,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 				int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 				treasuryCard.setSelectable(true);
 				Animations.teleportCardToLocationReverse(treasuryCard, PlayerBaseView.this.getLoc()
-						.add(locCalculator.cardLocationInCardHolder(index)), wait);
+						.add(locCalculator.cardLocationInCardHolder(index)), condition());
 			}
 		});
 
@@ -83,7 +104,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 
 			@Override
 			public void run() {
-				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, wait);
+				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, condition());
 
 			}
 		});
@@ -111,13 +132,8 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	}
 
 	public void setActive(final boolean active) {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
-
+		Platform.runLater(new Runnable() {
+			
 			@Override
 			public void run() {
 				if (active && !getChildren().contains(activeNode)) {
@@ -126,26 +142,25 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 				if (!active) {
 					getChildren().remove(activeNode);
 				}
-
 			}
 		});
-
+	
 	}
 
 	public Node createActiveNode() {
 		Group group = new Group();
 		int yTextCoord = 30;
 		Rectangle rect = new Rectangle(270, 0, 20, 220);
-		
+
 		rect.getStyleClass().add("active-rect");
 		DropShadow effect = new DropShadow();
-			        effect.setColor(Color.LIME);
-		       effect.setBlurType(BlurType.GAUSSIAN);
-			        effect.setSpread(0.5);
-			        effect.setRadius(25);
+		effect.setColor(Color.LIME);
+		effect.setBlurType(BlurType.GAUSSIAN);
+		effect.setSpread(0.5);
+		effect.setRadius(25);
 		rect.setEffect(effect);
 		group.getChildren().add(rect);
-//		rect.setFill(Color.GREEN);
+		// rect.setFill(Color.GREEN);
 		for (String s : "A C T I V E".split(" ")) {
 			Text t = new Text(s);
 			t.setFill(Color.WHITE);

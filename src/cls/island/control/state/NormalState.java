@@ -141,13 +141,8 @@ public class NormalState implements GameState {
 		updateActionButtons();
 		islandScreen.c_setSelectedActionButton(ButtonAction.MOVE);
 		if (gameModel.getCurrentTurnPlayer().getTreasuryCards().size() > GameModel.MAX_CARDS_ALLOWED_IN_HAND) {
-			return new ChooseDiscardCardState(gameController, islandScreen, gameModel, this);
+			return new UseOrDiscardCardState(gameController, islandScreen, gameModel, this);
 		}
 		return null;
-	}
-
-	@Override
-	public GameState createGameState() {
-		return new NormalState(gameController, islandScreen, gameModel);
 	}
 }

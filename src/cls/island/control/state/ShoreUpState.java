@@ -88,9 +88,4 @@ public class ShoreUpState implements GameState {
 		return null;
 	}
 
-	@Override
-	public GameState createGameState() {
-		return new ShoreUpState(gameController, islandScreen, gameModel);
-	}
-
 }

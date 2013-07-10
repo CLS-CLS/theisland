@@ -72,7 +72,7 @@ public class SwimToAdjacentIslandState implements GameState {
 		}
 		if (currentPlayer == null) {
 			islandScreen.c_hideMessagePanel();
-			return fromState.createGameState();
+			return fromState;
 		}
 		return null;
 	}
@@ -121,7 +121,7 @@ public class SwimToAdjacentIslandState implements GameState {
 		}
 
 		if (!manualMove) {
-			return fromState.createGameState();
+			return fromState;
 		}
 
 		for (Player player : possibleMovePerPlayer.keySet()) {
@@ -132,12 +132,6 @@ public class SwimToAdjacentIslandState implements GameState {
 		}
 		islandScreen.c_showMessagePanel("Move " + currentPlayer.getPiece().getColor()
 				+ " piece to an island");
-		return null;
-	}
-
-	@Override
-	public GameState createGameState() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

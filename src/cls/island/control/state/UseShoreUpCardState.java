@@ -35,22 +35,21 @@ public class UseShoreUpCardState implements GameState {
 	 * discardCard && drawCard)
 	 */
 	private GameState changeState() {
-		for (Island island : gameModel.getIslands()){
+		for (Island island : gameModel.getIslands()) {
 			island.getComponent().setValidToCkickEffect(false);
 		}
 		selectedTreasureCard.getComponent().setValidToCkickEffect(false);
 		islandScreen.c_hideMessagePanel();
-		if (fromState instanceof ChooseDiscardCardState) {
-			ChooseDiscardCardState discardState = (ChooseDiscardCardState) fromState;
-			if (discardState.getFromState() instanceof DrawCardState) {
-				DrawCardState drawCardState = (DrawCardState) discardState.getFromState();
-				return drawCardState.createGameState();
+		if (fromState instanceof UseOrDiscardCardState) {
+			if (!(fromState.getFromState() instanceof DrawCardState)) {
+				throw new RuntimeException(
+						"UseOrDiscardState expected to have been triggered by DrawCarsState only but found "
+								+ fromState.getFromState().getClass());
 			}
-
+			return fromState.getFromState();
 		} else {
-			return fromState.createGameState();
+			return fromState;
 		}
-		return null;
 	}
 
 	@Override
@@ -80,12 +79,12 @@ public class UseShoreUpCardState implements GameState {
 	}
 
 	private GameState cancel() {
-		for (Island island : gameModel.getIslands()){
+		for (Island island : gameModel.getIslands()) {
 			island.getComponent().setValidToCkickEffect(false);
 		}
 		selectedTreasureCard.getComponent().setValidToCkickEffect(false);
 		islandScreen.c_hideMessagePanel();
-		return fromState.createGameState();
+		return fromState;
 	}
 
 	@Override
@@ -102,19 +101,14 @@ public class UseShoreUpCardState implements GameState {
 	@Override
 	public GameState start() {
 		islandScreen.disableButtons();
-		for (Island island : gameModel.getIslands()){
-			if (island.isFlooded() && !island.isSunk()){
+		for (Island island : gameModel.getIslands()) {
+			if (island.isFlooded() && !island.isSunk()) {
 				island.getComponent().setValidToCkickEffect(true);
 			}
 		}
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
 		return null;
-	}
-
-	@Override
-	public GameState createGameState() {
-		throw new UnsupportedOperationException("no need to support it yet");
 	}
 
 }

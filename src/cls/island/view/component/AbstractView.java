@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.SignaledRunnable;
@@ -24,19 +25,17 @@ import cls.island.utils.concurrent.AutoReentrantLock;
 import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
-public class AbstractView<T> extends Parent implements IslandComponent {
+public class AbstractView<T> extends Parent implements IslandComponent, ThreadBlock {
 	private static final double HOVER_OVER_OPACITY = 0.2;
 	private static final double HOVER_OVER_ANIM_DURATION = 200;
-
 	private boolean selectable = true;
-	private final Lock lock = new AutoReentrantLock();
 	protected static LocCalculator locCalculator = LocCalculator.getInstance();
 	private Rectangle mouseEnteredRect;
 	private Timeline onEnteredAnimation = new Timeline();
 	private Timeline onExitedAnimation = new Timeline();
 	private T model;
-	protected volatile Condition wait = lock.newCondition();
 	private volatile OnOffEffectNode validToClick;
+	private volatile ThreadBlock  threadBlock = new FxThreadBlock();
 
 	private static final Effect defaultEffect() {
 		Light.Distant light = new Light.Distant();
@@ -183,26 +182,12 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	}
 
 	public void execute(final SignaledRunnable runnable) {
-		if (Platform.isFxApplicationThread()) {
-			runnable.run();
-			return;
-		}
-		lock.lock();
+		threadBlock.execute(runnable);
+	}
 
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				runnable.run();
-				if (!runnable.willSignal()) {
-					wait.signal();
-				}
-			}
-		});
-		try {
-			wait.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	@Override
+	public Condition condition() {
+		return threadBlock.condition();
 	}
 
 }

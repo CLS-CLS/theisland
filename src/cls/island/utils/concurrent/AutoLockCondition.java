@@ -37,7 +37,7 @@ public class AutoLockCondition implements Condition{
 
 	@Override
 	public void signalAll() {
-
+		throw new UnsupportedOperationException();
 	}
 	@Override
 	public void awaitUninterruptibly() {

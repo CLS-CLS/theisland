@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.concurrent.locks.Condition;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -40,8 +41,11 @@ import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
+import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator.Loc;
+import cls.island.utils.SignaledRunnable;
 import cls.island.view.component.MessagePanel;
+import cls.island.view.component.ThreadBlock;
 import cls.island.view.component.actionsleft.ActionsLeftView;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
@@ -59,13 +63,14 @@ import cls.island.view.screen.popup.FloodCardDrawPopUp;
 import cls.island.view.screen.popup.GameLostPopUp;
 import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 
-public class IslandScreen extends AbstractScreen {
+public class IslandScreen extends AbstractScreen  {
 
 	private Rectangle background;
 	private List<TreasuryCard> cards = new ArrayList<>();
 	private TreasuryPile treasuryBase;
 	private MessagePanel msgPanel = new MessagePanel();
 	private GameController gameController;
+	private ThreadBlock threadBlock = new FxThreadBlock();
 	/**
 	 * hold all the available buttons for easy iteration.
 	 */
@@ -81,6 +86,7 @@ public class IslandScreen extends AbstractScreen {
 	private IslandView islandViewToDelete;
 	private WaterLevelView waterLevelView;
 	private Button collectTreasureButton;
+
 
 	public IslandScreen(final MainController mainController, final GameController gameController, final Config config, GameModel model) {
 		super(mainController, config);
@@ -132,7 +138,9 @@ public class IslandScreen extends AbstractScreen {
 
 			@Override
 			public void handle(MouseEvent event) {
-				gameController.mouseClicked(event);
+				if (!c_isAnimationInProgress()) {
+					gameController.mouseClicked(event);
+				}
 			}
 		});
 
@@ -200,22 +208,34 @@ public class IslandScreen extends AbstractScreen {
 		return floodCards;
 	}
 
-	public void c_movePiece(PieceView pieceView, final IslandView islandView, int index) {
-		Loc pieceLoc = islandView.getLoc().add(locCalculator.pieceLocationOnIslandTile(index));
-		EventHandler<ActionEvent> onFinish = new EventHandler<ActionEvent>() {
-
+	public void c_movePiece(final PieceView pieceView, final IslandView islandView, final int index) {
+		execute(new SignaledRunnable() {
+			
 			@Override
-			public void handle(ActionEvent event) {
-				// TODO Fix It !! BAD CODE *** calls the model.. when it
-				// shouldn' t
-				SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel()
-						.getPiecesAndPositions();
-				for (int order : pieceZorder.keySet()) {
-					pieceZorder.get(order).getComponent().toFront();
-				}
+			public boolean willSignal() {
+				return true;
 			}
-		};
-		Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, null);
+			
+			@Override
+			public void run() {
+				Loc pieceLoc = islandView.getLoc().add(locCalculator.pieceLocationOnIslandTile(index));
+				EventHandler<ActionEvent> onFinish = new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						// TODO Fix It !! BAD CODE *** calls the model.. when it
+						// shouldn' t
+						SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel()
+								.getPiecesAndPositions();
+						for (int order : pieceZorder.keySet()) {
+							pieceZorder.get(order).getComponent().toFront();
+						}
+					}
+				};
+				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, condition());
+			}
+		});
+		
 	}
 
 	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard,
@@ -234,25 +254,31 @@ public class IslandScreen extends AbstractScreen {
 		if (Platform.isFxApplicationThread())
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
-
-		popUpwaitCondition = lock.newCondition();
-		lock.lock();
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
-				msgPanel.layoutYProperty(), 800)));
-		timeline.setOnFinished(new EventHandler<ActionEvent>() {
-
+		
+		execute(new SignaledRunnable() {
+			
 			@Override
-			public void handle(ActionEvent event) {
-				msgPanel.showMessage(message);
-				popUpwaitCondition.signal();
+			public boolean willSignal() {
+				return true;
+			}
+			
+			@Override
+			public void run() {
+				Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
+						msgPanel.layoutYProperty(), 800)));
+				timeline.setOnFinished(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+						msgPanel.showMessage(message);
+						condition().signal();
+					}
+				});
+				timeline.play();
 			}
 		});
-		timeline.play();
-		try {
-			popUpwaitCondition.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		
+		
 	}
 
 	public void c_hideMessagePanel() {
@@ -260,24 +286,30 @@ public class IslandScreen extends AbstractScreen {
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
 
-		popUpwaitCondition = lock.newCondition();
-		lock.lock();
-		Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
-				msgPanel.layoutYProperty(), 1000)));
-		tmln.setOnFinished(new EventHandler<ActionEvent>() {
-
+		execute(new SignaledRunnable() {
+			
 			@Override
-			public void handle(ActionEvent event) {
-				popUpwaitCondition.signal();
+			public boolean willSignal() {
+				return true;
+			}
+			
+			@Override
+			public void run() {
+				Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
+						msgPanel.layoutYProperty(), 1000)));
+				tmln.setOnFinished(new EventHandler<ActionEvent>() {
 
+					@Override
+					public void handle(ActionEvent event) {
+						condition().signal();
+
+					}
+				});
+				tmln.play();
 			}
 		});
-		tmln.play();
-		try {
-			popUpwaitCondition.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		
+		
 	}
 
 	public void c_WaterCardDrawnPopUp() {
@@ -405,4 +437,7 @@ public class IslandScreen extends AbstractScreen {
 			flyButton.setOpacity(1);
 		}
 	}
+
+	
+
 }

@@ -50,8 +50,7 @@ public class UseHelicopterCardState implements GameState {
 			island.getComponent().setValidToCkickEffect(false);
 		}
 		islandScreen.c_hideMessagePanel();
-		return fromState.createGameState();
-		
+		return fromState;
 	}
 	
 	
@@ -101,11 +100,6 @@ public class UseHelicopterCardState implements GameState {
 		islandScreen.disableButtons();
 		islandScreen.c_showMessagePanel("Select an Island to Fly from!\nRight Click to cancel");
 		return null;
-	}
-
-	@Override
-	public GameState createGameState() {
-		return new UseHelicopterCardState(gameController, islandScreen, gameModel, card, fromState);
 	}
 
 }

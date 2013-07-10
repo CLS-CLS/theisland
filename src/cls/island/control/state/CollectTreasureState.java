@@ -53,13 +53,8 @@ public class CollectTreasureState implements GameState {
 			}
 		}
 		
-		return fromState.createGameState();
+		return fromState;
 
-	}
-
-	@Override
-	public GameState createGameState() {
-		throw new UnsupportedOperationException();
 	}
 
 }

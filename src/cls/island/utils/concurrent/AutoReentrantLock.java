@@ -16,6 +16,7 @@ public class AutoReentrantLock extends ReentrantLock {
 	
 	@Override
 	public void lock() {
+		if (isHeldByCurrentThread())return;
 		super.lock();
 //		System.out.println("lock : locked By thread " + Thread.currentThread());
 	}

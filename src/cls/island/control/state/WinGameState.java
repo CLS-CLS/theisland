@@ -57,10 +57,4 @@ public class WinGameState implements GameState {
 		return null;
 	}
 
-	@Override
-	public GameState createGameState() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

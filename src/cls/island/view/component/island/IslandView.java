@@ -41,12 +41,11 @@ public class IslandView extends AbstractView<Island> {
 	private Node savedNode;
 	private ImageView treasureImageView;
 	final ColorAdjust floodEffect;
-	
 
 	public IslandView(Image tileImage, Model model, Island component) {
 		this(tileImage, model, component, null);
 	}
-	
+
 	public IslandView(Image tileImage, Model model, Island component, Image treasureImg) {
 		super(true, component);
 		floodEffect = new ColorAdjust(0, 0, 0, 0);
@@ -60,32 +59,32 @@ public class IslandView extends AbstractView<Island> {
 		if (model.isSunk()) {
 			sink();
 		}
-		if (treasureImg != null){
+		if (treasureImg != null) {
 			treasureImageView = new ImageView(treasureImg);
 			getChildren().add(treasureImageView);
 			treasureImageView.relocate(0, 50);
 		}
 	}
-	
 
 	private void init(Image tileImage) {
 		width = tileImage.getRequestedWidth();
 		height = tileImage.getRequestedHeight();
 		islandImage = new ImageView(tileImage);
 		savedNode = createBorder();
-//		if (new Random().nextBoolean()){
-			flood = new Rectangle(width, height, Color.BLUE);
-			flood.opacityProperty().set(0);
-			flood.setBlendMode(BlendMode.OVERLAY);
-//		}
-		
+		// if (new Random().nextBoolean()){
+		flood = new Rectangle(width, height, Color.BLUE);
+		flood.opacityProperty().set(0);
+		flood.setBlendMode(BlendMode.OVERLAY);
+		// }
+
 		islandImage.setEffect(floodEffect);
 		getChildren().add(islandImage);
-		if (flood !=null)getChildren().add(flood);
+		if (flood != null)
+			getChildren().add(flood);
 	}
 
 	private Node createBorder() {
-		return new ImageView(new Image("images/other/saved.png", 20,20,false,true));
+		return new ImageView(new Image("images/other/saved.png", 20, 20, false, true));
 	}
 
 	public void activateSavedNode() {
@@ -99,7 +98,7 @@ public class IslandView extends AbstractView<Island> {
 			@Override
 			public void run() {
 				IslandView.this.getChildren().add(savedNode);
-				savedNode.relocate(0,100);
+				savedNode.relocate(0, 100);
 			}
 		});
 
@@ -120,7 +119,6 @@ public class IslandView extends AbstractView<Island> {
 		timelineSingle.play();
 	}
 
-	
 	public void sink() {
 		execute(new SignaledRunnable() {
 
@@ -131,37 +129,24 @@ public class IslandView extends AbstractView<Island> {
 
 			@Override
 			public void run() {
-				Animations.sinkTile(IslandView.this, wait);
+				Animations.sinkTile(IslandView.this, condition());
 			}
 		});
 	}
-	
+
 	/**
 	 * make an island flooded without anim.
 	 */
-	public void setFlood(){
-		//TODO Fix this ugly code.. same properties are in animation .. yack!!
-		final double brightness =  0.37;
+	public void setFlood() {
+		// TODO Fix this ugly code.. same properties are in animation .. yack!!
+		final double brightness = 0.37;
 		final double contrast = 0.34;
-		final double saturation =  -1;
-		final double opacity  = 0.5 ;
-		
-		execute(new SignaledRunnable() {
-			
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
-			
-			@Override
-			public void run() {
-				floodEffect.setBrightness(brightness);
-				floodEffect.setContrast(contrast);
-				floodEffect.setSaturation(saturation);
-				flood.setOpacity(opacity);
-				
-			}
-		});
+		final double saturation = -1;
+		final double opacity = 0.5;
+		floodEffect.setBrightness(brightness);
+		floodEffect.setContrast(contrast);
+		floodEffect.setSaturation(saturation);
+		flood.setOpacity(opacity);
 	}
 
 	public void flood() {
@@ -175,20 +160,21 @@ public class IslandView extends AbstractView<Island> {
 			@Override
 			public void run() {
 				animate(FLOOD);
-				
+
 			}
 		});
 
 	}
-	
+
 	private void animate(boolean floodBool) {
 		List<DoubleProperty> animateProps = new ArrayList<>();
 		animateProps.add(floodEffect.brightnessProperty());
 		animateProps.add(floodEffect.contrastProperty());
 		animateProps.add(floodEffect.saturationProperty());
 		animateProps.add(flood.opacityProperty());
-		Animations.floodTile(Arrays.asList(new IslandView[]{this}),animateProps, floodBool, wait);
-		
+		Animations.floodTile(Arrays.asList(new IslandView[] { this }), animateProps, floodBool,
+				condition());
+
 	}
 
 	public void unFlood() {
@@ -205,12 +191,12 @@ public class IslandView extends AbstractView<Island> {
 			}
 		});
 	}
-	
+
 	/**
 	 * returns the properties of the effect
 	 * @return
 	 */
-	public Map<String, DoubleProperty> exposeEffect(){
+	public Map<String, DoubleProperty> exposeEffect() {
 		Map<String, DoubleProperty> list = new HashMap<>();
 		list.put("Brightness", floodEffect.brightnessProperty());
 		list.put("Contrast", floodEffect.contrastProperty());
@@ -221,21 +207,21 @@ public class IslandView extends AbstractView<Island> {
 
 	public void setSaved(final boolean b) {
 		execute(new SignaledRunnable() {
-			
+
 			@Override
 			public boolean willSignal() {
 				return false;
 			}
-			
+
 			@Override
 			public void run() {
-				if (b){
+				if (b) {
 					getChildren().add(savedNode);
-				}else {
+				} else {
 					getChildren().remove(savedNode);
 				}
 			}
 		});
-		
+
 	}
 }

@@ -10,7 +10,6 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
-import cls.island.model.LooseCondition;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
@@ -92,7 +91,7 @@ public class WaterRiseState implements GameState {
 	private GameState cancel() {
 		disableClickableEffect();
 		islandScreen.c_hideMessagePanel();
-		return fromState.createGameState();
+		return fromState;
 	}
 
 	@Override
@@ -115,7 +114,7 @@ public class WaterRiseState implements GameState {
 		islandScreen.disableButtons();
 		GameState returnState = null;
 		if (!playerHasShoreUpCard() || !flooderIslandExists()) {
-			returnState = fromState.createGameState();
+			returnState = fromState;
 		} else {
 			islandScreen
 					.c_showMessagePanel("Save an Island with a Sandbag\nClick OK (or Right-Click) when ready");
@@ -156,11 +155,6 @@ public class WaterRiseState implements GameState {
 			}
 		}
 		return shoreUpCardsExist;
-	}
-
-	@Override
-	public GameState createGameState() {
-		return new WaterRiseState(gameController, islandScreen, gameModel, getFromState());
 	}
 
 }

@@ -9,12 +9,15 @@ import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.Config;
 import cls.island.control.MainController;
+import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
+import cls.island.utils.SignaledRunnable;
 import cls.island.utils.concurrent.AutoReentrantLock;
+import cls.island.view.component.ThreadBlock;
 import cls.island.view.screen.popup.PopUpInternal;
 import cls.island.view.screen.popup.PopUpWrapper;
 
-public abstract class AbstractScreen extends Group {
+public abstract class AbstractScreen extends Group implements ThreadBlock {
 
 	protected static LocCalculator locCalculator = LocCalculator.getInstance();
 	protected final AutoReentrantLock lock = new AutoReentrantLock();
@@ -22,40 +25,25 @@ public abstract class AbstractScreen extends Group {
 	final protected MainController mainController;
 	final protected Config config;
 	private volatile boolean animationInProgress;
-	private volatile boolean animationInProgressOriginal;
-
-	protected Condition popUpwaitCondition;
+	private boolean animationInProgressOriginal;
+	private volatile ThreadBlock threadBlock = new FxThreadBlock();
 
 	public AbstractScreen(MainController mainController, Config config) {
 		this.mainController = mainController;
 		this.config = config;
-		addDisableButtonPressFilter();
 	}
 
-	public  void c_setAnimationInProgress(final boolean inProgress) {
-		Platform.runLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				synchronized (AbstractScreen.this) {
-					AbstractScreen.this.animationInProgress = inProgress;
-				}
-			}
-		});
-		
+	public void c_setAnimationInProgress(final boolean inProgress) {
+		if (!Platform.isFxApplicationThread()) {
+			throw new RuntimeException("should have been in Fx- Thread");
+		}
+		synchronized (AbstractScreen.this) {
+			animationInProgress = inProgress;
+		}
 	}
 
-	private void addDisableButtonPressFilter() {
-		this.addEventFilter(MouseEvent.ANY, new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-				if (animationInProgress) {
-					event.consume();
-				}
-			}
-		});
-
+	public boolean c_isAnimationInProgress() {
+		return animationInProgress;
 	}
 
 	public static LocCalculator getLocCalculator() {
@@ -69,54 +57,61 @@ public abstract class AbstractScreen extends Group {
 	public Config getConfig() {
 		return config;
 	}
-	
+
 	/**
 	 * Shows the pop up on top of this screen. Makes the thread that 
 	 * requested this pop-up to wait until the pop-up is closed.
 	 * @param popUpInternal
 	 * @return
 	 */
-	protected <T> T c_showPopup(PopUpInternal<T> popUpInternal) {
+	protected <T> T c_showPopup(final PopUpInternal<T> popUpInternal) {
 		if (Platform.isFxApplicationThread())
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
-		
-		popUpwaitCondition = lock.newCondition();
-		lock.lock();
-		final PopUpWrapper<T> popUp = new PopUpWrapper<>(popUpInternal, this);
-		Platform.runLater(new Runnable() {
+		final PopUpWrapper<T> popUp = new PopUpWrapper<>(popUpInternal, AbstractScreen.this);
+		threadBlock.execute(new SignaledRunnable() {
+
+			@Override
+			public boolean willSignal() {
+				return true;
+			}
 
 			@Override
 			public void run() {
 				getChildren().add(popUp);
 				popUp.show();
 				animationInProgressOriginal = animationInProgress;
-				c_setAnimationInProgress(false);
 				
 			}
 		});
-		try {
-			popUpwaitCondition.await();
-			return popUp.getResult();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;
+		c_setAnimationInProgress(false);
+		return popUp.getResult();
+		
+		
 	}
-	
+
 	/**
 	 * closes the pop-up and resumes the paused thread which requested the 
 	 * pop-up to open.
 	 * @param popUp
 	 */
 	public void closePopup(final PopUpWrapper<?> popUp) {
+		condition().signal();
 		getChildren().remove(popUp);
 		c_setAnimationInProgress(animationInProgressOriginal);
-		popUpwaitCondition.signal();
+		// popUpwaitCondition.signal();
 
 	}
-	
-	
-	
+
+	@Override
+	public void execute(SignaledRunnable runnable) {
+		threadBlock.execute(runnable);
+
+	}
+
+	@Override
+	public Condition condition() {
+		return threadBlock.condition();
+	}
 
 }

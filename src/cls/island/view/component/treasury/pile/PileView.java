@@ -53,7 +53,7 @@ public class PileView extends AbstractView<TreasuryPile> {
 			@Override
 			public void run() {
 				// treasuryCard.relocate(PileView.this.getLoc().add(cardLoc));
-				Animations.moveComponentToLocation(treasuryCard, PileView.this.getLoc().add(cardLoc), null, wait);
+				Animations.moveComponentToLocation(treasuryCard, PileView.this.getLoc().add(cardLoc), null, condition());
 
 			}
 		});

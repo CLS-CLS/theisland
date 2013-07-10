@@ -1,7 +1,10 @@
 package cls.island.view.screen.popup;
 
+import java.util.concurrent.locks.Condition;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.paint.Color;
@@ -60,7 +63,7 @@ public class PopUpWrapper<T> extends AbstractScreen {
 		setOpacity(0);
 		TimelineSingle timelineSingle = new TimelineSingle();
 		timelineSingle.getKeyFrames().add(
-				new KeyFrame(Duration.millis(300), new KeyValue(PopUpWrapper.this.opacityProperty(),
+				new KeyFrame(Duration.millis(2000), new KeyValue(PopUpWrapper.this.opacityProperty(),
 						1)));
 		timelineSingle.play();
 

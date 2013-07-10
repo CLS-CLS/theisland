@@ -37,7 +37,7 @@ public class UseHelicopterCardStepTwoState implements GameState {
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
-			return goToState(fromState.createGameState());
+			return goToState(fromState);
 		}
 
 		// various checks --start
@@ -59,17 +59,17 @@ public class UseHelicopterCardStepTwoState implements GameState {
 
 		if (takeOffIsland.getPieces().size() == 1) {
 			flyToIsland(island, takeOffIsland.getPieces().get(0));
-			return goToState(fromState.getFromState().createGameState());
+			return goToState(fromState.getFromState());
 		} else {
 			List<Piece> result = islandScreen
 					.c_showSelectPieceToFlyPopUp(takeOffIsland.getPieces());
 			if (result.size() == 0) {
-				return goToState(fromState.createGameState());
+				return goToState(fromState);
 			} else {
 				for (Piece piece : result) {
 					flyToIsland(island, piece);
 				}
-				return goToState(fromState.getFromState().createGameState());
+				return goToState(fromState.getFromState());
 			}
 		}
 	}
@@ -103,12 +103,6 @@ public class UseHelicopterCardStepTwoState implements GameState {
 		islandScreen.c_showMessagePanel("Select Island to Fly to\nRight Click to cancel");
 		card.getComponent().setValidToCkickEffect(true);
 		takeOffIsland.getComponent().setValidToCkickEffect(true);
-		return null;
-	}
-
-	@Override
-	public GameState createGameState() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -68,7 +68,7 @@ public class TradeCardState implements GameState {
 
 	private GameState previousState() {
 		islandScreen.c_hideMessagePanel();
-		return fromState.createGameState();
+		return fromState;
 	}
 
 	@Override
@@ -98,20 +98,15 @@ public class TradeCardState implements GameState {
 		eligibleCards = new ArrayList<>();
 		gameModel.findCurrentPlayerEligibleCardsAndPlayersToTrade(eligibleCards, eligiblePlayers);
 		if (eligibleCards.size() == 0){
-			return fromState.createGameState();
+			return fromState;
 		}
 		if (eligiblePlayers.size() == 0){
-			return fromState.createGameState();
+			return fromState;
 		}
 		islandScreen.c_showMessagePanel("Choose a card to give \nRight-Click to cancel");
 		return null;
 
 	}
 
-	@Override
-	public GameState createGameState() {
-		return new TradeCardState(gameController, islandScreen, gameModel, fromState);
-
-	}
 
 }
