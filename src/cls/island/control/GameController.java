@@ -13,13 +13,14 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY;
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO;
 	}
 
 	volatile private GameState gameState;
 	private MainController mainController;
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
+	private Action lastAction;
 
 	public GameController(MainController mainController, GameModel gameModel) {
 		this.mainController = mainController;
@@ -27,26 +28,28 @@ public class GameController {
 	}
 
 	public void buttonPressed(final ButtonAction action) {
-		if (islandScreen.c_isAnimationInProgress()){
+		if (islandScreen.c_isAnimationInProgress()) {
 			return;
 		}
-		System.out.println("mouse Clicked animations is : " + islandScreen.c_isAnimationInProgress());
 		islandScreen.c_setAnimationInProgress(true);
-		
 		ThreadUtil.Runlater(new Runnable() {
 
 			@Override
 			public void run() {
-				GameState state = gameState.buttonPressed(action);
-				if (state != null) {
-					setGameState(state);
+				if (action == ButtonAction.UNDO) {
+					lastAction.revert();
+					lastAction = null;
+				} else {
+					GameState state = gameState.buttonPressed(action);
+					if (state != null) {
+						setGameState(state);
+					}
 				}
 				Platform.runLater(new Runnable() {
 
 					@Override
 					public void run() {
 						islandScreen.c_setAnimationInProgress(false);
-
 					}
 				});
 			}
@@ -54,7 +57,8 @@ public class GameController {
 	}
 
 	public void mouseClicked(final MouseEvent event) {
-		System.out.println("mouse Clicked animations is : " + islandScreen.c_isAnimationInProgress());
+		System.out.println("mouse Clicked animations is : "
+				+ islandScreen.c_isAnimationInProgress());
 		islandScreen.c_setAnimationInProgress(true);
 		ThreadUtil.Runlater(new Runnable() {
 
@@ -133,5 +137,11 @@ public class GameController {
 			}
 		}
 		return resultPlayer;
+	}
+
+	public void executeAction(Action action) {
+		lastAction = action;
+		action.execute();
+
 	}
 }

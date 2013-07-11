@@ -290,6 +290,10 @@ public class Player {
 		return true;
 	}
 	
+	public void setActionsLeft(int actionsLeft) {
+		this.actionsLeft.setValue(actionsLeft);
+	}
+	
 	
 
 }

@@ -2,6 +2,7 @@ package cls.island.control.state;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import cls.island.control.Action;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
@@ -30,8 +31,8 @@ public class NormalState implements GameState {
 		this.gameModel = gameModel;
 	}
 
-	public void mouseClickedOnIslandTile(Island island) {
-		PieceView movingPiece = gameModel.getCurrentTurnPlayer().getPiece().getComponent();
+	public void mouseClickedOnIslandTile(final Island island) {
+		final PieceView movingPiece = gameModel.getCurrentTurnPlayer().getPiece().getComponent();
 		Island from = movingPiece.getParentModel().getIsland();
 
 		if (!gameModel.getCurrentTurnPlayer().hasAction())
@@ -42,9 +43,25 @@ public class NormalState implements GameState {
 		if (!gameModel.getCurrentTurnPlayer().isValidMove(from, island, gameModel.getIslandGrid())) {
 			return;
 		}
-		int addedIndex = gameModel.getCurrentTurnPlayer().moveToIsland(island);
-		islandScreen.c_movePiece(movingPiece, island.getComponent(), addedIndex);
-		updateActionButtons();
+		
+		gameController.executeAction(new Action(){
+			Island previousIsland = null;
+			int actionsLeft = gameModel.getCurrentTurnPlayer().getActionsLeft();
+			
+			public void execute(){
+				previousIsland = gameModel.getCurrentTurnPlayer().getPiece().getIsland();
+				int addedIndex = gameModel.getCurrentTurnPlayer().moveToIsland(island);
+				islandScreen.c_movePiece(movingPiece, island.getComponent(), addedIndex);
+				updateActionButtons();
+			}
+			
+			public void revert(){
+				int addedIndex = gameModel.getCurrentTurnPlayer().setToIsland(previousIsland);
+				gameModel.getCurrentTurnPlayer().setActionsLeft(actionsLeft);
+				islandScreen.c_movePiece(movingPiece, previousIsland.getComponent(), addedIndex);
+			}
+		});
+		
 	}
 
 	@Override

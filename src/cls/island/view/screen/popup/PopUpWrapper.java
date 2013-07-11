@@ -63,7 +63,7 @@ public class PopUpWrapper<T> extends AbstractScreen {
 		setOpacity(0);
 		TimelineSingle timelineSingle = new TimelineSingle();
 		timelineSingle.getKeyFrames().add(
-				new KeyFrame(Duration.millis(2000), new KeyValue(PopUpWrapper.this.opacityProperty(),
+				new KeyFrame(Duration.millis(500), new KeyValue(PopUpWrapper.this.opacityProperty(),
 						1)));
 		timelineSingle.play();
 

@@ -78,6 +78,7 @@ public class IslandScreen extends AbstractScreen {
 	private ToggleGroup toggleGroup = new ToggleGroup();
 	private ToggleButton moveButton;
 	private Button nextTurnButton;
+	private Button undoButton;
 	private ToggleButton shoreUpButton;
 	private ToggleButton tradeButton;
 	private ToggleButton flyButton;
@@ -177,6 +178,7 @@ public class IslandScreen extends AbstractScreen {
 		nextTurnButton = ButtonFactory.actionButton("Next \n Turn", ButtonAction.NEXT_TURN,
 				gameController);
 		buttons.add(nextTurnButton);
+		undoButton = ButtonFactory.actionButton("Undo", ButtonAction.UNDO, gameController);
 		flyButton = ButtonFactory.actionToggleButton("Fly", ButtonAction.FLY, gameController);
 		flyButton.setToggleGroup(toggleGroup);
 		buttons.add(flyButton);
@@ -188,6 +190,7 @@ public class IslandScreen extends AbstractScreen {
 		tradeButton.relocate(1200, 410);
 		collectTreasureButton.relocate(1310, 410);
 		nextTurnButton.relocate(1200, 520);
+		undoButton.relocate(1200, 630);
 		flyButton.relocate(1310, 520);
 
 		getChildren().add(moveButton);
@@ -195,6 +198,7 @@ public class IslandScreen extends AbstractScreen {
 		getChildren().add(collectTreasureButton);
 		getChildren().add(tradeButton);
 		getChildren().add(nextTurnButton);
+		getChildren().add(undoButton);
 		getChildren().add(flyButton);
 		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		getChildren().add(msgPanel);
