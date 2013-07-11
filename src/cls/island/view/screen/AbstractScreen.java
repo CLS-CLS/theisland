@@ -3,10 +3,7 @@ package cls.island.view.screen;
 import java.util.concurrent.locks.Condition;
 
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.input.MouseEvent;
 import cls.island.control.Config;
 import cls.island.control.MainController;
 import cls.island.utils.FxThreadBlock;
@@ -21,7 +18,7 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 
 	protected static LocCalculator locCalculator = LocCalculator.getInstance();
 	protected final AutoReentrantLock lock = new AutoReentrantLock();
-
+	private boolean popUpOpen = false;
 	final protected MainController mainController;
 	final protected Config config;
 	private volatile boolean animationInProgress;
@@ -79,15 +76,14 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 			@Override
 			public void run() {
 				getChildren().add(popUp);
+				popUpOpen = true;
 				popUp.show();
 				animationInProgressOriginal = animationInProgress;
-				
+				c_setAnimationInProgress(false);
 			}
 		});
-		c_setAnimationInProgress(false);
+		
 		return popUp.getResult();
-		
-		
 	}
 
 	/**
@@ -96,11 +92,14 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 	 * @param popUp
 	 */
 	public void closePopup(final PopUpWrapper<?> popUp) {
+		popUpOpen = false;
 		condition().signal();
 		getChildren().remove(popUp);
 		c_setAnimationInProgress(animationInProgressOriginal);
-		// popUpwaitCondition.signal();
-
+	}
+	
+	public boolean isPopUpOpen(){
+		return popUpOpen;
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class UseHelicopterCardState implements GameState {
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
-			cancel();
+			return cancel();
 		}
 		IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event.getTarget());
 		if (islandComponent != null && islandComponent instanceof IslandView) {

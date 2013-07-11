@@ -9,6 +9,7 @@ import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
+import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
@@ -24,11 +25,13 @@ public class UseHelicopterCardStepTwoState implements GameState {
 	private final TreasuryCard card;
 	private final IslandScreen islandScreen;
 	private final GameController gameController;
+	private final GameModel gameModel;
 
 	public UseHelicopterCardStepTwoState(GameController gameController, IslandScreen islandScreen,
 			GameModel gameModel, TreasuryCard card, Island takeOffIsland, GameState fromState) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
+		this.gameModel = gameModel;
 		this.card = card;
 		this.takeOffIsland = takeOffIsland;
 		this.fromState = fromState;
@@ -58,25 +61,36 @@ public class UseHelicopterCardStepTwoState implements GameState {
 		// various checks -- end
 
 		if (takeOffIsland.getPieces().size() == 1) {
-			flyToIsland(island, takeOffIsland.getPieces().get(0));
-			return goToState(fromState.getFromState());
+			return flyToIsland(island, takeOffIsland.getPieces().get(0));
 		} else {
 			List<Piece> result = islandScreen
 					.c_showSelectPieceToFlyPopUp(takeOffIsland.getPieces());
 			if (result.size() == 0) {
 				return goToState(fromState);
 			} else {
-				for (Piece piece : result) {
-					flyToIsland(island, piece);
-				}
-				return goToState(fromState.getFromState());
+				return flyToIsland(island, result.toArray(new Piece[result.size()]));
 			}
 		}
 	}
 
-	private void flyToIsland(Island island, Piece piece) {
-		int index = gameController.getPlayerWithPiece(piece).setToIsland(island);
-		islandScreen.c_movePiece(piece.getComponent(), island.getComponent(), index);
+	private GameState findInitialPage() {
+		if (fromState.getFromState() instanceof UseOrDiscardCardState) {
+			return fromState.getFromState().getFromState();
+		} else {
+			return fromState.getFromState();
+		}
+
+	}
+
+	private GameState flyToIsland(Island island, Piece... piece) {
+		for (Piece currentPiece : piece){
+			int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(island);
+			islandScreen.c_movePiece(currentPiece.getComponent(), island.getComponent(), index);
+		}
+		Player cardHolder = ViewUtils.findPlayerHoldingCard(gameModel, card);
+		gameModel.discardCard(cardHolder, card);
+		islandScreen.c_discardPlayerCard(cardHolder.getBase().getComponent(), card.getComponent());
+		return goToState(findInitialPage());
 	}
 
 	private GameState goToState(GameState state) {
@@ -88,14 +102,12 @@ public class UseHelicopterCardStepTwoState implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public GameState getFromState() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

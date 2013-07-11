@@ -63,7 +63,7 @@ import cls.island.view.screen.popup.FloodCardDrawPopUp;
 import cls.island.view.screen.popup.GameLostPopUp;
 import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 
-public class IslandScreen extends AbstractScreen  {
+public class IslandScreen extends AbstractScreen {
 
 	private Rectangle background;
 	private List<TreasuryCard> cards = new ArrayList<>();
@@ -87,8 +87,8 @@ public class IslandScreen extends AbstractScreen  {
 	private WaterLevelView waterLevelView;
 	private Button collectTreasureButton;
 
-
-	public IslandScreen(final MainController mainController, final GameController gameController, final Config config, GameModel model) {
+	public IslandScreen(final MainController mainController, final GameController gameController,
+			final Config config, GameModel model) {
 		super(mainController, config);
 		this.model = model;
 		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
@@ -105,10 +105,10 @@ public class IslandScreen extends AbstractScreen  {
 			Loc location = locCalculator.gridToCoords(island.getGrid());
 			island.getComponent().relocate(location);
 			islandViewToDelete = island.getComponent();
-			if (island.isFlooded()){
+			if (island.isFlooded()) {
 				island.getComponent().setFlood();
 			}
-			//TODO same for sinked.
+			// TODO same for sinked.
 		}
 
 		waterLevelView = model.getWaterLevel().getComponent();
@@ -138,7 +138,9 @@ public class IslandScreen extends AbstractScreen  {
 
 			@Override
 			public void handle(MouseEvent event) {
-				if (!c_isAnimationInProgress()) {
+				System.out.println("MouseClicked : \n   Animation in progress = "
+						+ c_isAnimationInProgress() + "\n   Popup open = " + isPopUpOpen());
+				if (!c_isAnimationInProgress() && !isPopUpOpen()) {
 					gameController.mouseClicked(event);
 				}
 			}
@@ -157,11 +159,12 @@ public class IslandScreen extends AbstractScreen  {
 		toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-				if (newValue == null){
+			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue,
+					Toggle newValue) {
+				if (newValue == null) {
 					toggleGroup.selectToggle(moveButton);
 				}
-				
+
 			}
 		});
 		buttons.add(shoreUpButton);
@@ -187,7 +190,6 @@ public class IslandScreen extends AbstractScreen  {
 		nextTurnButton.relocate(1200, 520);
 		flyButton.relocate(1310, 520);
 
-		
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
 		getChildren().add(collectTreasureButton);
@@ -210,15 +212,16 @@ public class IslandScreen extends AbstractScreen  {
 
 	public void c_movePiece(final PieceView pieceView, final IslandView islandView, final int index) {
 		execute(new SignaledRunnable() {
-			
+
 			@Override
 			public boolean willSignal() {
 				return true;
 			}
-			
+
 			@Override
 			public void run() {
-				Loc pieceLoc = islandView.getLoc().add(locCalculator.pieceLocationOnIslandTile(index));
+				Loc pieceLoc = islandView.getLoc().add(
+						locCalculator.pieceLocationOnIslandTile(index));
 				EventHandler<ActionEvent> onFinish = new EventHandler<ActionEvent>() {
 
 					@Override
@@ -235,7 +238,7 @@ public class IslandScreen extends AbstractScreen  {
 				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, condition());
 			}
 		});
-		
+
 	}
 
 	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard,
@@ -254,14 +257,14 @@ public class IslandScreen extends AbstractScreen  {
 		if (Platform.isFxApplicationThread())
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
-		
+
 		execute(new SignaledRunnable() {
-			
+
 			@Override
 			public boolean willSignal() {
 				return true;
 			}
-			
+
 			@Override
 			public void run() {
 				Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
@@ -277,8 +280,7 @@ public class IslandScreen extends AbstractScreen  {
 				timeline.play();
 			}
 		});
-		
-		
+
 	}
 
 	public void c_hideMessagePanel() {
@@ -287,12 +289,12 @@ public class IslandScreen extends AbstractScreen  {
 					"the method should run outside fx-tread in order to be blocking");
 
 		execute(new SignaledRunnable() {
-			
+
 			@Override
 			public boolean willSignal() {
 				return true;
 			}
-			
+
 			@Override
 			public void run() {
 				Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
@@ -308,8 +310,7 @@ public class IslandScreen extends AbstractScreen  {
 				tmln.play();
 			}
 		});
-		
-		
+
 	}
 
 	public void c_WaterCardDrawnPopUp() {
@@ -358,54 +359,54 @@ public class IslandScreen extends AbstractScreen  {
 	 * @param actions
 	 */
 	public void disableButtons(ButtonAction... actions) {
-		setButtonsDisabled(true,false, actions);
+		setButtonsDisabled(true, false, actions);
 	}
-	
-	
-	public List<Piece> c_showSelectPieceToFlyPopUp(List<Piece> piecesToMove){
+
+	public List<Piece> c_showSelectPieceToFlyPopUp(List<Piece> piecesToMove) {
 		return c_showPopup(new SelectPieceToFlyPopup(piecesToMove));
-		
+
 	}
-	
+
 	/**
 	 * enables the action buttons with the specific actions. If no
 	 * actions are provided all the buttons are enabled
 	 * @param actions
 	 */
 	public void enableButtons(ButtonAction... actions) {
-		setButtonsDisabled(false,false, actions);
+		setButtonsDisabled(false, false, actions);
 	}
-	
+
 	public void disableAllButtonsExcluding(ButtonAction... actions) {
-		setButtonsDisabled(true,true, actions);
+		setButtonsDisabled(true, true, actions);
 	}
-	
+
 	public void enableAllButtonsExluding(ButtonAction... actions) {
-		setButtonsDisabled(false,true, actions);
+		setButtonsDisabled(false, true, actions);
 	}
-	
-	
-	private void setButtonsDisabled(boolean disabled, boolean isExcludeList, ButtonAction... buttonActions) {
+
+	private void setButtonsDisabled(boolean disabled, boolean isExcludeList,
+			ButtonAction... buttonActions) {
 		List<ButtonAction> actionList = Arrays.asList(buttonActions);
 		for (ButtonBase button : buttons) {
-			if (!(button instanceof Action))continue;
-			Action actionButton = (Action)button;
-			if (buttonActions.length ==0){
+			if (!(button instanceof Action))
+				continue;
+			Action actionButton = (Action) button;
+			if (buttonActions.length == 0) {
 				button.setDisable(disabled);
-			}else {
-				if (isExcludeList && !actionList.contains(actionButton.getButtonAction())){
+			} else {
+				if (isExcludeList && !actionList.contains(actionButton.getButtonAction())) {
 					button.setDisable(disabled);
 				}
-				if (!isExcludeList && actionList.contains(actionButton.getButtonAction())){
+				if (!isExcludeList && actionList.contains(actionButton.getButtonAction())) {
 					button.setDisable(disabled);
 				}
 			}
-		
+
 		}
 	}
 
 	public void c_setSelectedActionButton(final ButtonAction action) {
-		
+
 		switch (action) {
 		case MOVE:
 			moveButton.setSelected(true);
@@ -420,9 +421,9 @@ public class IslandScreen extends AbstractScreen  {
 			break;
 		}
 	}
-	
-	public void c_setCursorImage(ButtonAction action){
-		switch (action){
+
+	public void c_setCursorImage(ButtonAction action) {
+		switch (action) {
 		case SHORE_UP:
 			mainController.setCursorImage(config.shoreUpCursorImg);
 			break;
@@ -430,14 +431,12 @@ public class IslandScreen extends AbstractScreen  {
 			mainController.setCursorImage(config.cursorImg);
 		}
 	}
-	
-	public void c_setUpButtonsForPlayer(Player player){
+
+	public void c_setUpButtonsForPlayer(Player player) {
 		flyButton.setOpacity(0);
-		if (player instanceof PilotPlayer){
+		if (player instanceof PilotPlayer) {
 			flyButton.setOpacity(1);
 		}
 	}
-
-	
 
 }
