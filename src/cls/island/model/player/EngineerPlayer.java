@@ -12,12 +12,19 @@ public class EngineerPlayer extends Player {
 	 */
 	private int numberOfShoreUps = 0;
 
+	/**
+	 * holds the internal state before the shore-up. Uses to restore
+	 * the state to undo a shore up
+	 */
+	private PreviousState previousState = null;
+
 	protected EngineerPlayer(Piece piece, PlayerBase base) {
 		super(PlayerType.ENGINEER, piece, base);
 	}
 
 	@Override
 	public void shoreUp(Island island) {
+		previousState = new PreviousState(actionsLeft.get(), numberOfShoreUps);
 		island.unFlood();
 		switch (numberOfShoreUps) {
 		case 0:
@@ -41,7 +48,7 @@ public class EngineerPlayer extends Player {
 		super.resetActions();
 		numberOfShoreUps = 0;
 	}
-	
+
 	/**
 	 * The engineer player can shore up 2 cards in an action. Having 
 	 * the engineer take his last action to shore up a card, will lead to
@@ -56,6 +63,28 @@ public class EngineerPlayer extends Player {
 		if (actionsLeft.getValue() == 0 && numberOfShoreUps == 1)
 			return true;
 		return false;
+	}
+
+	/**
+	 * reverts the internal states as it was before the shore up/
+	 * 
+	 * special handling of undo shoreup action because of the
+	 * special shore up ability of enginner
+	 */
+	public void undoShoreUp() {
+		actionsLeft.set(previousState.actionsLeft);
+		numberOfShoreUps = previousState.numberOfShoreUps;
+	}
+
+	private class PreviousState {
+		int actionsLeft;
+		int numberOfShoreUps;
+
+		public PreviousState(int actionsLeft, int numberOfShoreUps) {
+			this.actionsLeft = actionsLeft;
+			this.numberOfShoreUps = numberOfShoreUps;
+		}
+
 	}
 
 }

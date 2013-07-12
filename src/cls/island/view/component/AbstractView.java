@@ -1,7 +1,6 @@
 package cls.island.view.component;
 
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -21,10 +20,18 @@ import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.SignaledRunnable;
-import cls.island.utils.concurrent.AutoReentrantLock;
 import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
+
+
+/**
+ * General class that provides implementation for {@link IslandComponent} and {@link ThreadBlock}
+ * interfaces 
+ * @author lytsikas
+ *
+ * @param <T>
+ */
 public class AbstractView<T> extends Parent implements IslandComponent, ThreadBlock {
 	private static final double HOVER_OVER_OPACITY = 0.2;
 	private static final double HOVER_OVER_ANIM_DURATION = 200;
@@ -186,8 +193,8 @@ public class AbstractView<T> extends Parent implements IslandComponent, ThreadBl
 	}
 
 	@Override
-	public Condition condition() {
-		return threadBlock.condition();
+	public void unpause(){
+		threadBlock.unpause();
 	}
 
 }

@@ -42,12 +42,12 @@ public class IslandTurnState implements GameState {
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -57,6 +57,7 @@ public class IslandTurnState implements GameState {
 
 	@Override
 	public GameState start() {
+		gameController.resetUndoableActions();
 		numberOfDrawCards++;
 		islandScreen.disableButtons();
 		if (numberOfDrawCards > gameModel.getNumberOfIslandsToSink()) {

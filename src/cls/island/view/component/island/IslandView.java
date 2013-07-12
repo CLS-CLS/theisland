@@ -129,7 +129,7 @@ public class IslandView extends AbstractView<Island> {
 
 			@Override
 			public void run() {
-				Animations.sinkTile(IslandView.this, condition());
+				Animations.sinkTile(IslandView.this, IslandView.this);
 			}
 		});
 	}
@@ -173,7 +173,7 @@ public class IslandView extends AbstractView<Island> {
 		animateProps.add(floodEffect.saturationProperty());
 		animateProps.add(flood.opacityProperty());
 		Animations.floodTile(Arrays.asList(new IslandView[] { this }), animateProps, floodBool,
-				condition());
+				IslandView.this);
 
 	}
 

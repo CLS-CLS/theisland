@@ -3,10 +3,12 @@ package cls.island.control.state;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import cls.island.control.Action;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
+import cls.island.model.player.EngineerPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.IslandView;
@@ -35,20 +37,42 @@ public class ShoreUpState implements GameState {
 				.getTarget());
 		if (!(islandComponent instanceof IslandView))
 			return null;
-		IslandView islandView = (IslandView) islandComponent;
+		final IslandView islandView = (IslandView) islandComponent;
 		if (!islandView.getParentModel().isFlooded() || islandView.getParentModel().isSunk())
 			return null;
 
 		// primary button pressed on flooded island
-		Player player = gameModel.getCurrentTurnPlayer();
+		final Player player = gameModel.getCurrentTurnPlayer();
 		
 		//and is a valid shore-up.
 		if (!player.isValidShoreUp(player.getPiece().getIsland(), islandView.getParentModel(),
 				gameModel.getIslandGrid())) {
 			return null;
 		}
-		player.shoreUp(islandView.getParentModel());
-		islandView.unFlood();
+		
+		
+		gameController.executeAction(new Action(){
+			
+			@Override
+			public void execute() {
+				player.shoreUp(islandView.getParentModel());
+				islandView.unFlood();
+			}
+
+			@Override
+			public GameState revert() {
+				if (player instanceof EngineerPlayer){
+					((EngineerPlayer)player).undoShoreUp();
+				}else {
+					player.setActionsLeft(player.getActionsLeft()+1);
+				}
+				islandView.getParentModel().flood();
+				islandView.flood();
+				return normalState();
+			}
+			
+		});
+		
 		if (!player.canShoreUp()) return normalState();
 		return null;
 	}

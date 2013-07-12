@@ -3,6 +3,7 @@ package cls.island.control.state;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import cls.island.control.Action;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
@@ -21,9 +22,11 @@ public class UseShoreUpCardState implements GameState {
 	private final GameModel gameModel;
 	private final GameState fromState;
 	private final TreasuryCard selectedTreasureCard;
+	private final GameController gameController;
 
-	public UseShoreUpCardState(GameController stateContext, IslandScreen islandScreen,
+	public UseShoreUpCardState(GameController gameController, IslandScreen islandScreen,
 			GameModel gameModel, TreasuryCard selectedTreasureCard, GameState fromState) {
+		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.selectedTreasureCard = selectedTreasureCard;
@@ -63,17 +66,37 @@ public class UseShoreUpCardState implements GameState {
 				.getTarget());
 		if (!(islandComponent instanceof IslandView))
 			return null;
-		IslandView islandView = (IslandView) islandComponent;
+		final IslandView islandView = (IslandView) islandComponent;
 		if (!islandView.getParentModel().isFlooded() || islandView.getParentModel().isSunk())
 			return null;
 
 		// primary button pressed on flooded island
-		islandView.getParentModel().unFlood();
-		islandView.unFlood();
-		Player player = ViewUtils.findPlayerHoldingCard(gameModel, selectedTreasureCard);
-		gameModel.discardCard(player, selectedTreasureCard);
-		islandScreen.c_discardPlayerCard(player.getBase().getComponent(),
-				selectedTreasureCard.getComponent());
+		gameController.executeAction(new Action() {
+
+			Player cardHolder = null;
+
+			@Override
+			public void execute() {
+				islandView.getParentModel().unFlood();
+				islandView.unFlood();
+				cardHolder = ViewUtils.findPlayerHoldingCard(gameModel, selectedTreasureCard);
+				gameModel.discardCard(cardHolder, selectedTreasureCard);
+				islandScreen.c_discardPlayerCard(cardHolder.getBase().getComponent(),
+						selectedTreasureCard.getComponent());
+			}
+
+			@Override
+			public GameState revert() {
+				islandView.getParentModel().flood();
+				islandView.flood();
+				gameModel.undiscardCard(cardHolder, selectedTreasureCard);
+				islandScreen.c_moveTreasuryCardFromPileToPlayer(
+						selectedTreasureCard.getComponent(), cardHolder.getBase().getComponent());
+				return UseShoreUpCardState.this;
+			}
+
+		});
+
 		return changeState();
 
 	}

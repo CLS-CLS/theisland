@@ -5,6 +5,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+/**
+ * Convenient class that automatically acquires the asks lock
+ * when an opration that needs the lock in order to be executed
+ * is invoked.
+ * @author cls
+ *
+ */
 public class AutoLockCondition implements Condition{
 	
 	private Condition condition;
@@ -13,26 +20,20 @@ public class AutoLockCondition implements Condition{
 	public AutoLockCondition(Condition condition, Lock parentLock) {
 		this.condition  = condition;
 		this.parentLock = parentLock;
-		
 	}
 	
 	
 	@Override
 	public void await() throws InterruptedException {
 		condition.await();
-		parentLock.unlock();
-		
 	}
 
 	
 	@Override
 	public void signal() {
 		parentLock.lock();
-//		System.out.println("Singal : locked by Thread " + Thread.currentThread());
 		condition.signal();
 		parentLock.unlock();
-//		System.out.println("Signal : unlocked by Thread "  +Thread.currentThread());
-		
 	}
 
 	@Override
@@ -47,16 +48,19 @@ public class AutoLockCondition implements Condition{
 
 	@Override
 	public long awaitNanos(long nanosTimeout) throws InterruptedException {
+		parentLock.lock();
 		return condition.awaitNanos(nanosTimeout);
 	}
 
 	@Override
 	public boolean await(long time, TimeUnit unit) throws InterruptedException {
+		parentLock.lock();
 		return this.condition.await(time, unit);
 	}
 
 	@Override
 	public boolean awaitUntil(Date deadline) throws InterruptedException {
+		parentLock.lock();
 		return condition.awaitUntil(deadline);
 	}
 

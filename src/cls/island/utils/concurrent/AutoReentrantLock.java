@@ -3,6 +3,11 @@ package cls.island.utils.concurrent;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * a Reentrant lock implementation that uses the {@link AutoLockCondition}
+ * @author lytsikas
+ *
+ */
 public class AutoReentrantLock extends ReentrantLock {
 
 	

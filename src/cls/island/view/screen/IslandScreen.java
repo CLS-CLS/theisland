@@ -11,6 +11,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -191,6 +195,8 @@ public class IslandScreen extends AbstractScreen {
 		collectTreasureButton.relocate(1310, 410);
 		nextTurnButton.relocate(1200, 520);
 		undoButton.relocate(1200, 630);
+		undoButton.disableProperty().bind(
+				BooleanBinding.booleanExpression(gameController.undoActionProperty()).not());
 		flyButton.relocate(1310, 520);
 
 		getChildren().add(moveButton);
@@ -239,7 +245,7 @@ public class IslandScreen extends AbstractScreen {
 						}
 					}
 				};
-				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, condition());
+				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, IslandScreen.this);
 			}
 		});
 
@@ -278,7 +284,7 @@ public class IslandScreen extends AbstractScreen {
 					@Override
 					public void handle(ActionEvent event) {
 						msgPanel.showMessage(message);
-						condition().signal();
+						unpause();
 					}
 				});
 				timeline.play();
@@ -307,7 +313,7 @@ public class IslandScreen extends AbstractScreen {
 
 					@Override
 					public void handle(ActionEvent event) {
-						condition().signal();
+						unpause();
 
 					}
 				});

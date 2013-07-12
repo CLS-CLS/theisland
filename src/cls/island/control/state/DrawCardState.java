@@ -73,6 +73,8 @@ public class DrawCardState implements GameState {
 	@Override
 	public GameState start() {
 		numberOfDrawCards++;
+		//after this state is triggered, no undo is allowed
+		gameController.resetUndoableActions();
 		if (numberOfDrawCards > GameModel.DRAW_CARDS_PER_TURN) {
 			if (waterRised) {
 				waterRised = false;
@@ -106,10 +108,8 @@ public class DrawCardState implements GameState {
 		if (currentPlayer.getTreasuryCards().size() > 5) {
 			return (new UseOrDiscardCardState(gameController, islandScreen, gameModel,
 					DrawCardState.this));
-
 		}
 		return this;
-
 	}
 
 }

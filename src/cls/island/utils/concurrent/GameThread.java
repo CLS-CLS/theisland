@@ -7,6 +7,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The Thread where all the non visual operations of the game  will run on
+ * 
+ */
 class GameThread extends Thread {
 
 	private Logger logger = Logger.getLogger(GameThread.class.getName());
@@ -21,7 +25,12 @@ class GameThread extends Thread {
 		super(THREAD_ID);
 		setDaemon(isDaemon);
 	}
-
+	
+	/**
+	 * Adds a task that will be executed when all the previous tasks have finished, or
+	 * immediately if no other task exists.
+	 * @param runnable the task to run
+	 */
 	protected void addTask(Runnable runnable) {
 		try {
 			lock.lock();

@@ -35,10 +35,11 @@ public class FxThreadBlock implements ThreadBlock {
 			e.printStackTrace();
 		}
 	}
-	
+		
+
 	@Override
-	public Condition condition(){
-		return wait;
+	public void unpause() {
+		wait.signal();
 	}
 
 }

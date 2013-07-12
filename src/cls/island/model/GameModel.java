@@ -593,5 +593,16 @@ public class GameModel {
 		}
 		return false;
 	}
+	/**
+	 * gives back to player the specified discarded card
+	 * @param cardHolder
+	 * @param selectedTreasureCard
+	 * @return the index of the card in the player's hand
+	 */
+	public int undiscardCard(Player cardHolder, TreasuryCard discardedCard) {
+		treasuryPile.removeFromPile(discardedCard, PileType.DISCARD);
+		return cardHolder.addCard(discardedCard);
+		
+	}
 
 }

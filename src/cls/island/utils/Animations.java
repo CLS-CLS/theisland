@@ -14,6 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Duration;
 import cls.island.utils.LocCalculator.Loc;
+import cls.island.view.component.ThreadBlock;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 
@@ -48,7 +49,7 @@ public class Animations {
 	}
 
 	public static void moveComponentToLocation(final Node component, Loc location, final EventHandler<ActionEvent> onFinish,
-			final Condition condition) {
+			final ThreadBlock block) {
 		if (!Platform.isFxApplicationThread()){
 			Platform.runLater(new Runnable() {
 				
@@ -67,16 +68,16 @@ public class Animations {
 				@Override
 				public void handle(ActionEvent event) {
 					onFinish.handle(event);
-					if (condition != null)
-						condition.signal();
+					if (block != null)
+						block.unpause();
 				}
 			});
-		} else if (condition != null) {
+		} else if (block != null) {
 			EventHandler<ActionEvent> onFinish2 = new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent event) {
-					condition.signal();
+					block.unpause();
 				}
 			};
 			timeline.setOnFinished(onFinish2);
@@ -117,11 +118,8 @@ public class Animations {
 	
 	/**
 	 * instantly disappear a card and make it visible in another location
-	 * @param animateProps
-	 * @param flood
-	 * @param signal
 	 */
-	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView, Loc location, final Condition condition) {
+	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView, Loc location, final ThreadBlock threadBlock) {
 		treasuryCardView.toFront();
 		treasuryCardView.setOpacity(0);
 		treasuryCardView.relocate(location);
@@ -131,14 +129,14 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				condition.signal();
+				threadBlock.unpause();
 			}
 		});
 
 		timeline.play();
 	}
 
-	public static void floodTile(List<IslandView> islands , List<DoubleProperty> animateProps, boolean flood, final Condition signal) {
+	public static void floodTile(List<IslandView> islands , List<DoubleProperty> animateProps, boolean flood, final ThreadBlock threadBlock) {
 		if (flood) {
 			shake(null, islands.toArray(new IslandView[islands.size()]));
 		}
@@ -157,13 +155,13 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				signal.signal();
+				threadBlock.unpause();
 			}
 		});
 		timeline.play();
 	}
 
-	public static void sinkTile(IslandView islandView, final Condition condition) {
+	public static void sinkTile(IslandView islandView, final ThreadBlock threadBlock) {
 		shake(null, islandView);
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(islandView.opacityProperty(), 0)));
@@ -171,15 +169,14 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				condition.signal();
-
+				threadBlock.unpause();
 			}
 		});
 		timeline.play();
 	}
 
 	public static void rearrangeCardsInCardHolder(List<TreasuryCardView> cardsToMove, List<Loc> locationToMove,
-			final Condition condition) {
+			final ThreadBlock threadBlock) {
 		List<KeyValue> keyValues = new ArrayList<>();
 		for (int i = 0; i < cardsToMove.size(); i++) {
 			TreasuryCardView treasuryCardView = cardsToMove.get(i);
@@ -197,7 +194,7 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				condition.signal();
+				threadBlock.unpause();
 			}
 		});
 		timeline.play();

@@ -80,7 +80,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 				int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 				treasuryCard.setSelectable(true);
 				Animations.teleportCardToLocationReverse(treasuryCard, PlayerBaseView.this.getLoc()
-						.add(locCalculator.cardLocationInCardHolder(index)), condition());
+						.add(locCalculator.cardLocationInCardHolder(index)), PlayerBaseView.this);
 			}
 		});
 
@@ -104,7 +104,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 
 			@Override
 			public void run() {
-				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, condition());
+				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, PlayerBaseView.this);
 
 			}
 		});

@@ -82,7 +82,7 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 				c_setAnimationInProgress(false);
 			}
 		});
-		
+
 		return popUp.getResult();
 	}
 
@@ -93,12 +93,12 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 	 */
 	public void closePopup(final PopUpWrapper<?> popUp) {
 		popUpOpen = false;
-		condition().signal();
+		threadBlock.unpause();
 		getChildren().remove(popUp);
 		c_setAnimationInProgress(animationInProgressOriginal);
 	}
-	
-	public boolean isPopUpOpen(){
+
+	public boolean isPopUpOpen() {
 		return popUpOpen;
 	}
 
@@ -109,8 +109,8 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 	}
 
 	@Override
-	public Condition condition() {
-		return threadBlock.condition();
+	public void unpause() {
+		threadBlock.unpause();
 	}
 
 }

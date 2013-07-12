@@ -4,6 +4,6 @@ public interface Action {
 	
 	public void execute();
 	
-	public void revert();
+	public GameState revert();
 
 }

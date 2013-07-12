@@ -191,6 +191,7 @@ public class Player {
 		actionsLeft.set(getActionsLeft() - 1);
 		island.unFlood();
 	}
+	
 
 	public ReadOnlyIntegerProperty actionsLeftProperty() {
 		return actionsLeft.getReadOnlyProperty();

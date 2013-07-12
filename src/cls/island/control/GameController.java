@@ -1,6 +1,8 @@
 package cls.island.control;
 
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
@@ -20,7 +22,13 @@ public class GameController {
 	private MainController mainController;
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
-	private Action lastAction;
+	private volatile Action lastAction;
+	
+	/**
+	 * used by {@link IslandScreen} to bind the disable function of undo button.
+	 */
+	private volatile SimpleBooleanProperty undoAction = new SimpleBooleanProperty(false);
+	
 
 	public GameController(MainController mainController, GameModel gameModel) {
 		this.mainController = mainController;
@@ -37,8 +45,12 @@ public class GameController {
 			@Override
 			public void run() {
 				if (action == ButtonAction.UNDO) {
-					lastAction.revert();
+					GameState gameState = lastAction.revert();
 					lastAction = null;
+					undoAction.set(false);
+					if (gameState != null){
+						setGameState(gameState);
+					}
 				} else {
 					GameState state = gameState.buttonPressed(action);
 					if (state != null) {
@@ -141,7 +153,24 @@ public class GameController {
 
 	public void executeAction(Action action) {
 		lastAction = action;
+		undoAction.set(true);
 		action.execute();
-
 	}
+	
+	public ReadOnlyBooleanProperty undoActionProperty(){
+		return undoAction;
+	}
+	
+	
+	/**
+	 * Used by controllers to notify that the undoable actions should be 
+	 * reset and no further undo can be done. 
+	 * Usually this happens when the last action that initially could be undone, triggers
+	 * other actions that change the internal state of the game.
+	 */
+	public void resetUndoableActions(){
+		lastAction = null;
+		undoAction.set(false);
+	}
+	
 }

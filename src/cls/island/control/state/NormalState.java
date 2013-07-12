@@ -55,10 +55,11 @@ public class NormalState implements GameState {
 				updateActionButtons();
 			}
 			
-			public void revert(){
+			public GameState revert(){
 				int addedIndex = gameModel.getCurrentTurnPlayer().setToIsland(previousIsland);
 				gameModel.getCurrentTurnPlayer().setActionsLeft(actionsLeft);
 				islandScreen.c_movePiece(movingPiece, previousIsland.getComponent(), addedIndex);
+				return NormalState.this;
 			}
 		});
 		
