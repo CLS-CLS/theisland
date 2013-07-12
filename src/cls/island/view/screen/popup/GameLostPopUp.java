@@ -1,38 +1,45 @@
 package cls.island.view.screen.popup;
 
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.ImageView;
+import cls.island.control.Config;
 import cls.island.model.LooseCondition;
+import cls.island.view.component.treasury.card.Type;
 
 public class GameLostPopUp extends PopUpInternal<Object> {
 
 	public GameLostPopUp(LooseCondition condition, Object[] infos) {
-		Rectangle rect = new Rectangle(300, 200, Color.RED);
-		getChildren().add(rect);
+		ImageView background = new ImageView(Config.getInstance().deepOcean);
+		getChildren().add(background);
 		Label label = new Label();
+		label.getStyleClass().add("white-text-button");
+
 		switch (condition) {
 		case FOOLS_LANDING_LOST:
 			label.setText("Fool's Landing lost");
+
 			break;
 		case MAX_WATER_LEVEL_REACHED:
 			label.setText("Max water level reached");
 			break;
-		case PLAYER_SUNK :
-			label.setText(infos[0]+ " Player was drawn after the \nisland sunk") ;
+		case PLAYER_SUNK:
+			label.setText(infos[0] + " Player was drawn after the \nisland sunk");
 			break;
 		case TREASURE_SUNK:
-			label.setText(infos[0] +" Treasure was lost");
+			label.setText("Treasure was lost");
+			label.relocate(100, 0);
+			ImageView lostImage = new ImageView(Config.getInstance().getTreasureImage(
+					Type.valueOf(infos[0].toString())));
+			lostImage.relocate(150, 50);
+			getChildren().add(lostImage);
 			break;
-			
+
 		default:
 			break;
 		}
-		label.getStyleClass().add("standard-label");
 		getChildren().add(label);
-		
+
 	}
-	
 
 	@Override
 	public Object getRusults() {

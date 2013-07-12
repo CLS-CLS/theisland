@@ -95,10 +95,8 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			@Override
 			public void run() {
 				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, this);
-
 			}
 		});
-
 	}
 
 	/**

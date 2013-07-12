@@ -7,9 +7,11 @@ import javafx.animation.KeyValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import cls.island.control.Config;
 import cls.island.utils.TimelineSingle;
 import cls.island.view.screen.AbstractScreen;
 
@@ -33,11 +35,10 @@ public class PopUpWrapper<T> extends AbstractScreen {
 		super(parent.getMainController(), parent.getConfig());
 		this.parent = parent;
 		this.internal = internal;
-		Rectangle rectangle = new Rectangle(config.getDefaultRes().getWidth(), config
-				.getDefaultRes().getHeight(), Color.BLACK);
-		rectangle.setOpacity(0.5);
-		getChildren().add(rectangle);
-		rectangle.addEventHandler(Event.ANY, new EventHandler<Event>() {
+		ImageView background = new ImageView(Config.getInstance().window);
+		background.setOpacity(0.8);
+		getChildren().add(background);
+		background.addEventHandler(Event.ANY, new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {

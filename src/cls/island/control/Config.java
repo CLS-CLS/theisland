@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import cls.island.control.Options.PlayerType;
 import cls.island.view.component.piece.PieceColor;
@@ -71,6 +72,8 @@ public class Config {
 	private Image pilotImage;
 	private Image messengerImage;
 	private Image engineerImage;
+	public Image deepOcean;
+	public Image window;
 
 	private Config() {
 		background = new Image("images/other/startScreen.png", false);
@@ -118,6 +121,10 @@ public class Config {
 		checkBoxImg = new Image("images/other/checkbox.png", 50, 50, false, true);
 		checkBoxWithTick = new Image("images/other/checkboxwithtick.png", 50, 50, false, true);
 
+		deepOcean = new Image("images/other/deepocean.jpg", 400, 300, false, true);
+		window = new Image("images/other/window.png", getDefaultRes().getWidth(), getDefaultRes()
+				.getHeight(), false, true);
+
 	}
 
 	public Image getTreasureImage(Type type) {
@@ -133,14 +140,14 @@ public class Config {
 		}
 		return null;
 	}
-	
-	public Image getPlayerImage(PlayerType player){
+
+	public Image getPlayerImage(PlayerType player) {
 		switch (player) {
 		case DIVER:
 			return diverImage;
 		case ENGINEER:
 			return engineerImage;
-		case EXPLORER: 
+		case EXPLORER:
 			return explorerImage;
 		case MESSANGER:
 			return messengerImage;
@@ -149,7 +156,7 @@ public class Config {
 		default:
 			return null;
 		}
-		
+
 	}
 
 	public Image getTreasureCard(Type type) {

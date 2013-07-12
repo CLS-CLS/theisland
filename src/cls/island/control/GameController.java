@@ -4,8 +4,10 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
+import cls.island.control.state.GameLostState;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
+import cls.island.model.LooseCondition;
 import cls.island.model.player.Player;
 import cls.island.utils.concurrent.ThreadUtil;
 import cls.island.view.component.piece.Piece;
@@ -23,12 +25,11 @@ public class GameController {
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
 	private volatile Action lastAction;
-	
+
 	/**
 	 * used by {@link IslandScreen} to bind the disable function of undo button.
 	 */
 	private volatile SimpleBooleanProperty undoAction = new SimpleBooleanProperty(false);
-	
 
 	public GameController(MainController mainController, GameModel gameModel) {
 		this.mainController = mainController;
@@ -40,32 +41,43 @@ public class GameController {
 			return;
 		}
 		islandScreen.c_setAnimationInProgress(true);
+		
 		ThreadUtil.Runlater(new Runnable() {
-
+			
 			@Override
 			public void run() {
-				if (action == ButtonAction.UNDO) {
-					GameState gameState = lastAction.revert();
-					lastAction = null;
-					undoAction.set(false);
-					if (gameState != null){
-						setGameState(gameState);
-					}
-				} else {
-					GameState state = gameState.buttonPressed(action);
-					if (state != null) {
-						setGameState(state);
-					}
-				}
-				Platform.runLater(new Runnable() {
-
-					@Override
-					public void run() {
-						islandScreen.c_setAnimationInProgress(false);
-					}
-				});
+				String[] infos = new String[1];
+				gameModel.checkLooseCondition(LooseCondition.TREASURE_SUNK, infos);
+				setGameState(new GameLostState(LooseCondition.TREASURE_SUNK, GameController.this, islandScreen, gameModel, null, infos));
+				
 			}
 		});
+//		ThreadUtil.Runlater(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				if (action == ButtonAction.UNDO) {
+//					GameState gameState = lastAction.revert();
+//					lastAction = null;
+//					undoAction.set(false);
+//					if (gameState != null) {
+//						setGameState(gameState);
+//					}
+//				} else {
+//					GameState state = gameState.buttonPressed(action);
+//					if (state != null) {
+//						setGameState(state);
+//					}
+//				}
+//				Platform.runLater(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						islandScreen.c_setAnimationInProgress(false);
+//					}
+//				});
+//			}
+//		});
 	}
 
 	public void mouseClicked(final MouseEvent event) {
@@ -111,7 +123,7 @@ public class GameController {
 	public void startNewGame() {
 		if (islandScreen == null)
 			throw new RuntimeException("IslandScrren should not be null");
-		setGameState(new NormalState(this, islandScreen, gameModel));
+		setGameState(new NormalState(GameController.this, islandScreen, gameModel));
 		for (Player player : gameModel.getPlayers()) {
 			for (int i = 0; i < 2; i++) {
 				TreasuryPile treasuryPile = gameModel.getTreasuryPile();
@@ -121,6 +133,7 @@ public class GameController {
 						.getBase().getComponent());
 			}
 		}
+
 	}
 
 	public void setIslandScreen(IslandScreen islandScreen) {
@@ -156,21 +169,20 @@ public class GameController {
 		undoAction.set(true);
 		action.execute();
 	}
-	
-	public ReadOnlyBooleanProperty undoActionProperty(){
+
+	public ReadOnlyBooleanProperty undoActionProperty() {
 		return undoAction;
 	}
-	
-	
+
 	/**
 	 * Used by controllers to notify that the undoable actions should be 
 	 * reset and no further undo can be done. 
 	 * Usually this happens when the last action that initially could be undone, triggers
 	 * other actions that change the internal state of the game.
 	 */
-	public void resetUndoableActions(){
+	public void resetUndoableActions() {
 		lastAction = null;
 		undoAction.set(false);
 	}
-	
+
 }
