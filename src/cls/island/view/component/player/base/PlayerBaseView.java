@@ -20,7 +20,8 @@ import javafx.scene.transform.Scale;
 import cls.island.utils.Animations;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.SignaledRunnable;
+import cls.island.utils.concurrent.SignaledRunnable;
+import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
@@ -68,19 +69,13 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 //	}
 
 	public void moveToBase(final TreasuryCardView treasuryCard) {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
-
+		execute(new ThreadBlockingRunnable() {
 			@Override
 			public void run() {
 				int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 				treasuryCard.setSelectable(true);
 				Animations.teleportCardToLocationReverse(treasuryCard, PlayerBaseView.this.getLoc()
-						.add(locCalculator.cardLocationInCardHolder(index)), PlayerBaseView.this);
+						.add(locCalculator.cardLocationInCardHolder(index)), this);
 			}
 		});
 
@@ -95,16 +90,11 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			cardViews.add(treasuryCardsInBase.get(i).getComponent());
 		}
 
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
+		execute(new ThreadBlockingRunnable() {
 
 			@Override
 			public void run() {
-				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, PlayerBaseView.this);
+				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, this);
 
 			}
 		});

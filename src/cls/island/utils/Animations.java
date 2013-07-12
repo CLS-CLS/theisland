@@ -14,12 +14,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Duration;
 import cls.island.utils.LocCalculator.Loc;
+import cls.island.utils.concurrent.SignaledRunnable;
 import cls.island.view.component.ThreadBlock;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 
 public class Animations {
-	
+
 	/**
 	 * Transition between screens and menus
 	 * @param from
@@ -43,22 +44,22 @@ public class Animations {
 		});
 
 		timeline.getKeyFrames().add(
-				new KeyFrame(new Duration(800), new KeyValue(to.opacityProperty(), 1), from != null ? new KeyValue(from
-						.opacityProperty(), 0) : null));
+				new KeyFrame(new Duration(800), new KeyValue(to.opacityProperty(), 1),
+						from != null ? new KeyValue(from.opacityProperty(), 0) : null));
 		timeline.play();
 	}
 
-	public static void moveComponentToLocation(final Node component, Loc location, final EventHandler<ActionEvent> onFinish,
-			final ThreadBlock block) {
-		if (!Platform.isFxApplicationThread()){
+	public static void moveComponentToLocation(final Node component, Loc location,
+			final EventHandler<ActionEvent> onFinish, final SignaledRunnable signalRunnable) {
+		if (!Platform.isFxApplicationThread()) {
 			Platform.runLater(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					component.toFront();
 				}
 			});
-		}else {
+		} else {
 			component.toFront();
 		}
 		TimelineSingle timeline = new TimelineSingle();
@@ -68,28 +69,27 @@ public class Animations {
 				@Override
 				public void handle(ActionEvent event) {
 					onFinish.handle(event);
-					if (block != null)
-						block.unpause();
+					if (signalRunnable != null)
+						signalRunnable.signal();
 				}
 			});
-		} else if (block != null) {
+		} else if (signalRunnable != null) {
 			EventHandler<ActionEvent> onFinish2 = new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent event) {
-					block.unpause();
+					signalRunnable.signal();
 				}
 			};
 			timeline.setOnFinished(onFinish2);
 		}
 
 		timeline.getKeyFrames().add(
-				new KeyFrame(Duration.millis(200), new KeyValue(component.layoutXProperty(), location.x), new KeyValue(
-						component.layoutYProperty(), location.y)));
+				new KeyFrame(Duration.millis(200), new KeyValue(component.layoutXProperty(),
+						location.x), new KeyValue(component.layoutYProperty(), location.y)));
 		timeline.play();
 	}
 
-	
 	/**
 	 * makes a card transparent and instantly reappears it in the provided
 	 * location.
@@ -98,11 +98,14 @@ public class Animations {
 	 * @param location
 	 *            the location the card will reappear
 	 */
-	public static void teleportCardToLocation(TreasuryCardView treasuryCardView, Loc location, final Condition condition) {
+	public static void teleportCardToLocation(TreasuryCardView treasuryCardView, Loc location,
+			final Condition condition) {
 		final Loc fLoc = location;
 		final TreasuryCardView fCard = treasuryCardView;
 		TimelineSingle timeline = new TimelineSingle();
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(), 0)));
+		timeline.getKeyFrames().add(
+				new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(),
+						0)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -115,28 +118,32 @@ public class Animations {
 
 		timeline.play();
 	}
-	
+
 	/**
 	 * instantly disappear a card and make it visible in another location
 	 */
-	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView, Loc location, final ThreadBlock threadBlock) {
+	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView,
+			Loc location, final SignaledRunnable signaledRunnable) {
 		treasuryCardView.toFront();
 		treasuryCardView.setOpacity(0);
 		treasuryCardView.relocate(location);
 		TimelineSingle timeline = new TimelineSingle();
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(), 1)));
+		timeline.getKeyFrames().add(
+				new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(),
+						1)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				threadBlock.unpause();
+				signaledRunnable.signal();
 			}
 		});
 
 		timeline.play();
 	}
 
-	public static void floodTile(List<IslandView> islands , List<DoubleProperty> animateProps, boolean flood, final ThreadBlock threadBlock) {
+	public static void floodTile(List<IslandView> islands, List<DoubleProperty> animateProps,
+			boolean flood, final SignaledRunnable runnable) {
 		if (flood) {
 			shake(null, islands.toArray(new IslandView[islands.size()]));
 		}
@@ -146,37 +153,36 @@ public class Animations {
 		double opacity = flood ? 0.5 : 0;
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(
-				new KeyFrame(Duration.millis(500), new KeyValue(animateProps.get(0), brightness)
-						,new KeyValue(animateProps.get(1), contrast)
-						,new KeyValue(animateProps.get(2), saturation)
-						,new KeyValue(animateProps.get(3),opacity))
-				);
+				new KeyFrame(Duration.millis(500), new KeyValue(animateProps.get(0), brightness),
+						new KeyValue(animateProps.get(1), contrast), new KeyValue(animateProps
+								.get(2), saturation), new KeyValue(animateProps.get(3), opacity)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				threadBlock.unpause();
+				runnable.signal();
 			}
 		});
 		timeline.play();
 	}
 
-	public static void sinkTile(IslandView islandView, final ThreadBlock threadBlock) {
+	public static void sinkTile(IslandView islandView, final SignaledRunnable runnable) {
 		shake(null, islandView);
 		TimelineSingle timeline = new TimelineSingle();
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(islandView.opacityProperty(), 0)));
+		timeline.getKeyFrames().add(
+				new KeyFrame(Duration.millis(500), new KeyValue(islandView.opacityProperty(), 0)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				threadBlock.unpause();
+				runnable.signal();
 			}
 		});
 		timeline.play();
 	}
 
-	public static void rearrangeCardsInCardHolder(List<TreasuryCardView> cardsToMove, List<Loc> locationToMove,
-			final ThreadBlock threadBlock) {
+	public static void rearrangeCardsInCardHolder(List<TreasuryCardView> cardsToMove,
+			List<Loc> locationToMove, final SignaledRunnable runnable) {
 		List<KeyValue> keyValues = new ArrayList<>();
 		for (int i = 0; i < cardsToMove.size(); i++) {
 			TreasuryCardView treasuryCardView = cardsToMove.get(i);
@@ -187,47 +193,51 @@ public class Animations {
 			keyValues.add(keyValueY);
 		}
 
-		KeyFrame keyFrame = new KeyFrame(Duration.millis(200), keyValues.toArray(new KeyValue[keyValues.size() * 2]));
+		KeyFrame keyFrame = new KeyFrame(Duration.millis(200),
+				keyValues.toArray(new KeyValue[keyValues.size() * 2]));
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(keyFrame);
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				threadBlock.unpause();
+				runnable.signal();
 			}
 		});
 		timeline.play();
 	}
-	
-	public static void shake(final Condition condition, Node...nodes){
+
+	public static void shake(final Condition condition, Node... nodes) {
 		TimelineSingle timeline = new TimelineSingle();
 		double timeStep = 10D;
 		double moveStep = 2;
-		Duration totalDuration  = Duration.millis(0);
-		for (int j=0; j<10;j++){
+		Duration totalDuration = Duration.millis(0);
+		for (int j = 0; j < 10; j++) {
 			totalDuration = new Duration(totalDuration.toMillis() + timeStep);
 			KeyValue[] keyValues = new KeyValue[nodes.length];
-			for (int i=0 ;i<nodes.length;i++){
-				keyValues[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty().getValue()-moveStep);
+			for (int i = 0; i < nodes.length; i++) {
+				keyValues[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty()
+						.getValue() - moveStep);
 			}
 			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues));
-			
+
 			totalDuration = new Duration(totalDuration.toMillis() + timeStep * 2);
 			KeyValue[] keyValues2 = new KeyValue[nodes.length];
-			for (int i=0 ;i<nodes.length;i++){
-				keyValues2[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty().getValue()+moveStep*2 );
+			for (int i = 0; i < nodes.length; i++) {
+				keyValues2[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty()
+						.getValue() + moveStep * 2);
 			}
 			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues2));
-			
+
 			totalDuration = new Duration(totalDuration.toMillis() + timeStep);
 			KeyValue[] keyValues3 = new KeyValue[nodes.length];
-			for (int i=0 ;i<nodes.length;i++){
-				keyValues3[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty().getValue()-moveStep);
+			for (int i = 0; i < nodes.length; i++) {
+				keyValues3[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty()
+						.getValue() - moveStep);
 			}
 			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues3));
 		}
-		if (condition != null){
+		if (condition != null) {
 			timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 				@Override

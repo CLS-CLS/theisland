@@ -20,9 +20,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import cls.island.utils.Animations;
-import cls.island.utils.SignaledRunnable;
 import cls.island.utils.TimelineSingle;
 import cls.island.utils.TimelineSingle.Process;
+import cls.island.utils.concurrent.NoSignalingRunnable;
+import cls.island.utils.concurrent.SignaledRunnable;
+import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.island.Island.Model;
 
@@ -88,13 +90,7 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	public void activateSavedNode() {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
-
+		execute(new NoSignalingRunnable() {
 			@Override
 			public void run() {
 				IslandView.this.getChildren().add(savedNode);
@@ -120,7 +116,7 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	public void sink() {
-		execute(new SignaledRunnable() {
+		execute(new ThreadBlockingRunnable() {
 
 			@Override
 			public boolean willSignal() {
@@ -129,7 +125,7 @@ public class IslandView extends AbstractView<Island> {
 
 			@Override
 			public void run() {
-				Animations.sinkTile(IslandView.this, IslandView.this);
+				Animations.sinkTile(IslandView.this, this);
 			}
 		});
 	}
@@ -150,35 +146,28 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	public void flood() {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
-
+		execute(new ThreadBlockingRunnable() {
 			@Override
 			public void run() {
-				animate(FLOOD);
-
+				animate(FLOOD, this);
 			}
 		});
 
 	}
 
-	private void animate(boolean floodBool) {
+	private void animate(boolean floodBool, SignaledRunnable runnable) {
 		List<DoubleProperty> animateProps = new ArrayList<>();
 		animateProps.add(floodEffect.brightnessProperty());
 		animateProps.add(floodEffect.contrastProperty());
 		animateProps.add(floodEffect.saturationProperty());
 		animateProps.add(flood.opacityProperty());
 		Animations.floodTile(Arrays.asList(new IslandView[] { this }), animateProps, floodBool,
-				IslandView.this);
+				runnable);
 
 	}
 
 	public void unFlood() {
-		execute(new SignaledRunnable() {
+		execute(new ThreadBlockingRunnable() {
 
 			@Override
 			public boolean willSignal() {
@@ -187,7 +176,7 @@ public class IslandView extends AbstractView<Island> {
 
 			@Override
 			public void run() {
-				animate(UNFLOOD);
+				animate(UNFLOOD, this);
 			}
 		});
 	}
@@ -206,13 +195,7 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	public void setSaved(final boolean b) {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
-
+		execute(new NoSignalingRunnable() {
 			@Override
 			public void run() {
 				if (b) {

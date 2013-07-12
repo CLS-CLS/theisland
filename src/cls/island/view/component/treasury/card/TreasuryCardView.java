@@ -7,7 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import cls.island.utils.SignaledRunnable;
+import cls.island.utils.concurrent.NoSignalingRunnable;
+import cls.island.utils.concurrent.SignaledRunnable;
 import cls.island.view.component.AbstractView;
 
 public class TreasuryCardView extends AbstractView<TreasuryCard> {
@@ -36,13 +37,8 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 	}
 
 	public void setFaceUp(final boolean faceUp) {
-		execute(new SignaledRunnable() {
-			
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
-			
+		execute(new NoSignalingRunnable() {
+
 			@Override
 			public void run() {
 				if (faceUp && !getChildren().contains(faceUpView)) {
@@ -53,7 +49,7 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 					getChildren().add(faceDownView);
 					getChildren().remove(faceUpView);
 				}
-				
+
 			}
 		});
 	}
@@ -67,12 +63,7 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 		displayed = inDiscard != null ? 1 : 0;
 		useDiscardComponent.discardButton.setOnAction(inDiscard);
 		useDiscardComponent.discardButton.setOpacity(displayed);
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
+		execute(new NoSignalingRunnable() {
 
 			@Override
 			public void run() {
@@ -89,12 +80,7 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 	 * discarded or used.
 	 */
 	public void disableUseDiscard() {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
+		execute(new NoSignalingRunnable() {
 
 			@Override
 			public void run() {

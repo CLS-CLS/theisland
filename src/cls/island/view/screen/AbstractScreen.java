@@ -8,13 +8,14 @@ import cls.island.control.Config;
 import cls.island.control.MainController;
 import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
-import cls.island.utils.SignaledRunnable;
 import cls.island.utils.concurrent.AutoReentrantLock;
+import cls.island.utils.concurrent.SignaledRunnable;
+import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.ThreadBlock;
 import cls.island.view.screen.popup.PopUpInternal;
 import cls.island.view.screen.popup.PopUpWrapper;
 
-public abstract class AbstractScreen extends Group implements ThreadBlock {
+public abstract class AbstractScreen extends Group {
 
 	protected static LocCalculator locCalculator = LocCalculator.getInstance();
 	protected final AutoReentrantLock lock = new AutoReentrantLock();
@@ -81,6 +82,11 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 				animationInProgressOriginal = animationInProgress;
 				c_setAnimationInProgress(false);
 			}
+
+			@Override
+			public void signal() {
+				throw new UnsupportedOperationException();
+			}
 		});
 
 		return popUp.getResult();
@@ -102,15 +108,9 @@ public abstract class AbstractScreen extends Group implements ThreadBlock {
 		return popUpOpen;
 	}
 
-	@Override
-	public void execute(SignaledRunnable runnable) {
+	public void execute(ThreadBlockingRunnable runnable) {
+		runnable.register(threadBlock);
 		threadBlock.execute(runnable);
-
 	}
-
-	@Override
-	public void unpause() {
-		threadBlock.unpause();
-	}
-
+	
 }

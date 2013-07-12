@@ -3,18 +3,13 @@ package cls.island.view.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
-import java.util.concurrent.locks.Condition;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,7 +42,7 @@ import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
 import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.SignaledRunnable;
+import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.MessagePanel;
 import cls.island.view.component.ThreadBlock;
 import cls.island.view.component.actionsleft.ActionsLeftView;
@@ -221,13 +216,7 @@ public class IslandScreen extends AbstractScreen {
 	}
 
 	public void c_movePiece(final PieceView pieceView, final IslandView islandView, final int index) {
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
-
+		execute(new ThreadBlockingRunnable() {
 			@Override
 			public void run() {
 				Loc pieceLoc = islandView.getLoc().add(
@@ -245,7 +234,7 @@ public class IslandScreen extends AbstractScreen {
 						}
 					}
 				};
-				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, IslandScreen.this);
+				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, this);
 			}
 		});
 
@@ -268,13 +257,7 @@ public class IslandScreen extends AbstractScreen {
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
 
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
-
+		execute(new ThreadBlockingRunnable() {
 			@Override
 			public void run() {
 				Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
@@ -284,7 +267,7 @@ public class IslandScreen extends AbstractScreen {
 					@Override
 					public void handle(ActionEvent event) {
 						msgPanel.showMessage(message);
-						unpause();
+						signal();
 					}
 				});
 				timeline.play();
@@ -298,13 +281,7 @@ public class IslandScreen extends AbstractScreen {
 			throw new RuntimeException(
 					"the method should run outside fx-tread in order to be blocking");
 
-		execute(new SignaledRunnable() {
-
-			@Override
-			public boolean willSignal() {
-				return true;
-			}
-
+		execute(new ThreadBlockingRunnable() {
 			@Override
 			public void run() {
 				Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
@@ -313,8 +290,7 @@ public class IslandScreen extends AbstractScreen {
 
 					@Override
 					public void handle(ActionEvent event) {
-						unpause();
-
+						signal();
 					}
 				});
 				tmln.play();

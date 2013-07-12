@@ -5,6 +5,7 @@ import java.util.concurrent.locks.Lock;
 
 import javafx.application.Platform;
 import cls.island.utils.concurrent.AutoReentrantLock;
+import cls.island.utils.concurrent.SignaledRunnable;
 import cls.island.view.component.ThreadBlock;
 
 public class FxThreadBlock implements ThreadBlock {

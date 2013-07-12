@@ -1,7 +1,5 @@
 package cls.island.view.component;
 
-import java.util.concurrent.locks.Condition;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -19,7 +17,7 @@ import javafx.util.Duration;
 import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.SignaledRunnable;
+import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
@@ -32,7 +30,7 @@ import cls.island.view.screen.IslandComponent;
  *
  * @param <T>
  */
-public class AbstractView<T> extends Parent implements IslandComponent, ThreadBlock {
+public class AbstractView<T> extends Parent implements IslandComponent {
 	private static final double HOVER_OVER_OPACITY = 0.2;
 	private static final double HOVER_OVER_ANIM_DURATION = 200;
 	private boolean selectable = true;
@@ -188,11 +186,11 @@ public class AbstractView<T> extends Parent implements IslandComponent, ThreadBl
 		return model;
 	}
 
-	public void execute(final SignaledRunnable runnable) {
+	public void execute(final ThreadBlockingRunnable runnable) {
+		runnable.register(threadBlock);
 		threadBlock.execute(runnable);
 	}
 
-	@Override
 	public void unpause(){
 		threadBlock.unpause();
 	}

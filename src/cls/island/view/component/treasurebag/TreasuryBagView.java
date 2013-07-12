@@ -10,7 +10,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import cls.island.utils.SignaledRunnable;
+import cls.island.utils.concurrent.NoSignalingRunnable;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.treasury.card.Type;
 import cls.island.view.component.treasury.card.Type.Ability;
@@ -55,13 +55,7 @@ public class TreasuryBagView extends AbstractView<TreasureBag>{
 	}
 	
 	public void removeEffect(final Type type){
-		execute(new SignaledRunnable() {
-			
-			@Override
-			public boolean willSignal() {
-				return false;
-			}
-			
+		execute(new NoSignalingRunnable() {
 			@Override
 			public void run() {
 				mapping.get(type).setEffect(null);
