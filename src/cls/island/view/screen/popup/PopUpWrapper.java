@@ -1,15 +1,10 @@
 package cls.island.view.screen.popup;
 
-import java.util.concurrent.locks.Condition;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.utils.TimelineSingle;
