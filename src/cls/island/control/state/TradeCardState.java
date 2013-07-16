@@ -55,11 +55,6 @@ public class TradeCardState implements GameState {
 		}
 		if (!eligibleCards.contains(cardView.getParentModel()))return null;
 		
-		if (eligiblePlayers.size() == 1){
-			gameModel.getCurrentTurnPlayer().giveCard(eligiblePlayers.get(0), cardView.getParentModel());
-			eligiblePlayers.get(0).getBase().getComponent().moveToBase(cardView);
-			return previousState();
-		}
 		islandScreen.c_hideMessagePanel();
 		return new TradeCardStateStepTwo(gameController, islandScreen, gameModel,
 				cardView.getParentModel(), eligiblePlayers, fromState);

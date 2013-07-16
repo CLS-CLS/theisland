@@ -10,7 +10,7 @@ import cls.island.view.component.ThreadBlock;
 
 public class FxThreadBlock implements ThreadBlock {
 	
-	private final Lock lock = new AutoReentrantLock();
+	private volatile Lock lock = new AutoReentrantLock();
 	protected volatile Condition wait = lock.newCondition();
 	
 	@Override
@@ -19,19 +19,22 @@ public class FxThreadBlock implements ThreadBlock {
 			runnable.run();
 			return;
 		}
+		System.out.println(Thread.currentThread().getName() + " acqurining lock in execute method " );
 		lock.lock();
 
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				runnable.run();
-				if (!runnable.willSignal()) {
-					wait.signal();
-				}
 			}
 		});
 		try {
-			wait.await();
+			if (runnable.willSignal()){
+				System.out.println(Thread.currentThread().getName() + " Waiting " );
+				wait.await();
+			}else {
+				lock.unlock();
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

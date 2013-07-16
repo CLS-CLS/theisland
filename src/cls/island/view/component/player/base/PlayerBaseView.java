@@ -20,7 +20,6 @@ import javafx.scene.transform.Scale;
 import cls.island.utils.Animations;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.concurrent.SignaledRunnable;
 import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.treasury.card.TreasuryCard;
@@ -72,10 +71,12 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		execute(new ThreadBlockingRunnable() {
 			@Override
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " move To Base Start ");
 				int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 				treasuryCard.setSelectable(true);
 				Animations.teleportCardToLocationReverse(treasuryCard, PlayerBaseView.this.getLoc()
 						.add(locCalculator.cardLocationInCardHolder(index)), this);
+				System.out.println(Thread.currentThread().getName() +" move To Base End ");
 			}
 		});
 

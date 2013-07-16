@@ -40,7 +40,6 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	private Timeline onExitedAnimation = new Timeline();
 	private T model;
 	private volatile OnOffEffectNode validToClick;
-	private volatile ThreadBlock  threadBlock = new FxThreadBlock();
 
 	private static final Effect defaultEffect() {
 		Light.Distant light = new Light.Distant();
@@ -187,12 +186,8 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	}
 
 	public void execute(final ThreadBlockingRunnable runnable) {
-		runnable.register(threadBlock);
-		threadBlock.execute(runnable);
+		FxThreadBlock localThreadBlock = new FxThreadBlock();
+		runnable.register(localThreadBlock);
+		localThreadBlock.execute(runnable);
 	}
-
-	public void unpause(){
-		threadBlock.unpause();
-	}
-
 }

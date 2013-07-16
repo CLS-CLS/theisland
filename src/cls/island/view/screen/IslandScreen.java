@@ -69,7 +69,6 @@ public class IslandScreen extends AbstractScreen {
 	private TreasuryPile treasuryBase;
 	private MessagePanel msgPanel = new MessagePanel();
 	private GameController gameController;
-	private ThreadBlock threadBlock = new FxThreadBlock();
 	/**
 	 * hold all the available buttons for easy iteration.
 	 */

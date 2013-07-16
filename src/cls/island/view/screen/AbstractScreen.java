@@ -1,7 +1,5 @@
 package cls.island.view.screen;
 
-import java.util.concurrent.locks.Condition;
-
 import javafx.application.Platform;
 import javafx.scene.Group;
 import cls.island.control.Config;
@@ -109,8 +107,9 @@ public abstract class AbstractScreen extends Group {
 	}
 
 	public void execute(ThreadBlockingRunnable runnable) {
-		runnable.register(threadBlock);
-		threadBlock.execute(runnable);
+		FxThreadBlock localThreadBlock = new FxThreadBlock();
+		runnable.register(localThreadBlock);
+		localThreadBlock.execute(runnable);
 	}
 	
 }

@@ -32,6 +32,7 @@ public class AutoLockCondition implements Condition{
 	@Override
 	public void signal() {
 		parentLock.lock();
+		System.out.println("signal !!");
 		condition.signal();
 		parentLock.unlock();
 	}

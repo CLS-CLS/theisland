@@ -15,7 +15,6 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.concurrent.SignaledRunnable;
-import cls.island.view.component.ThreadBlock;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 
@@ -124,6 +123,7 @@ public class Animations {
 	 */
 	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView,
 			Loc location, final SignaledRunnable signaledRunnable) {
+		System.out.println(Thread.currentThread().getName() + " Start teleporting");
 		treasuryCardView.toFront();
 		treasuryCardView.setOpacity(0);
 		treasuryCardView.relocate(location);
@@ -135,6 +135,7 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
+				System.out.println(Thread.currentThread().getName() +" fininsed Teleporting");
 				signaledRunnable.signal();
 			}
 		});

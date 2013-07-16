@@ -405,25 +405,25 @@ public class GameModel {
 				}
 			}
 		case TREASURE_SUNK:
-			infos[0] = Type.CRYSTAL_OF_FIRE.name();
-			return true;
-//			List<Type> remainingTreasures = Type.getTypesWithAbility(Ability.TREASURE);
-//			remainingTreasures.removeAll(getTreasureBag().getAcquiredTreaures());
-//			for (Type remainingTreasure : remainingTreasures) {
-//				int sinked = 0;
-//				for (Island island : islands) {
-//					if (island.hasTreasure() && island.getTreasure() == remainingTreasure
-//							&& island.isSunk()) {
-//						sinked++;
-//					}
-//				}
-//				if (sinked == 2) {
-//					if (infos.length >0){
-//						infos[0] = remainingTreasure.name();
-//					}
-//					return true;
-//				}
-//			}
+//			infos[0] = Type.CRYSTAL_OF_FIRE.name();
+//			return true;
+			List<Type> remainingTreasures = Type.getTypesWithAbility(Ability.TREASURE);
+			remainingTreasures.removeAll(getTreasureBag().getAcquiredTreaures());
+			for (Type remainingTreasure : remainingTreasures) {
+				int sinked = 0;
+				for (Island island : islands) {
+					if (island.hasTreasure() && island.getTreasure() == remainingTreasure
+							&& island.isSunk()) {
+						sinked++;
+					}
+				}
+				if (sinked == 2) {
+					if (infos.length >0){
+						infos[0] = remainingTreasure.name();
+					}
+					return true;
+				}
+			}
 		default:
 			break;
 		}
