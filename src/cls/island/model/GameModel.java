@@ -32,7 +32,6 @@ import cls.island.view.component.treasury.pile.TreasuryPile;
 import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
 import cls.island.view.component.waterlevel.WaterLevel;
 
-
 public class GameModel {
 	private Map<PieceColor, Island> colorToIsland = new HashMap<>();
 	private static final int SANDBAG_CARD_QUANTITY = 2;
@@ -110,23 +109,22 @@ public class GameModel {
 	public void newGame() {
 		setUpRandomTiles();
 		Collections.shuffle(treasuryCards);
-
-		// ensure the the first n*2 cards(where n the number of players )are not
-		// flood cards. 1)Remove the flood cards if any in the first n*2
-		// positions
-		// 2) add them back after the n*2 position.
-		ArrayList<TreasuryCard> treasuryCardsMock = new ArrayList<>(treasuryCards);
-		List<TreasuryCard> removedCards = new ArrayList<>();
-		for (int i = treasuryCardsMock.size() - 1; i >= treasuryCardsMock.size() - 6; i--) {
-			if (treasuryCardsMock.get(i).getType().getAbility() == Ability.DANGER) {
-				removedCards.add(treasuryCards.remove(i));
+		List<TreasuryCard> clonedTreasureCards = new ArrayList<>(treasuryCards);
+		// remove 2* number of players not water cards
+		List<TreasuryCard> initialCards = new ArrayList<>();
+		for (TreasuryCard trCard : treasuryCards) {
+			if (!trCard.getType().equals(Type.WATER_RISE)) {
+				initialCards.add(trCard);
+				clonedTreasureCards.remove(trCard);
+				if (initialCards.size() == getPlayers().size() * 2) {
+					break;
+				}
 			}
 		}
-		int minimumAddIndex = getPlayers().size() * DRAW_CARDS_PER_TURN + 1;
-		for (TreasuryCard card : removedCards) {
-			treasuryCards.add(ViewUtils.getRandomInt(0, treasuryCards.size() - minimumAddIndex),
-					card);
-		}
+		treasuryCards = clonedTreasureCards;
+		Collections.shuffle(treasuryCards);
+
+		treasuryCards.addAll(initialCards);
 
 		for (TreasuryCard treasuryCard : treasuryCards) {
 			treasuryPile.addToPile(treasuryCard, PileType.NORMAL);
@@ -143,14 +141,12 @@ public class GameModel {
 		Collections.shuffle(islandsToFlood);
 
 		actionsLeft.setPlayer(getCurrentTurnPlayer());
-		
-		//draw six  flood cards
-		for (int i=0; i <6; i++){
+
+		// draw six flood cards
+		for (int i = 0; i < 6; i++) {
 			Island island = getNextIslantToFlood();
 			floodIsland(island);
 		}
-		
-		
 	}
 
 	private void initPlayers(List<PlayerAndColor> players) {
@@ -212,12 +208,13 @@ public class GameModel {
 				treasure = Type.EARTH_STONE;
 			if (treasure == null) {
 				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
-						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false,
-								name, false, false, LocCalculator.getInstance())));
-			}else {
+						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name,
+								false, false, LocCalculator.getInstance())));
+			} else {
 				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
-						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false,
-								name, false, false, LocCalculator.getInstance()), config.getTreasureImage(treasure)));
+						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name,
+								false, false, LocCalculator.getInstance()), config
+								.getTreasureImage(treasure)));
 			}
 		}
 	}
@@ -325,7 +322,7 @@ public class GameModel {
 		Island toFloodIsland = islandsToFlood.get(islandsToFlood.size() - 1);
 		return toFloodIsland;
 	}
-	
+
 	/**
 	 * floods an island and updates the floodlist 
 	 * @param island
@@ -390,23 +387,20 @@ public class GameModel {
 	public IslandGrid<Island> getIslandGrid() {
 		return islandGrid;
 	}
-	
-	public boolean checkLooseCondition(LooseCondition type, Object... infos){
+
+	public boolean checkLooseCondition(LooseCondition type, Object... infos) {
 		switch (type) {
 		case MAX_WATER_LEVEL_REACHED:
 			if (waterLevel.getWaterLevel() >= MAX_WATER_LEVEL) {
 				return true;
 			}
 		case FOOLS_LANDING_LOST:
-			for (Island island : getIslands()){
-				if (island.getName().equals(IslandName.FoolsLanding.name()) &&
-						island.isSunk()){
+			for (Island island : getIslands()) {
+				if (island.getName().equals(IslandName.FoolsLanding.name()) && island.isSunk()) {
 					return true;
 				}
 			}
 		case TREASURE_SUNK:
-//			infos[0] = Type.CRYSTAL_OF_FIRE.name();
-//			return true;
 			List<Type> remainingTreasures = Type.getTypesWithAbility(Ability.TREASURE);
 			remainingTreasures.removeAll(getTreasureBag().getAcquiredTreaures());
 			for (Type remainingTreasure : remainingTreasures) {
@@ -418,7 +412,7 @@ public class GameModel {
 					}
 				}
 				if (sinked == 2) {
-					if (infos.length >0){
+					if (infos.length > 0) {
 						infos[0] = remainingTreasure.name();
 					}
 					return true;
@@ -454,7 +448,7 @@ public class GameModel {
 				}
 			}
 			if (sinked == 2) {
-				if (infos.length >0){
+				if (infos.length > 0) {
 					infos[0] = remainingTreasure.name();
 				}
 				return LooseCondition.TREASURE_SUNK;
@@ -581,7 +575,7 @@ public class GameModel {
 		}
 		return collectionCards;
 	}
-	
+
 	/**
 	 * Checks if the player has met the win conditions
 	 * @return true if the player has won, false otherwise
@@ -590,11 +584,12 @@ public class GameModel {
 		Island island = getCurrentTurnPlayer().getPiece().getIsland();
 		if (island.getName() == IslandName.FoolsLanding
 				&& island.getPiecesAndPositions().keySet().size() == getPlayers().size()
-				&& getTreasureBag().getAcquiredTreaures().size() == 4){
+				&& getTreasureBag().getAcquiredTreaures().size() == 4) {
 			return true;
 		}
 		return false;
 	}
+
 	/**
 	 * gives back to player the specified discarded card
 	 * @param cardHolder
@@ -604,7 +599,7 @@ public class GameModel {
 	public int undiscardCard(Player cardHolder, TreasuryCard discardedCard) {
 		treasuryPile.removeFromPile(discardedCard, PileType.DISCARD);
 		return cardHolder.addCard(discardedCard);
-		
+
 	}
 
 }

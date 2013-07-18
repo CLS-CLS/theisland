@@ -3,9 +3,10 @@ package cls.island.control.state;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import cls.island.control.Action;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
+import cls.island.control.action.Action;
+import cls.island.control.action.RevertableAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
@@ -71,8 +72,7 @@ public class UseShoreUpCardState implements GameState {
 			return null;
 
 		// primary button pressed on flooded island
-		gameController.executeAction(new Action() {
-
+		gameController.executeAction(new RevertableAction() {
 			Player cardHolder = null;
 
 			@Override

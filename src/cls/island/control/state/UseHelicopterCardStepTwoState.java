@@ -7,6 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
+import cls.island.control.action.RevertableAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
@@ -82,14 +83,35 @@ public class UseHelicopterCardStepTwoState implements GameState {
 
 	}
 
-	private GameState flyToIsland(Island island, Piece... piece) {
-		for (Piece currentPiece : piece){
-			int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(island);
-			islandScreen.c_movePiece(currentPiece.getComponent(), island.getComponent(), index);
-		}
-		Player cardHolder = ViewUtils.findPlayerHoldingCard(gameModel, card);
-		gameModel.discardCard(cardHolder, card);
-		islandScreen.c_discardPlayerCard(cardHolder.getBase().getComponent(), card.getComponent());
+	private GameState flyToIsland(final Island island,final Piece... piece) {
+		gameController.executeAction(new RevertableAction() {
+			
+			Player cardHolder = ViewUtils.findPlayerHoldingCard(gameModel, card);
+			GameState initialState = findInitialPage();
+			
+			@Override
+			public GameState revert() {
+				gameModel.undiscardCard(cardHolder, card);
+				islandScreen.c_moveTreasuryCardFromPileToPlayer(card.getComponent(), cardHolder.getBase().getComponent());
+				for (Piece currentPiece : piece){
+					int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(takeOffIsland);
+					islandScreen.c_movePiece(currentPiece.getComponent(), takeOffIsland.getComponent(), index);
+				}
+				return goToState(initialState);
+			}
+			
+			@Override
+			public void execute() {
+				for (Piece currentPiece : piece){
+					int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(island);
+					islandScreen.c_movePiece(currentPiece.getComponent(), island.getComponent(), index);
+				}
+				
+				gameModel.discardCard(cardHolder, card);
+				islandScreen.c_discardPlayerCard(cardHolder.getBase().getComponent(), card.getComponent());
+			}
+		});
+		
 		return goToState(findInitialPage());
 	}
 

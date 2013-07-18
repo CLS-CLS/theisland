@@ -3,10 +3,10 @@ package cls.island.control.state;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import cls.island.control.Action;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
+import cls.island.control.action.RevertableAction;
 import cls.island.model.GameModel;
 import cls.island.model.player.EngineerPlayer;
 import cls.island.model.player.Player;
@@ -51,7 +51,7 @@ public class ShoreUpState implements GameState {
 		}
 		
 		
-		gameController.executeAction(new Action(){
+		gameController.executeAction(new RevertableAction(){
 			
 			@Override
 			public void execute() {

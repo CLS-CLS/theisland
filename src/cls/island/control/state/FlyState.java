@@ -5,9 +5,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
+import cls.island.control.action.RevertableAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.PilotPlayer;
+import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
@@ -19,9 +21,11 @@ public class FlyState implements GameState {
 	private final IslandScreen islandScreen;
 	private final GameModel gameModel;
 	private final GameState fromState;
+	private final GameController gameController;
 
 	public FlyState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
 			GameState fromState) {
+		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.fromState = fromState;
@@ -39,15 +43,34 @@ public class FlyState implements GameState {
 		if (islandComponent == null)
 			return null;
 		if (islandComponent instanceof IslandView) {
-			Island island = ((IslandView) islandComponent).getParentModel();
+			final Island island = ((IslandView) islandComponent).getParentModel();
 			if (island.isSunk())
 				return null;
 			if (island.equals(gameModel.getCurrentTurnPlayer().getPiece().getIsland())) {
 				return null;
 			}
-			int index = ((PilotPlayer) gameModel.getCurrentTurnPlayer()).fly(island);
-			islandScreen.c_movePiece(gameModel.getCurrentTurnPlayer().getPiece().getComponent(),
-					island.getComponent(), index);
+			gameController.executeAction(new RevertableAction() {
+				
+				private Island islandFrom = gameModel.getCurrentTurnPlayer().getPiece().getIsland();
+				private Player currentTurnPlayer = gameModel.getCurrentTurnPlayer();
+				
+				@Override
+				public GameState revert() {
+					
+					int index = currentTurnPlayer.setToIsland(islandFrom);
+					islandScreen.c_movePiece(currentTurnPlayer.getPiece().getComponent(), islandFrom.getComponent(), index);
+					currentTurnPlayer.setActionsLeft(currentTurnPlayer.getActionsLeft()+1);
+					((PilotPlayer)currentTurnPlayer).setCanFly(true);
+					return fromState;
+				}
+				
+				@Override
+				public void execute() {
+					int index = ((PilotPlayer) currentTurnPlayer).fly(island);
+					islandScreen.c_movePiece(currentTurnPlayer.getPiece().getComponent(),
+							island.getComponent(), index);
+				}
+			});
 			return toNormalState();
 		}
 		return null;

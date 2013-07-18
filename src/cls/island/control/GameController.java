@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
+import cls.island.control.action.Action;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
@@ -171,8 +172,13 @@ public class GameController {
 	}
 
 	public void executeAction(Action action) {
-		lastAction = action;
-		undoAction.set(true);
+		if (action.isRevartable()){
+			lastAction = action;
+			undoAction.set(true);
+		}else {
+			lastAction = null;
+			undoAction.set(false);
+		}
 		action.execute();
 	}
 

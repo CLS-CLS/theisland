@@ -5,10 +5,10 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import cls.island.control.Action;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
+import cls.island.control.action.RevertableAction;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
@@ -106,12 +106,12 @@ public class TradeCardStateStepTwo implements GameState {
 
 	}
 	
-	private final class TradeAction implements Action {
+	private final class TradeAction extends RevertableAction {
 		private final Player playerToGiveCard;
 		TreasuryCard card = selectedCard;
 		Player playerFrom = gameModel.getCurrentTurnPlayer();
 		Player playerTo;
-		GameState stateToReturn = TradeCardStateStepTwo.this.getFromState();
+		GameState stateToReturn = TradeCardStateStepTwo.this.fromState;
 
 		private TradeAction(Player playerToGiveCard) {
 			this.playerToGiveCard = playerToGiveCard;

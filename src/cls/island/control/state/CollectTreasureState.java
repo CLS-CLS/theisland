@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
+import cls.island.control.action.UnrevertableAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
@@ -17,9 +18,11 @@ public class CollectTreasureState implements GameState {
 	private final IslandScreen islandScreen;
 	public final GameModel gameModel;
 	private final GameState fromState;
+	private final GameController gameController;
 
-	public CollectTreasureState(GameController gameController, IslandScreen islandScreen, GameModel gameModel,
-			GameState fromState) {
+	public CollectTreasureState(GameController gameController, IslandScreen islandScreen,
+			GameModel gameModel, GameState fromState) {
+		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.fromState = fromState;
@@ -43,18 +46,24 @@ public class CollectTreasureState implements GameState {
 	@Override
 	public GameState start() {
 		islandScreen.disableButtons();
-		Player currentPlayer = gameModel.getCurrentTurnPlayer();
-		List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
-		if (gameModel.canCollectTreasure(currentPlayer)){
-			Type collectedType = gameModel.collectTreasure(collectionCards);
-			gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
-			for (TreasuryCard card : collectionCards) {
-				islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(), card.getComponent());
-			}
-		}
-		
-		return fromState;
+		gameController.executeAction(new UnrevertableAction() {
 
+			@Override
+			public void execute() {
+				Player currentPlayer = gameModel.getCurrentTurnPlayer();
+				List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
+				if (gameModel.canCollectTreasure(currentPlayer)) {
+					Type collectedType = gameModel.collectTreasure(collectionCards);
+					gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
+					for (TreasuryCard card : collectionCards) {
+						islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
+								card.getComponent());
+					}
+				}
+			}
+		});
+
+		return fromState;
 	}
 
 }

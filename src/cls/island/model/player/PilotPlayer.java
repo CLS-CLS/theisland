@@ -14,7 +14,7 @@ public class PilotPlayer extends Player {
 	}
 	
 	/**
-	 * Moves the player to the provided island using his flying ability.
+	 * Moves the player to the provided island using his flying ability and removes one action.
 	 * @param toIsland
 	 */
 	public int fly(Island toIsland){
@@ -39,7 +39,7 @@ public class PilotPlayer extends Player {
 	}
 	
 	/**
-	 * form initialization purposes only
+	 * for initialization purposes only
 	 * @param canFly
 	 */
 	public void setCanFly(boolean canFly){
