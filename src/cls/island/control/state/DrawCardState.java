@@ -118,4 +118,8 @@ public class DrawCardState implements GameState {
 		return this;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

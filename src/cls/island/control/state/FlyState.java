@@ -105,4 +105,8 @@ public class FlyState implements GameState {
 		return null;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

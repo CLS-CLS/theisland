@@ -19,7 +19,6 @@ import cls.island.view.screen.IslandScreen;
 
 public class TradeCardStateStepTwo implements GameState {
 
-
 	private final GameController gameController;
 	private final IslandScreen islandScreen;
 	private final GameModel gameModel;
@@ -41,7 +40,7 @@ public class TradeCardStateStepTwo implements GameState {
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
 		if (event.getButton() == MouseButton.SECONDARY) {
-			removeEffects();
+			end();
 			return fromState;
 		}
 		IslandComponent component = ViewUtils.findIslandComponent((Node) event.getTarget());
@@ -63,14 +62,13 @@ public class TradeCardStateStepTwo implements GameState {
 			return null;
 		}
 
-		final Player playerToGiveCard = selectedPlayer;
-		gameController.executeAction(new TradeAction(playerToGiveCard));
-		removeEffects();
-		return fromState.getFromState();
-
+		final Player receiver = selectedPlayer;
+		end();
+		return giveCard(receiver);
 	}
-
-	private void removeEffects() {
+	
+	@Override
+	public void end() {
 		islandScreen.c_hideMessagePanel();
 		selectedCard.getComponent().setValidToCkickEffect(false);
 		for (Player player : eligiblePlayers) {
@@ -91,9 +89,11 @@ public class TradeCardStateStepTwo implements GameState {
 	@Override
 	public GameState start() {
 		if (eligiblePlayers.size() == 1) {
-			gameController.executeAction(new TradeAction(eligiblePlayers.get(0)));
-			removeEffects();
-			return fromState.getFromState();
+			end();
+			return giveCard(eligiblePlayers.get(0));
+		}
+		for (TreasuryCard card : gameModel.getCurrentTurnPlayer().getTreasuryCards()) {
+			card.getComponent().setValidToCkickEffect(false);
 		}
 		islandScreen.c_setSelectedActionButton(ButtonAction.TRADE);
 		islandScreen.c_showMessagePanel("Choose a Player to give the card\nRight-Click to cancel");
@@ -104,22 +104,35 @@ public class TradeCardStateStepTwo implements GameState {
 		return null;
 
 	}
-	
+
+	/**
+	 * Gives the card to the player, and returns the state that should move on
+	 * @return the next state to go.s
+	 */
+	private GameState giveCard(Player receiver) {
+		gameController.executeAction(new TradeAction(receiver));
+		if (receiver.getTreasuryCards().size() <= 5) {
+			return fromState.getFromState();
+		} else {
+			return new UseOrDiscardCardState(receiver, gameController, islandScreen, gameModel,
+					fromState);
+		}
+
+	}
+
 	private final class TradeAction extends RevertableAction {
 		private final Player playerToGiveCard;
 		TreasuryCard card = selectedCard;
 		Player playerFrom = gameModel.getCurrentTurnPlayer();
-		Player playerTo;
-		GameState stateToReturn = TradeCardStateStepTwo.this.fromState;
+		GameState stateToReturn = TradeCardStateStepTwo.this.fromState.getFromState();
 
 		private TradeAction(Player playerToGiveCard) {
 			this.playerToGiveCard = playerToGiveCard;
-			playerTo = playerToGiveCard;
 		}
 
 		@Override
 		public GameState revert() {
-			playerTo.setGiveCard(playerFrom, card);
+			playerToGiveCard.setGiveCard(playerFrom, card);
 			playerFrom.setActionsLeft(playerFrom.getActionsLeft() + 1);
 			playerFrom.getBase().getComponent().moveToBase(card.getComponent());
 			return stateToReturn;
@@ -129,6 +142,7 @@ public class TradeCardStateStepTwo implements GameState {
 		public void execute() {
 			gameModel.getCurrentTurnPlayer().giveCard(playerToGiveCard, selectedCard);
 			playerToGiveCard.getBase().getComponent().moveToBase(selectedCard.getComponent());
+			gameModel.getCurrentTurnPlayer().getBase().getComponent().rearrangeCards();
 			islandScreen.c_hideMessagePanel();
 			selectedCard.getComponent().setValidToCkickEffect(false);
 			for (Player player : eligiblePlayers) {
@@ -137,5 +151,4 @@ public class TradeCardStateStepTwo implements GameState {
 
 		}
 	}
-
 }

@@ -112,4 +112,8 @@ public class ShoreUpState implements GameState {
 		return null;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

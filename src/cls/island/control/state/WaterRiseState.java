@@ -157,4 +157,8 @@ public class WaterRiseState implements GameState {
 		return shoreUpCardsExist;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

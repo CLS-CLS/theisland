@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import cls.island.control.Options.PlayerType;
 import cls.island.view.component.piece.PieceColor;

@@ -11,12 +11,10 @@ import cls.island.view.screen.IslandScreen;
 public class WinGameState implements GameState {
 	
 	private final IslandScreen islandScreen;
-	private final GameModel gameModel;
 	private final GameController gameController;
 
 	public WinGameState(GameController gameController, GameModel gameModel, IslandScreen islandScreen) {
 		this.gameController = gameController;
-		this.gameModel = gameModel;
 		this.islandScreen = islandScreen;
 		// TODO Auto-generated constructor stub
 	}
@@ -55,6 +53,10 @@ public class WinGameState implements GameState {
 			}
 		});
 		return null;
+	}
+
+	@Override
+	public void end() {
 	}
 
 }

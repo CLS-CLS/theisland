@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
+import cls.island.control.action.RevertableAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
@@ -19,14 +20,39 @@ public class UseOrDiscardCardState implements GameState {
 	private final GameModel gameModel;
 	private final GameState fromState;
 	private TreasuryCard selectedCard;
+	private final Player playerToDiscardCards;
 
+	/**
+	 * Constructor to create a UseOrDiscardCardState for the cards of the currentTurn player
+	 * @param gameController
+	 * @param islandScreen
+	 * @param gameModel
+	 * @param fromState
+	 */
 	public UseOrDiscardCardState(GameController gameController, IslandScreen islandScreen,
 			GameModel gameModel, GameState fromState) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
 		this.fromState = fromState;
+		this.playerToDiscardCards = gameModel.getCurrentTurnPlayer();
+	}
 
+	/**
+	 * 
+	 * @param playertToDiscardCards the player who holds more cards than allowed
+	 * @param gameController
+	 * @param islandScreen
+	 * @param gameModel
+	 * @param fromState
+	 */
+	public UseOrDiscardCardState(Player playertToDiscardCards, GameController gameController,
+			IslandScreen islandScreen, GameModel gameModel, GameState fromState) {
+		this.gameController = gameController;
+		this.islandScreen = islandScreen;
+		this.gameModel = gameModel;
+		this.fromState = fromState;
+		this.playerToDiscardCards = playertToDiscardCards;
 	}
 
 	@Override
@@ -36,40 +62,48 @@ public class UseOrDiscardCardState implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		Player player = gameModel.getCurrentTurnPlayer();
 		switch (action) {
 		case USE:
-			return useCard(player);
+			return useCard();
 		case DISCARD:
-			return discardCard(player);
+			return discardCard();
 		}
-		
+
 		return null;
 	}
 
-	private GameState discardCard(Player player) {
-		for (TreasuryCard playerCard : player.getTreasuryCards()) {
-			playerCard.getComponent().disableUseDiscard();
-		}
-		gameModel.discardCard(player, selectedCard);
-		islandScreen.c_discardPlayerCard(player.getBase().getComponent(),
-				selectedCard.getComponent());
-		islandScreen.c_hideMessagePanel();
+	private GameState discardCard() {
+		end();
+		gameController.executeAction(new RevertableAction() {
+
+			@Override
+			public GameState revert() {
+				gameModel.undiscardCard(playerToDiscardCards, selectedCard);
+				islandScreen.c_moveTreasuryCardFromPileToPlayer(selectedCard.getComponent(),
+						playerToDiscardCards.getBase().getComponent());
+				return UseOrDiscardCardState.this;
+			}
+
+			@Override
+			public void execute() {
+				gameModel.discardCard(playerToDiscardCards, selectedCard);
+				islandScreen.c_discardPlayerCard(playerToDiscardCards.getBase().getComponent(),
+						selectedCard.getComponent());
+			}
+		});
+
 		return fromState;
 	}
 
-	private GameState useCard(Player player) {
-		for (TreasuryCard playerCard : player.getTreasuryCards()) {
-			playerCard.getComponent().disableUseDiscard();
-		}
-		islandScreen.c_hideMessagePanel();
+	private GameState useCard() {
+		end();
 		switch (selectedCard.getType()) {
 		case SANDBAGS:
-			return new UseShoreUpCardState(gameController, islandScreen,
-					gameModel, selectedCard, UseOrDiscardCardState.this);
+			return new UseShoreUpCardState(gameController, islandScreen, gameModel, selectedCard,
+					UseOrDiscardCardState.this);
 		case HELICOPTER:
-			return new UseHelicopterCardState(gameController,
-					islandScreen, gameModel, selectedCard, UseOrDiscardCardState.this);
+			return new UseHelicopterCardState(gameController, islandScreen, gameModel,
+					selectedCard, UseOrDiscardCardState.this);
 		}
 		return null;
 	}
@@ -114,7 +148,7 @@ public class UseOrDiscardCardState implements GameState {
 	@Override
 	public GameState start() {
 		islandScreen.disableButtons();
-		for (TreasuryCard treasuryCard : gameModel.getCurrentTurnPlayer().getTreasuryCards()) {
+		for (TreasuryCard treasuryCard : playerToDiscardCards.getTreasuryCards()) {
 			if (treasuryCard.getType().getAbility() == Type.Ability.AID) {
 				treasuryCard.getComponent().enableUseDiscard(new UseHandler(treasuryCard),
 						new DiscardHandler(treasuryCard));
@@ -125,6 +159,14 @@ public class UseOrDiscardCardState implements GameState {
 		}
 		islandScreen.c_showMessagePanel("Select a card to Use or Discard");
 		return null;
+	}
+
+	@Override
+	public void end() {
+		for (TreasuryCard playerCard : playerToDiscardCards.getTreasuryCards()) {
+			playerCard.getComponent().disableUseDiscard();
+		}
+		islandScreen.c_hideMessagePanel();
 	}
 
 }

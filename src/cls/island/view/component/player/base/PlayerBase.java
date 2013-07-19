@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import cls.island.control.PlayerAndColor;
 import cls.island.control.Options.PlayerType;

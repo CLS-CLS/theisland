@@ -73,46 +73,77 @@ public class UseHelicopterCardStepTwoState implements GameState {
 			}
 		}
 	}
-
-	private GameState findInitialPage() {
-		if (fromState.getFromState() instanceof UseOrDiscardCardState) {
-			return fromState.getFromState().getFromState();
+	
+	/**
+	 * possible ways to come here 
+	 * 1) normal->trade->useDiscard->heli->heli2
+	 * 2) normal->drawCard->useDiscard->heli->heli2
+	 * 3) normal->heli->heli2
+	 * @return
+	 */
+	private GameState aPreviousState() {
+		GameState fromFromState = fromState.getFromState();
+		if (fromFromState instanceof UseOrDiscardCardState) {
+			if (fromFromState.getFromState() instanceof TradeCardState) {
+				assert fromFromState.getFromState().getFromState() instanceof NormalState : "was "
+						+ fromFromState.getFromState().getFromState().getClass();
+				return fromFromState.getFromState().getFromState(); //if from trade ->use-discard -> heli->heli2 ==> goto normal
+			}
+			return fromFromState.getFromState(); //if drawCard->useDiscard->heli->heli2 ==>go to drawCard
 		} else {
-			return fromState.getFromState();
+			return fromFromState; //if normal->heli->heli2 ==> go to normal
 		}
-
+	}
+	
+	/**
+	 * possible ways to come here 
+	 * 1) normal->trade->useDiscard->heli->heli2 / go to useDiscard
+	 * 2) normal->drawCard->useDiscard->heli->heli2 / not applicable
+	 * 3) normal->heli->heli2 / go to normal
+	 * @return
+	 */
+	private GameState findRevertToState() {
+		//happens to be ok for all possibilities!
+		return fromState.getFromState();
 	}
 
-	private GameState flyToIsland(final Island island,final Piece... piece) {
+	private GameState flyToIsland(final Island island, final Piece... piece) {
 		gameController.executeAction(new RevertableAction() {
-			
+
 			Player cardHolder = ViewUtils.findPlayerHoldingCard(gameModel, card);
-			GameState initialState = findInitialPage();
-			
+			GameState revertToState = findRevertToState();
+
 			@Override
 			public GameState revert() {
 				gameModel.undiscardCard(cardHolder, card);
-				islandScreen.c_moveTreasuryCardFromPileToPlayer(card.getComponent(), cardHolder.getBase().getComponent());
-				for (Piece currentPiece : piece){
-					int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(takeOffIsland);
-					islandScreen.c_movePiece(currentPiece.getComponent(), takeOffIsland.getComponent(), index);
+				islandScreen.c_moveTreasuryCardFromPileToPlayer(card.getComponent(), cardHolder
+						.getBase().getComponent());
+				for (Piece currentPiece : piece) {
+					int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(
+							takeOffIsland);
+					islandScreen.c_movePiece(currentPiece.getComponent(),
+							takeOffIsland.getComponent(), index);
 				}
-				return goToState(initialState);
+				return goToState(revertToState);
 			}
+
 			
+
 			@Override
 			public void execute() {
-				for (Piece currentPiece : piece){
+				for (Piece currentPiece : piece) {
 					int index = gameController.getPlayerWithPiece(currentPiece).setToIsland(island);
-					islandScreen.c_movePiece(currentPiece.getComponent(), island.getComponent(), index);
+					islandScreen.c_movePiece(currentPiece.getComponent(), island.getComponent(),
+							index);
 				}
-				
+
 				gameModel.discardCard(cardHolder, card);
-				islandScreen.c_discardPlayerCard(cardHolder.getBase().getComponent(), card.getComponent());
+				islandScreen.c_discardPlayerCard(cardHolder.getBase().getComponent(),
+						card.getComponent());
 			}
 		});
-		
-		return goToState(findInitialPage());
+
+		return goToState(aPreviousState());
 	}
 
 	private GameState goToState(GameState state) {
@@ -138,6 +169,10 @@ public class UseHelicopterCardStepTwoState implements GameState {
 		card.getComponent().setValidToCkickEffect(true);
 		takeOffIsland.getComponent().setValidToCkickEffect(true);
 		return null;
+	}
+
+	@Override
+	public void end() {
 	}
 
 }

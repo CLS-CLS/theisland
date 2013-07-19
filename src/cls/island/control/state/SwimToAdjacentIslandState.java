@@ -135,4 +135,8 @@ public class SwimToAdjacentIslandState implements GameState {
 		return null;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

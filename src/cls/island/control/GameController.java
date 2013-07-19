@@ -40,22 +40,12 @@ public class GameController {
 			return;
 		}
 		islandScreen.c_setAnimationInProgress(true);
-		
-//		ThreadUtil.Runlater(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				String[] infos = new String[1];
-//				gameModel.checkLooseCondition(LooseCondition.TREASURE_SUNK, infos);
-//				setGameState(new GameLostState(LooseCondition.TREASURE_SUNK, GameController.this, islandScreen, gameModel, null, infos));
-//				
-//			}
-//		});
 		ThreadUtil.Runlater(new Runnable() {
 
 			@Override
 			public void run() {
 				if (action == ButtonAction.UNDO) {
+					gameState.end();
 					GameState gameState = lastAction.revert();
 					lastAction = null;
 					undoAction.set(false);

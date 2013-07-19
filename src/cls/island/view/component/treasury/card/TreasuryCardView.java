@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import cls.island.utils.concurrent.NoSignalingRunnable;
-import cls.island.utils.concurrent.SignaledRunnable;
 import cls.island.view.component.AbstractView;
 
 public class TreasuryCardView extends AbstractView<TreasuryCard> {

@@ -163,4 +163,8 @@ public class NormalState implements GameState {
 		}
 		return null;
 	}
+
+	@Override
+	public void end() {
+	}
 }

@@ -54,15 +54,14 @@ public class TradeCardState implements GameState {
 			return null;
 		}
 		if (!eligibleCards.contains(cardView.getParentModel()))return null;
-		
-		islandScreen.c_hideMessagePanel();
+		end();
 		return new TradeCardStateStepTwo(gameController, islandScreen, gameModel,
-				cardView.getParentModel(), eligiblePlayers, fromState);
+				cardView.getParentModel(), eligiblePlayers, this);
 
 	}
 
 	private GameState previousState() {
-		islandScreen.c_hideMessagePanel();
+		end();
 		return fromState;
 	}
 
@@ -99,8 +98,20 @@ public class TradeCardState implements GameState {
 			return fromState;
 		}
 		islandScreen.c_showMessagePanel("Choose a card to give \nRight-Click to cancel");
+		for (TreasuryCard card :eligibleCards){
+			card.getComponent().setValidToCkickEffect(true);
+		}
 		return null;
 
+	}
+
+	@Override
+	public void end() {
+		islandScreen.c_hideMessagePanel();
+		for (TreasuryCard card :eligibleCards){
+			card.getComponent().setValidToCkickEffect(false);
+		}
+				
 	}
 
 

@@ -1,6 +1,5 @@
 package cls.island.view.component.waterlevel;
 
-import javafx.beans.property.ReadOnlyFloatProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.scene.image.Image;

@@ -103,4 +103,8 @@ public class IslandTurnState implements GameState {
 		return this;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

@@ -72,4 +72,8 @@ public class CollectTreasureState implements GameState {
 		return fromState;
 	}
 
+	@Override
+	public void end() {
+	}
+
 }

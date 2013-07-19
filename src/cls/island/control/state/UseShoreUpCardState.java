@@ -44,12 +44,17 @@ public class UseShoreUpCardState implements GameState {
 		selectedTreasureCard.getComponent().setValidToCkickEffect(false);
 		islandScreen.c_hideMessagePanel();
 		if (fromState instanceof UseOrDiscardCardState) {
-			if (!(fromState.getFromState() instanceof DrawCardState)) {
-				throw new RuntimeException(
-						"UseOrDiscardState expected to have been triggered by DrawCarsState only but found "
-								+ fromState.getFromState().getClass());
+			GameState fromFromState = fromState.getFromState();
+			assert fromFromState instanceof DrawCardState
+					|| fromFromState instanceof TradeCardState : "UseOrDiscardState expected to have been triggered by DrawCardState or TradeCardState but found "
+					+ fromFromState.getClass();
+			if (fromFromState instanceof DrawCardState) {
+				return fromFromState;
+			} else {
+				assert fromFromState.getFromState() instanceof NormalState : "normal state expected but was"
+						+ fromFromState.getFromState();
+				return fromFromState.getFromState(); // go to normal
 			}
-			return fromState.getFromState();
 		} else {
 			return fromState;
 		}
@@ -131,6 +136,10 @@ public class UseShoreUpCardState implements GameState {
 		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
 				+ "\nRight Click to cancel");
 		return null;
+	}
+
+	@Override
+	public void end() {
 	}
 
 }

@@ -17,7 +17,6 @@ public class GameLostState implements GameState {
 
 	private final IslandScreen islandScreen;
 	private final GameController gameController;
-	private final GameModel gameModel;
 	private final LooseCondition looseCondition;
 	private final Object[] infos;
 
@@ -26,7 +25,6 @@ public class GameLostState implements GameState {
 		this.looseCondition = looseCondition;
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
-		this.gameModel = gameModel;
 		this.infos = infos;
 	}
 
@@ -63,6 +61,10 @@ public class GameLostState implements GameState {
 	@Override
 	public GameState getFromState() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void end() {
 	}
 
 }

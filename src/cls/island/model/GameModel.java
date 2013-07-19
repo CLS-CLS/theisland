@@ -16,7 +16,6 @@ import cls.island.model.player.Player;
 import cls.island.model.player.PlayerFactory;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Grid;
-import cls.island.utils.ViewUtils;
 import cls.island.view.component.actionsleft.ActionsLeft;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.Island.IslandName;

@@ -40,11 +40,9 @@ import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
-import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.MessagePanel;
-import cls.island.view.component.ThreadBlock;
 import cls.island.view.component.actionsleft.ActionsLeftView;
 import cls.island.view.component.island.Island;
 import cls.island.view.component.island.IslandView;
@@ -68,7 +66,6 @@ public class IslandScreen extends AbstractScreen {
 	private List<TreasuryCard> cards = new ArrayList<>();
 	private TreasuryPile treasuryBase;
 	private MessagePanel msgPanel = new MessagePanel();
-	private GameController gameController;
 	/**
 	 * hold all the available buttons for easy iteration.
 	 */
@@ -81,7 +78,6 @@ public class IslandScreen extends AbstractScreen {
 	private ToggleButton tradeButton;
 	private ToggleButton flyButton;
 	private List<TreasuryCardView> floodCards = new ArrayList<>();
-	private final GameModel model;
 	private IslandView islandViewToDelete;
 	private WaterLevelView waterLevelView;
 	private Button collectTreasureButton;
@@ -89,7 +85,6 @@ public class IslandScreen extends AbstractScreen {
 	public IslandScreen(final MainController mainController, final GameController gameController,
 			final Config config, GameModel model) {
 		super(mainController, config);
-		this.model = model;
 		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
 				.getHeight(), Color.DARKGRAY);
 		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980,

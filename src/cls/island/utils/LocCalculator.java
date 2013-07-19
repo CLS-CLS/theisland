@@ -1,6 +1,5 @@
 package cls.island.utils;
 
-import cls.island.utils.LocCalculator.Loc;
 
 public class LocCalculator {
 

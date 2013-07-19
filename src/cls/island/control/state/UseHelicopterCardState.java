@@ -46,10 +46,7 @@ public class UseHelicopterCardState implements GameState {
 
 	
 	private GameState cancel(){
-		for (Island island :gameModel.getIslands()){
-			island.getComponent().setValidToCkickEffect(false);
-		}
-		islandScreen.c_hideMessagePanel();
+		end();
 		return fromState;
 	}
 	
@@ -62,12 +59,13 @@ public class UseHelicopterCardState implements GameState {
 		if (island.getPieces().size() == 0) {
 			return null;
 		}
-		removeEffects();
+		end();
 		return new UseHelicopterCardStepTwoState(gameController, islandScreen, gameModel, card,
 				island, this);
 	}
 
-	private void removeEffects() {
+	@Override
+	public void end() {
 		islandScreen.c_hideMessagePanel();
 		card.getComponent().setValidToCkickEffect(false);
 		for (Island island : gameModel.getIslands()) {
