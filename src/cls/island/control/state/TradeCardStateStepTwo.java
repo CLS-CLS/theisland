@@ -80,8 +80,7 @@ public class TradeCardStateStepTwo implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

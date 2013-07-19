@@ -13,6 +13,10 @@ import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.Type;
 import cls.island.view.screen.IslandScreen;
 
+/**
+ * Collects a treasure that can be collected. 
+ *
+ */
 public class CollectTreasureState implements GameState {
 
 	private final IslandScreen islandScreen;
@@ -46,6 +50,8 @@ public class CollectTreasureState implements GameState {
 	@Override
 	public GameState start() {
 		islandScreen.disableButtons();
+		
+		//TODO make it revertable
 		gameController.executeAction(new UnrevertableAction() {
 
 			@Override

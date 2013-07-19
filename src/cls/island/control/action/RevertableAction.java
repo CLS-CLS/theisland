@@ -1,7 +1,10 @@
 package cls.island.control.action;
 
-import cls.island.control.GameState;
-
+/**
+ * An action that can be reverted
+ * @author cls
+ *
+ */
 public abstract class RevertableAction implements Action {
 
 	@Override
