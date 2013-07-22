@@ -51,8 +51,18 @@ public class MainController {
 	}
 
 	public void goToIslandScreen() {
+//		options.setPlayers(Arrays.asList(new PlayerAndColor[] {
+//				new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
+//				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN), 
+//				new PlayerAndColor(PlayerType.PILOT, PieceColor.BLUE)}));
 		options.setPlayers(selectPlayerScreen.getSelectedPlayers());
-//		Animations.transtition(selectPlayerScreen, islandScreen, root);
+		gameModel = new GameModel(options, config);
+		gameModel.newGame();
+		gameController = new GameController(MainController.this, gameModel);
+		islandScreen = new IslandScreen(MainController.this, gameController, config, gameModel);
+		gameController.setIslandScreen(islandScreen);
+		root.clear();
+		root.getChildren().add(islandScreen);
 		gameController.startNewGame();
 
 	}
@@ -91,19 +101,6 @@ public class MainController {
 		});
 
 		// goToMainScreen(null);
-		options.setPlayers(Arrays.asList(new PlayerAndColor[] {
-				new PlayerAndColor(PlayerType.ENGINEER, PieceColor.RED),
-				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN), 
-				new PlayerAndColor(PlayerType.PILOT, PieceColor.BLUE)}));
-		gameModel = new GameModel(options, config);
-		gameModel.newGame();
-		gameController = new GameController(MainController.this, gameModel);
-		islandScreen = new IslandScreen(MainController.this, gameController, config, gameModel);
-		gameController.setIslandScreen(islandScreen);
-		root.clear();
-		root.getChildren().add(islandScreen);
-		gameController.startNewGame();
-
 	}
 
 	private void initScene() {
@@ -136,7 +133,8 @@ public class MainController {
 
 		stage.setScene(scene);
 		stage.initStyle(StageStyle.UNDECORATED);
-		// stage.setFullScreen(true);
+		stage.setFullScreen(true);
+		goToMainScreen(null);
 		stage.show();
 	}
 

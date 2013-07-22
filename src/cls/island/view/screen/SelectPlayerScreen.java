@@ -2,6 +2,7 @@ package cls.island.view.screen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -25,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.control.MainController;
@@ -50,13 +52,13 @@ public class SelectPlayerScreen extends AbstractScreen {
 				Options.PlayerType.RANDOM.name());
 
 		final Combo diverNode = new Combo(new ImageView(config.diverImage),
-				randomNode.rndCombo, Options.PlayerType.DIVER.name());
+				randomNode.rndCombo, Options.PlayerType.DIVER.name(), PieceColor.BROWN);
 		final Combo explorerNode = new Combo(new ImageView(config.explorerImage),
-				randomNode.rndCombo, Options.PlayerType.EXPLORER.name());
-		final Combo pilotNode = new Combo(new ImageView(config.diverImage),
-				randomNode.rndCombo, Options.PlayerType.PILOT.name());
-		final Combo lol2Node = new Combo(new ImageView(config.diverImage),
-				randomNode.rndCombo, Options.PlayerType.MESSANGER.name());
+				randomNode.rndCombo, Options.PlayerType.EXPLORER.name(), PieceColor.GREEN);
+		final Combo pilotNode = new Combo(new ImageView(config.pilotImage),
+				randomNode.rndCombo, Options.PlayerType.PILOT.name(),PieceColor.BLUE);
+		final Combo engineerNode = new Combo(new ImageView(config.engineerImage),
+				randomNode.rndCombo, Options.PlayerType.ENGINEER.name(),PieceColor.RED);
 
 		randomNode.rndCombo.selected.addListener(new ChangeListener<Boolean>() {
 
@@ -67,7 +69,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 					diverNode.setSelected(false);
 					explorerNode.setSelected(false);
 					pilotNode.setSelected(false);
-					lol2Node.setSelected(false);
+					engineerNode.setSelected(false);
 				}
 			}
 		});
@@ -75,12 +77,12 @@ public class SelectPlayerScreen extends AbstractScreen {
 		players.add(diverNode);
 		players.add(explorerNode);
 		players.add(pilotNode);
-		players.add(lol2Node);
+		players.add(engineerNode);
 
 		diverNode.relocate(200, 180);
 		explorerNode.relocate(400, 180);
 		pilotNode.relocate(600, 180);
-		lol2Node.relocate(800, 180);
+		engineerNode.relocate(800, 180);
 		randomNode.relocate(1100, 180);
 		Label text = new Label("Select the players to land... \n"
 				+ "         ...on the forbidden island");
@@ -129,7 +131,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 		main.getChildren().add(diverNode);
 		main.getChildren().add(explorerNode);
 		main.getChildren().add(pilotNode);
-		main.getChildren().add(lol2Node);
+		main.getChildren().add(engineerNode);
 		main.getChildren().add(randomNode);
 		root.getChildren().add(buttons);
 
@@ -142,10 +144,12 @@ public class SelectPlayerScreen extends AbstractScreen {
 		private Effect unselectedEffect = new ColorAdjust(0, -1, 0, 0);
 		private Combo random;
 		private String description;
+		private final PieceColor color;
 
-		public Combo(final ImageView imageView, final Combo randomCombo, String description) {
+		public Combo(final ImageView imageView, final Combo randomCombo, String description, PieceColor color) {
 			this.imageView = imageView;
 			this.description = description;
+			this.color = color;
 			imageView.getStyleClass().add("clickable");
 			this.random = randomCombo;
 			selectedNode.setOpacity(0);
@@ -192,8 +196,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 		}
 
 		public PieceColor getColor() {
-			//TODO 
-			return null;
+			return color;
 		}
 	}
 
@@ -244,7 +247,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 			final VBox textWithbuttons = new VBox();
 			textWithbuttons.setOpacity(0);
 
-			rndCombo = new Combo(imageView, null, description) {
+			rndCombo = new Combo(imageView, null, description, null) {
 				private void animate(double opacity) {
 					TimelineSingle opacityTimeline = new TimelineSingle();
 					opacityTimeline.getKeyFrames().add(
@@ -291,10 +294,13 @@ public class SelectPlayerScreen extends AbstractScreen {
 			}
 		}
 		if (randomNode.rndCombo.isSelected()) {
+			Random rndGen = new Random();
 			for (int i = 0; i < randomNode.randomPlayers; i++) {
-				//TODO
-//				enumPlayers.add(
-//						Options.PlayerType.valueOf(randomNode.rndCombo.getDescription()));
+				int random = rndGen.nextInt(players.size());
+				Combo player = players.remove(random);
+				enumPlayers.add(new PlayerAndColor(
+						Options.PlayerType.valueOf(player.getDescription()),
+						player.getColor()));
 			}
 		}
 		return enumPlayers;

@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 import cls.island.control.action.Action;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
@@ -70,6 +71,7 @@ public class GameController {
 	}
 
 	public void mouseClicked(final MouseEvent event) {
+		new AudioCl
 		System.out.println("mouse Clicked animations is : "
 				+ islandScreen.c_isAnimationInProgress());
 		islandScreen.c_setAnimationInProgress(true);

@@ -68,11 +68,12 @@ public class Config {
 	private Image pieceWhiteLarge;
 	public Image checkBoxImg;
 	public Image checkBoxWithTick;
-	private Image pilotImage;
-	private Image messengerImage;
-	private Image engineerImage;
+	public Image pilotImage;
+	public Image messengerImage;
+	public Image engineerImage;
 	public Image deepOcean;
 	public Image window;
+	private Image pieceBlack;
 
 	private Config() {
 		background = new Image("images/other/startScreen.png", false);
@@ -87,6 +88,8 @@ public class Config {
 		pieceGreen = new Image("images/other/pieceGreen.png", 31, 52, true, true);
 		pieceRed = new Image("images/other/pieceRed.png", 31, 52, true, true);
 		pieceBlue = new Image("images/other/pieceBlue.png", 31, 52, true, true);
+		//TODO curently mapped to white image!! make it black
+		pieceBlack = new Image("images/other/pieceBlack.png", 31, 52, true, true);
 		pieceWhiteLarge = new Image("images/other/pieceWhite.png", 31 * 2, 52 * 2, true, true);
 		pieceGreenLarge = new Image("images/other/pieceGreen.png", 31 * 2, 52 * 2, true, true);
 		pieceRedLarge = new Image("images/other/pieceRed.png", 31 * 2, 52 * 2, true, true);
@@ -180,9 +183,9 @@ public class Config {
 	}
 
 	public Rectangle2D getFullScreenRes() {
-		// return fullScreenRes;
+		 return fullScreenRes;
 		// TODO
-		return new Rectangle2D(0, 0, 1366, 768);
+//		return new Rectangle2D(0, 0, 1366, 768);
 		// return defaultRes;
 	}
 
@@ -228,6 +231,10 @@ public class Config {
 		case BLUE:
 			return pieceBlue;
 		case WHITE:
+			return pieceWhite;
+		case YELLOW:
+			return pieceWhite;
+		case BROWN:
 			return pieceWhite;
 		default:
 			break;

@@ -395,7 +395,7 @@ public class GameModel {
 			}
 		case FOOLS_LANDING_LOST:
 			for (Island island : getIslands()) {
-				if (island.getName().equals(IslandName.FoolsLanding.name()) && island.isSunk()) {
+				if (island.getName() == IslandName.FoolsLanding && island.isSunk()) {
 					return true;
 				}
 			}

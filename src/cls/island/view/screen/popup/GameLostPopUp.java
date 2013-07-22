@@ -1,9 +1,13 @@
 package cls.island.view.screen.popup;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import cls.island.control.Config;
 import cls.island.model.LooseCondition;
+import cls.island.utils.ButtonFactory;
 import cls.island.view.component.treasury.card.Type;
 
 public class GameLostPopUp extends PopUpInternal<Object> {
@@ -38,6 +42,17 @@ public class GameLostPopUp extends PopUpInternal<Object> {
 			break;
 		}
 		getChildren().add(label);
+		Button okButton = ButtonFactory.genButton("OK");
+		okButton.relocate(0, 300);
+		getChildren().add(okButton);
+		okButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				GameLostPopUp.this.close();
+				
+			}
+		});
 
 	}
 
