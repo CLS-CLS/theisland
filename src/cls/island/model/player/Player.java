@@ -238,15 +238,13 @@ public class Player {
 	 * 
 	 * @param player
 	 *            the player to receice the card
-	 * @param card
-	 *            the card to give
+	 * @param card the treasure card to give
 	 * @return true if the card can be given
 	 */
 	public boolean canGiveCard(Player player, TreasuryCard card) {
-		if (!this.getTreasuryCards().contains(card))
-			throw new IllegalArgumentException(this + " does not have tha card");
-		if (card.getType().getAbility() != Ability.TREASURE)
-			throw new IllegalArgumentException(card + " is not of type TREASURE");
+		assert this.getTreasuryCards().contains(card) : this + " does not have that card";
+		assert card.getType().getAbility() == Ability.TREASURE :card + " is not of type TREASURE";
+		
 		if (actionsLeft.getValue() == 0) return false;
 		if (!this.getPiece().getIsland().equals(player.getPiece().getIsland()))return false;
 		return true;

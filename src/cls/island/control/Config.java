@@ -151,7 +151,7 @@ public class Config {
 			return engineerImage;
 		case EXPLORER:
 			return explorerImage;
-		case MESSANGER:
+		case MESSENGER:
 			return messengerImage;
 		case PILOT:
 			return pilotImage;

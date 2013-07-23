@@ -498,7 +498,7 @@ public class GameModel {
 		if (cards.size() == 0) {
 			return;
 		}
-		// Tests for an eligible card which player are can receive the card
+		// Tests which players can receive the card
 		for (Player player : getPlayers()) {
 			if (player.equals(getCurrentTurnPlayer()))
 				continue;

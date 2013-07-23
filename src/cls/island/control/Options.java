@@ -8,7 +8,7 @@ import cls.island.view.component.piece.PieceColor;
 public class Options {
 	
 	public enum PlayerType{
-		DIVER, EXPLORER, PILOT, MESSANGER, RANDOM, ENGINEER;
+		DIVER, EXPLORER, PILOT, MESSENGER, RANDOM, ENGINEER;
 	}
 
 	private static final int DEFAULT_FLOOD = 0;

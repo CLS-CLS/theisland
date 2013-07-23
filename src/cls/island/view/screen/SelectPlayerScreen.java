@@ -59,6 +59,8 @@ public class SelectPlayerScreen extends AbstractScreen {
 				randomNode.rndCombo, Options.PlayerType.PILOT.name(),PieceColor.BLUE);
 		final Combo engineerNode = new Combo(new ImageView(config.engineerImage),
 				randomNode.rndCombo, Options.PlayerType.ENGINEER.name(),PieceColor.RED);
+		final Combo messengerNode = new Combo(new ImageView(config.messengerImage),
+				randomNode.rndCombo, Options.PlayerType.MESSENGER.name(),PieceColor.WHITE);
 
 		randomNode.rndCombo.selected.addListener(new ChangeListener<Boolean>() {
 
@@ -70,6 +72,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 					explorerNode.setSelected(false);
 					pilotNode.setSelected(false);
 					engineerNode.setSelected(false);
+					messengerNode.setSelected(false);
 				}
 			}
 		});
@@ -78,11 +81,13 @@ public class SelectPlayerScreen extends AbstractScreen {
 		players.add(explorerNode);
 		players.add(pilotNode);
 		players.add(engineerNode);
+		players.add(messengerNode);
 
 		diverNode.relocate(200, 180);
 		explorerNode.relocate(400, 180);
 		pilotNode.relocate(600, 180);
 		engineerNode.relocate(800, 180);
+		messengerNode.relocate(400,380);
 		randomNode.relocate(1100, 180);
 		Label text = new Label("Select the players to land... \n"
 				+ "         ...on the forbidden island");
@@ -132,6 +137,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 		main.getChildren().add(explorerNode);
 		main.getChildren().add(pilotNode);
 		main.getChildren().add(engineerNode);
+		main.getChildren().add(messengerNode);
 		main.getChildren().add(randomNode);
 		root.getChildren().add(buttons);
 
