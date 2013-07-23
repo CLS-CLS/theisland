@@ -71,9 +71,9 @@ public class GameController {
 	}
 
 	public void mouseClicked(final MouseEvent event) {
-		new AudioCl
-		System.out.println("mouse Clicked animations is : "
-				+ islandScreen.c_isAnimationInProgress());
+//		new AudioCl
+//		System.out.println("mouse Clicked animations is : "
+//				+ islandScreen.c_isAnimationInProgress());
 		islandScreen.c_setAnimationInProgress(true);
 		ThreadUtil.Runlater(new Runnable() {
 
