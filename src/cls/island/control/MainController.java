@@ -144,7 +144,10 @@ public class MainController {
 
 	public void setCursorImage(Image cursorImg) {
 		scene.setCursor(new ImageCursor(cursorImg));
-		
+	}
+	
+	public Stage getStage(){
+		return stage;
 	}
 
 }

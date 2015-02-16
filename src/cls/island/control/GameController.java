@@ -4,12 +4,10 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.AudioClip;
 import cls.island.control.action.Action;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
-import cls.island.utils.concurrent.ThreadUtil;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.pile.TreasuryPile;
@@ -29,7 +27,8 @@ public class GameController {
 	/**
 	 * used by {@link IslandScreen} to bind the disable function of undo button.
 	 */
-	private volatile SimpleBooleanProperty undoAction = new SimpleBooleanProperty(false);
+	private volatile SimpleBooleanProperty undoAction = new SimpleBooleanProperty(
+			false);
 
 	public GameController(MainController mainController, GameModel gameModel) {
 		this.mainController = mainController;
@@ -41,56 +40,43 @@ public class GameController {
 			return;
 		}
 		islandScreen.c_setAnimationInProgress(true);
-		ThreadUtil.Runlater(new Runnable() {
+
+		if (action == ButtonAction.UNDO) {
+			gameState.end();
+			GameState gameState = lastAction.revert();
+			lastAction = null;
+			undoAction.set(false);
+			if (gameState != null) {
+				setGameState(gameState);
+			}
+		} else {
+			GameState state = gameState.buttonPressed(action);
+			if (state != null) {
+				setGameState(state);
+			}
+		}
+		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				if (action == ButtonAction.UNDO) {
-					gameState.end();
-					GameState gameState = lastAction.revert();
-					lastAction = null;
-					undoAction.set(false);
-					if (gameState != null) {
-						setGameState(gameState);
-					}
-				} else {
-					GameState state = gameState.buttonPressed(action);
-					if (state != null) {
-						setGameState(state);
-					}
-				}
-				Platform.runLater(new Runnable() {
-
-					@Override
-					public void run() {
-						islandScreen.c_setAnimationInProgress(false);
-					}
-				});
+				islandScreen.c_setAnimationInProgress(false);
 			}
 		});
 	}
 
 	public void mouseClicked(final MouseEvent event) {
-//		new AudioCl
-//		System.out.println("mouse Clicked animations is : "
-//				+ islandScreen.c_isAnimationInProgress());
 		islandScreen.c_setAnimationInProgress(true);
-		ThreadUtil.Runlater(new Runnable() {
+
+		GameState state = gameState.mouseClicked(event);
+		if (state != null) {
+			setGameState(state);
+		}
+		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				GameState state = gameState.mouseClicked(event);
-				if (state != null) {
-					setGameState(state);
-				}
-				Platform.runLater(new Runnable() {
+				islandScreen.c_setAnimationInProgress(false);
 
-					@Override
-					public void run() {
-						islandScreen.c_setAnimationInProgress(false);
-
-					}
-				});
 			}
 		});
 
@@ -114,25 +100,24 @@ public class GameController {
 	public void startNewGame() {
 		if (islandScreen == null)
 			throw new RuntimeException("IslandScrren should not be null");
-		ThreadUtil.Runlater(new Runnable() {
-			
-			@Override
-			public void run() {
-				setGameState(new NormalState(GameController.this, islandScreen, gameModel));
-				for (Player player : gameModel.getPlayers()) {
-					for (int i = 0; i < 2; i++) {
-						TreasuryPile treasuryPile = gameModel.getTreasuryPile();
-						TreasuryCard treasuryCard = treasuryPile.getTopPileCard();
-						gameModel.giveCardToPlayerFromTreasurePile(player, treasuryCard);
-						System.out.println(Thread.currentThread().getName() + " before move");
-						islandScreen.c_moveTreasuryCardFromPileToPlayer(treasuryCard.getComponent(), player
-								.getBase().getComponent());
-						System.out.println(Thread.currentThread().getName() +" after  move");
-					}
-				}
+
+		setGameState(new NormalState(GameController.this, islandScreen,
+				gameModel));
+		for (Player player : gameModel.getPlayers()) {
+			for (int i = 0; i < 2; i++) {
+				TreasuryPile treasuryPile = gameModel.getTreasuryPile();
+				TreasuryCard treasuryCard = treasuryPile.getTopPileCard();
+				gameModel
+						.giveCardToPlayerFromTreasurePile(player, treasuryCard);
+				System.out.println(Thread.currentThread().getName()
+						+ " before move");
+				islandScreen.c_moveTreasuryCardFromPileToPlayer(treasuryCard
+						.getComponent(), player.getBase().getComponent());
+				System.out.println(Thread.currentThread().getName()
+						+ " after  move");
 			}
-		});
-		
+		}
+
 	}
 
 	public void setIslandScreen(IslandScreen islandScreen) {
@@ -149,6 +134,7 @@ public class GameController {
 
 	/**
 	 * Finds the player who owns the provided piece
+	 * 
 	 * @param piece
 	 * @return
 	 */
@@ -164,10 +150,10 @@ public class GameController {
 	}
 
 	public void executeAction(Action action) {
-		if (action.isRevartable()){
+		if (action.isRevartable()) {
 			lastAction = action;
 			undoAction.set(true);
-		}else {
+		} else {
 			lastAction = null;
 			undoAction.set(false);
 		}
@@ -179,10 +165,10 @@ public class GameController {
 	}
 
 	/**
-	 * Used by controllers to notify that the undoable actions should be 
-	 * reset and no further undo can be done. 
-	 * Usually this happens when the last action that initially could be undone, triggers
-	 * other actions that change the internal state of the game.
+	 * Used by controllers to notify that the undoable actions should be reset
+	 * and no further undo can be done. Usually this happens when the last
+	 * action that initially could be undone, triggers other actions that change
+	 * the internal state of the game.
 	 */
 	public void resetUndoableActions() {
 		lastAction = null;

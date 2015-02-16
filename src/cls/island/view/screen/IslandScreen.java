@@ -133,8 +133,8 @@ public class IslandScreen extends AbstractScreen {
 			@Override
 			public void handle(MouseEvent event) {
 				System.out.println("MouseClicked : \n   Animation in progress = "
-						+ c_isAnimationInProgress() + "\n   Popup open = " + isPopUpOpen());
-				if (!c_isAnimationInProgress() && !isPopUpOpen()) {
+						+ c_isAnimationInProgress());
+				if (!c_isAnimationInProgress()) {
 					gameController.mouseClicked(event);
 				}
 			}
