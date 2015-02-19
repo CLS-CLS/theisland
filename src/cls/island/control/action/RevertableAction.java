@@ -1,14 +1,18 @@
 package cls.island.control.action;
 
+import cls.island.control.GameState;
+
 /**
- * An action that can be reverted
+ * A revert-able action
  * @author cls
  *
  */
-public abstract class RevertableAction implements Action {
+public interface RevertableAction extends Action {
 
-	@Override
-	public final boolean isRevartable() {
-		return true;
-	}
+	/**
+	 * provides the means to revert the system to the 
+	 * state that it was before the action was executed.
+	 * @return
+	 */
+	public GameState revert();
 }

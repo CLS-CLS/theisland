@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.function.Consumer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -40,8 +40,8 @@ import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
+import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.MessagePanel;
 import cls.island.view.component.actionsleft.ActionsLeftView;
 import cls.island.view.component.island.Island;
@@ -210,28 +210,22 @@ public class IslandScreen extends AbstractScreen {
 	}
 
 	public void c_movePiece(final PieceView pieceView, final IslandView islandView, final int index) {
-		execute(new ThreadBlockingRunnable() {
-			@Override
-			public void run() {
-				Loc pieceLoc = islandView.getLoc().add(
-						locCalculator.pieceLocationOnIslandTile(index));
-				EventHandler<ActionEvent> onFinish = new EventHandler<ActionEvent>() {
+		FxThreadBlock block = new FxThreadBlock();
 
-					@Override
-					public void handle(ActionEvent event) {
-						// TODO Fix It !! BAD CODE *** calls the model.. when it
-						// shouldn' t
-						SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel()
-								.getPiecesAndPositions();
-						for (int order : pieceZorder.keySet()) {
-							pieceZorder.get(order).getComponent().toFront();
-						}
-					}
-				};
-				Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, this);
-			}
+		block.execute(() -> {
+			Loc pieceLoc = islandView.getLoc().add(locCalculator.pieceLocationOnIslandTile(index));
+
+			EventHandler<ActionEvent> onFinish = (event) -> {
+				// TODO Fix It !! BAD CODE *** calls the model.. when it
+				// shouldn' t
+				SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel().getPiecesAndPositions();
+				for (int order : pieceZorder.keySet()) {
+					pieceZorder.get(order).getComponent().toFront();
+				}
+			};
+			Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish,
+					block);
 		});
-
 	}
 
 	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard,
@@ -247,50 +241,30 @@ public class IslandScreen extends AbstractScreen {
 	}
 
 	public void c_showMessagePanel(final String message) {
-		if (Platform.isFxApplicationThread())
-			throw new RuntimeException(
-					"the method should run outside fx-tread in order to be blocking");
-
-		execute(new ThreadBlockingRunnable() {
-			@Override
-			public void run() {
-				Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
-						msgPanel.layoutYProperty(), 800)));
-				timeline.setOnFinished(new EventHandler<ActionEvent>() {
-
-					@Override
-					public void handle(ActionEvent event) {
-						msgPanel.showMessage(message);
-						signal();
-					}
-				});
-				timeline.play();
-			}
+		FxThreadBlock block = new FxThreadBlock();
+		block.execute(() -> {
+			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200),
+					new KeyValue(msgPanel.layoutYProperty(), 800)));
+			
+			timeline.setOnFinished((event) -> {
+				msgPanel.showMessage(message);
+				block.unpause();
+			});
+			
+			timeline.play();
 		});
 
 	}
+	
 
 	public void c_hideMessagePanel() {
-		if (Platform.isFxApplicationThread())
-			throw new RuntimeException(
-					"the method should run outside fx-tread in order to be blocking");
-
-		execute(new ThreadBlockingRunnable() {
-			@Override
-			public void run() {
-				Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
-						msgPanel.layoutYProperty(), 1000)));
-				tmln.setOnFinished(new EventHandler<ActionEvent>() {
-
-					@Override
-					public void handle(ActionEvent event) {
-						signal();
-					}
-				});
-				tmln.play();
-			}
+		FxThreadBlock block = new FxThreadBlock();
+		block.execute(() -> {
+			Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200),
+					new KeyValue(msgPanel.layoutYProperty(), 1000)));
+			tmln.setOnFinished((e) -> block.unpause());
+			tmln.play();
 		});
-
 	}
 
 	public void c_WaterCardDrawnPopUp() {

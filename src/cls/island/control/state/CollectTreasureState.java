@@ -5,8 +5,8 @@ import java.util.List;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
-import cls.island.control.action.UnrevertableAction;
 import cls.island.control.GameState;
+import cls.island.control.action.Action;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.view.component.treasury.card.TreasuryCard;
@@ -51,24 +51,20 @@ public class CollectTreasureState implements GameState {
 	public GameState start() {
 		islandScreen.disableButtons();
 		
-		//TODO make it revertable
-		gameController.executeAction(new UnrevertableAction() {
-
-			@Override
-			public void execute() {
-				Player currentPlayer = gameModel.getCurrentTurnPlayer();
-				List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
-				if (gameModel.canCollectTreasure(currentPlayer)) {
-					Type collectedType = gameModel.collectTreasure(collectionCards);
-					gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
-					for (TreasuryCard card : collectionCards) {
-						islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
-								card.getComponent());
-					}
-				}
+		Action action  =  () -> {
+			Player currentPlayer = gameModel.getCurrentTurnPlayer();
+			List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
+			if (gameModel.canCollectTreasure(currentPlayer)) {
+				Type collectedType = gameModel.collectTreasure(collectionCards);
+				gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
+				collectionCards.forEach((card) -> {
+					islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
+							card.getComponent());});
 			}
-		});
-
+		};
+		
+		//TODO make it revertable
+		gameController.executeAction(action);
 		return fromState;
 	}
 

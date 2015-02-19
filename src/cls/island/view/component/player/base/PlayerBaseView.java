@@ -18,9 +18,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import cls.island.utils.Animations;
+import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCardView;
@@ -68,16 +68,15 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 //	}
 
 	public void moveToBase(final TreasuryCardView treasuryCard) {
-		execute(new ThreadBlockingRunnable() {
-			@Override
-			public void run() {
-				System.out.println(Thread.currentThread().getName() + " move To Base Start ");
-				int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
-				treasuryCard.setSelectable(true);
-				Animations.teleportCardToLocationReverse(treasuryCard, PlayerBaseView.this.getLoc()
-						.add(locCalculator.cardLocationInCardHolder(index)), this);
-				System.out.println(Thread.currentThread().getName() +" move To Base End ");
-			}
+		FxThreadBlock block = new FxThreadBlock();
+		block.execute(() -> {
+			System.out.println(Thread.currentThread().getName() + " move To Base Start ");
+			int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
+			treasuryCard.setSelectable(true);
+			Animations.teleportCardToLocationReverse(treasuryCard,
+					PlayerBaseView.this.getLoc().add(locCalculator.cardLocationInCardHolder(index)),
+					block);
+			System.out.println(Thread.currentThread().getName() + " move To Base End ");
 		});
 
 	}
@@ -90,14 +89,8 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			locationToMove.add(this.getLoc().add(locCalculator.cardLocationInCardHolder(i)));
 			cardViews.add(treasuryCardsInBase.get(i).getComponent());
 		}
-
-		execute(new ThreadBlockingRunnable() {
-
-			@Override
-			public void run() {
-				Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, this);
-			}
-		});
+		FxThreadBlock block = new FxThreadBlock();
+		block.execute(() ->	Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, block));
 	}
 
 	/**

@@ -126,14 +126,14 @@ public class MainController {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
 					Boolean newValue) {
 				if (!newValue) {
-					stage.setFullScreen(true);
+//					stage.setFullScreen(true);
 				}
 			}
 		});
 
 		stage.setScene(scene);
 		stage.initStyle(StageStyle.UNDECORATED);
-		stage.setFullScreen(true);
+//		stage.setFullScreen(true);
 		goToMainScreen(null);
 		stage.show();
 	}

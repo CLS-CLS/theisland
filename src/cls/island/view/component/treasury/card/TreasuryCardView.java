@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import cls.island.utils.concurrent.NoSignalingRunnable;
 import cls.island.view.component.AbstractView;
 
 public class TreasuryCardView extends AbstractView<TreasuryCard> {
@@ -36,21 +35,15 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 	}
 
 	public void setFaceUp(final boolean faceUp) {
-		execute(new NoSignalingRunnable() {
+		if (faceUp && !getChildren().contains(faceUpView)) {
+			getChildren().add(faceUpView);
+			getChildren().remove(faceDownView);
+		}
+		if (!faceUp && !getChildren().contains(faceDownView)) {
+			getChildren().add(faceDownView);
+			getChildren().remove(faceUpView);
+		}
 
-			@Override
-			public void run() {
-				if (faceUp && !getChildren().contains(faceUpView)) {
-					getChildren().add(faceUpView);
-					getChildren().remove(faceDownView);
-				}
-				if (!faceUp && !getChildren().contains(faceDownView)) {
-					getChildren().add(faceDownView);
-					getChildren().remove(faceUpView);
-				}
-
-			}
-		});
 	}
 
 	public void enableUseDiscard(EventHandler<ActionEvent> inUse,
@@ -62,14 +55,7 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 		displayed = inDiscard != null ? 1 : 0;
 		useDiscardComponent.discardButton.setOnAction(inDiscard);
 		useDiscardComponent.discardButton.setOpacity(displayed);
-		execute(new NoSignalingRunnable() {
-
-			@Override
-			public void run() {
-				getChildren().add(useDiscardComponent);
-
-			}
-		});
+		getChildren().add(useDiscardComponent);
 
 	}
 
@@ -79,15 +65,8 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 	 * discarded or used.
 	 */
 	public void disableUseDiscard() {
-		execute(new NoSignalingRunnable() {
-
-			@Override
-			public void run() {
-				getChildren().remove(useDiscardComponent);
-				setSelectable(true);
-
-			}
-		});
+		getChildren().remove(useDiscardComponent);
+		setSelectable(true);
 	}
 
 	private class UseDiscardComponent extends Parent {

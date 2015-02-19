@@ -3,8 +3,8 @@ package cls.island.control.state;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
-import cls.island.control.action.UnrevertableAction;
 import cls.island.control.GameState;
+import cls.island.control.action.Action;
 import cls.island.model.GameModel;
 import cls.island.model.LooseCondition;
 import cls.island.model.player.Player;
@@ -98,16 +98,14 @@ public class DrawCardState implements GameState {
 				return new GameLostState(LooseCondition.MAX_WATER_LEVEL_REACHED, gameController,
 						islandScreen, gameModel, this);
 			}
-			gameController.executeAction(new UnrevertableAction() {
-				
-				@Override
-				public void execute() {
-					islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
-							treasuryCard.getComponent());
-					gameModel.shuffleDiscardedAndPutBackToNormalPile();
-					gameModel.getTreasuryPile().getComponent().rearrangePiles();
-				}
-			});
+			
+			Action c = () -> {
+				islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
+						treasuryCard.getComponent());
+				gameModel.shuffleDiscardedAndPutBackToNormalPile();
+				gameModel.getTreasuryPile().getComponent().rearrangePiles();
+			};
+			gameController.executeAction(c);
 			return this;
 
 		}

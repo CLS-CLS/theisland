@@ -13,7 +13,6 @@ public class OptionScreen extends AbstractScreen {
 	public OptionScreen(final MainController controller, Config config) {
 		super(controller, config);
 		createOptionButtonGroup();
-
 	}
 
 	private void createOptionButtonGroup() {

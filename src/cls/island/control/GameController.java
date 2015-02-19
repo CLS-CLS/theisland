@@ -5,6 +5,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.action.Action;
+import cls.island.control.action.RevertableAction;
 import cls.island.control.state.NormalState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
@@ -18,11 +19,11 @@ public class GameController {
 		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO;
 	}
 
-	volatile private GameState gameState;
+	private GameState gameState;
 	private MainController mainController;
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
-	private volatile Action lastAction;
+	private Action lastAction;
 
 	/**
 	 * used by {@link IslandScreen} to bind the disable function of undo button.
@@ -43,7 +44,7 @@ public class GameController {
 
 		if (action == ButtonAction.UNDO) {
 			gameState.end();
-			GameState gameState = lastAction.revert();
+			GameState gameState = ((RevertableAction)lastAction).revert();
 			lastAction = null;
 			undoAction.set(false);
 			if (gameState != null) {
@@ -55,13 +56,7 @@ public class GameController {
 				setGameState(state);
 			}
 		}
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				islandScreen.c_setAnimationInProgress(false);
-			}
-		});
+		islandScreen.c_setAnimationInProgress(false);
 	}
 
 	public void mouseClicked(final MouseEvent event) {
@@ -71,14 +66,8 @@ public class GameController {
 		if (state != null) {
 			setGameState(state);
 		}
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				islandScreen.c_setAnimationInProgress(false);
-
-			}
-		});
+		
+		islandScreen.c_setAnimationInProgress(false);
 
 	}
 
@@ -150,7 +139,7 @@ public class GameController {
 	}
 
 	public void executeAction(Action action) {
-		if (action.isRevartable()) {
+		if (action instanceof RevertableAction){
 			lastAction = action;
 			undoAction.set(true);
 		} else {

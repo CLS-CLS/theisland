@@ -4,9 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Group;
 import cls.island.control.Config;
 import cls.island.control.MainController;
-import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
-import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.screen.popup.PopUpInternal;
 import cls.island.view.screen.popup.PopUpWrapper;
 
@@ -26,9 +24,7 @@ public abstract class AbstractScreen extends Group {
 		if (!Platform.isFxApplicationThread()) {
 			throw new RuntimeException("should have been in Fx- Thread");
 		}
-		synchronized (AbstractScreen.this) {
-			animationInProgress = inProgress;
-		}
+		animationInProgress = inProgress;
 	}
 
 	public boolean c_isAnimationInProgress() {
@@ -59,13 +55,6 @@ public abstract class AbstractScreen extends Group {
 					"the method should run outside fx-tread in order to be blocking");
 		final PopUpWrapper<T> popUp = new PopUpWrapper<>(popUpInternal, mainController.getStage());
 		return popUp.getResult();
-	}
-
-
-	public void execute(ThreadBlockingRunnable runnable) {
-		FxThreadBlock localThreadBlock = new FxThreadBlock();
-		runnable.register(localThreadBlock);
-		localThreadBlock.execute(runnable);
 	}
 	
 }

@@ -14,7 +14,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Duration;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.concurrent.SignaledRunnable;
 import cls.island.view.component.island.IslandView;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 
@@ -49,7 +48,7 @@ public class Animations {
 	}
 
 	public static void moveComponentToLocation(final Node component, Loc location,
-			final EventHandler<ActionEvent> onFinish, final SignaledRunnable signalRunnable) {
+			final EventHandler<ActionEvent> onFinish, final FxThreadBlock block) {
 		if (!Platform.isFxApplicationThread()) {
 			Platform.runLater(new Runnable() {
 
@@ -63,24 +62,13 @@ public class Animations {
 		}
 		TimelineSingle timeline = new TimelineSingle();
 		if (onFinish != null) {
-			timeline.setOnFinished(new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent event) {
-					onFinish.handle(event);
-					if (signalRunnable != null)
-						signalRunnable.signal();
-				}
+			timeline.setOnFinished((event) -> {
+				onFinish.handle(event);
+				if (block != null)
+					block.unpause();
 			});
-		} else if (signalRunnable != null) {
-			EventHandler<ActionEvent> onFinish2 = new EventHandler<ActionEvent>() {
-
-				@Override
-				public void handle(ActionEvent event) {
-					signalRunnable.signal();
-				}
-			};
-			timeline.setOnFinished(onFinish2);
+		} else if (block != null) {
+			timeline.setOnFinished((ev) -> block.unpause());
 		}
 
 		timeline.getKeyFrames().add(
@@ -122,7 +110,7 @@ public class Animations {
 	 * instantly disappear a card and make it visible in another location
 	 */
 	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView,
-			Loc location, final SignaledRunnable signaledRunnable) {
+			Loc location, final FxThreadBlock block){
 		System.out.println(Thread.currentThread().getName() + " Start teleporting");
 		treasuryCardView.toFront();
 		treasuryCardView.setOpacity(0);
@@ -131,20 +119,17 @@ public class Animations {
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(),
 						1)));
-		timeline.setOnFinished(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.println(Thread.currentThread().getName() +" fininsed Teleporting");
-				signaledRunnable.signal();
-			}
+		timeline.setOnFinished((event) -> {
+			System.out.println(Thread.currentThread().getName()
+					+ " fininsed Teleporting");
+			block.unpause();
 		});
 
 		timeline.play();
 	}
 
 	public static void floodTile(List<IslandView> islands, List<DoubleProperty> animateProps,
-			boolean flood, final SignaledRunnable runnable) {
+			boolean flood, final FxThreadBlock block) {
 		if (flood) {
 			shake(null, islands.toArray(new IslandView[islands.size()]));
 		}
@@ -161,13 +146,13 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				runnable.signal();
+				block.unpause();
 			}
 		});
 		timeline.play();
 	}
 
-	public static void sinkTile(IslandView islandView, final SignaledRunnable runnable) {
+	public static void sinkTile(IslandView islandView, final FxThreadBlock block) {
 		shake(null, islandView);
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(
@@ -176,14 +161,14 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				runnable.signal();
+				block.unpause();
 			}
 		});
 		timeline.play();
 	}
 
 	public static void rearrangeCardsInCardHolder(List<TreasuryCardView> cardsToMove,
-			List<Loc> locationToMove, final SignaledRunnable runnable) {
+			List<Loc> locationToMove, final FxThreadBlock block) {
 		List<KeyValue> keyValues = new ArrayList<>();
 		for (int i = 0; i < cardsToMove.size(); i++) {
 			TreasuryCardView treasuryCardView = cardsToMove.get(i);
@@ -198,13 +183,7 @@ public class Animations {
 				keyValues.toArray(new KeyValue[keyValues.size() * 2]));
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(keyFrame);
-		timeline.setOnFinished(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				runnable.signal();
-			}
-		});
+		timeline.setOnFinished((event) -> block.unpause());
 		timeline.play();
 	}
 

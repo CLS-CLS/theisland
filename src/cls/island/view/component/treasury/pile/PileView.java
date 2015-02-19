@@ -7,9 +7,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import cls.island.utils.Animations;
+import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.concurrent.NoSignalingRunnable;
-import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.treasury.card.TreasuryCardView;
 import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
@@ -44,12 +43,9 @@ public class PileView extends AbstractView<TreasuryPile> {
 		int index = pileType == PileType.NORMAL ? getParentModel().getNormalPileCards().size() - 1 : getParentModel()
 				.getDiscardPileCards().size() - 1;
 		final Loc cardLoc = locCalculator.cardLocationInPile(index).add(loc);
-		execute(new ThreadBlockingRunnable() {
-			@Override
-			public void run() {
-				Animations.moveComponentToLocation(treasuryCard, PileView.this.getLoc().add(cardLoc), null, this);
-			}
-		});
+		FxThreadBlock block = new FxThreadBlock();
+		block.execute(() -> Animations.moveComponentToLocation(treasuryCard, 
+				PileView.this.getLoc().add(cardLoc), null, block));
 		treasuryCard.setSelectable(false);
 
 	}
@@ -57,24 +53,18 @@ public class PileView extends AbstractView<TreasuryPile> {
 
 
 	public void rearrangePiles() {
-		execute(new NoSignalingRunnable() {
-			@Override
-			public void run() {
-				for (int i = 0; i < getParentModel().getDiscardPileCards().size(); i++) {
-					TreasuryCardView card = getParentModel().getDiscardPileCards().get(i).getComponent();
-					card.toFront();
-					card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(DISCARD_PILE_LOC));
-					card.setSelectable(false);
-				}
-				for (int i = 0; i < getParentModel().getNormalPileCards().size(); i++) {
-					TreasuryCardView card = getParentModel().getNormalPileCards().get(i).getComponent();
-					card.toFront();
-					card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(PILE_LOC));
-					card.setSelectable(false);
-				}
-			}
-		});
-
+		for (int i = 0; i < getParentModel().getDiscardPileCards().size(); i++) {
+			TreasuryCardView card = getParentModel().getDiscardPileCards().get(i).getComponent();
+			card.toFront();
+			card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(DISCARD_PILE_LOC));
+			card.setSelectable(false);
+		}
+		for (int i = 0; i < getParentModel().getNormalPileCards().size(); i++) {
+			TreasuryCardView card = getParentModel().getNormalPileCards().get(i).getComponent();
+			card.toFront();
+			card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(PILE_LOC));
+			card.setSelectable(false);
+		}
 	}
 
 	@Override

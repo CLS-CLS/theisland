@@ -14,10 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.utils.concurrent.ThreadBlockingRunnable;
 import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
@@ -185,9 +183,4 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 		return model;
 	}
 
-	public void execute(final ThreadBlockingRunnable runnable) {
-		FxThreadBlock localThreadBlock = new FxThreadBlock();
-		runnable.register(localThreadBlock);
-		localThreadBlock.execute(runnable);
-	}
 }

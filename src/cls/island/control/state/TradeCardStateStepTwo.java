@@ -120,7 +120,7 @@ public class TradeCardStateStepTwo implements GameState {
 
 	}
 
-	private final class TradeAction extends RevertableAction {
+	private final class TradeAction implements RevertableAction {
 		private final Player playerToGiveCard;
 		TreasuryCard card = selectedCard;
 		Player playerFrom = gameModel.getCurrentTurnPlayer();
