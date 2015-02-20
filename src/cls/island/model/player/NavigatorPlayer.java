@@ -17,8 +17,6 @@ public class NavigatorPlayer extends Player {
 		super(PlayerType.NAVIGATOR, piece, base);
 	}
 
-	private boolean moveOtherPlayer = true;
-
 	/**
 	 * Moves the player to the provided island using his flying ability and
 	 * removes one action.
@@ -26,7 +24,6 @@ public class NavigatorPlayer extends Player {
 	 * @param toIsland
 	 */
 	public int moveOtherPlayer(Player otherPlayer, Island toIsland) {
-		moveOtherPlayer = false;
 		actionsLeft.set(actionsLeft.get() - 1);
 		return otherPlayer.setToIsland(toIsland);
 	}
@@ -46,20 +43,13 @@ public class NavigatorPlayer extends Player {
 	}
 
 	public boolean canMoveOtherPlayer() {
-		return moveOtherPlayer;
+		return actionsLeft.get() >0 ;
 	}
 
 	@Override
 	public void resetActions() {
 		super.resetActions();
-		moveOtherPlayer = true;
 	}
 
-	/**
-	 * for initialization purposes only
-	 */
-	public void setMoveOtherPlayer(boolean canMoveOtherPlayer) {
-		this.moveOtherPlayer = canMoveOtherPlayer;
-	}
 
 }

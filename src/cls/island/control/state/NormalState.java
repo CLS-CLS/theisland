@@ -114,7 +114,7 @@ public class NormalState implements GameState {
 		case FLY:
 			return new FlyState(gameController, islandScreen, gameModel, this);
 		case MOVE_OTHER:
-			return null;
+			return new MoveOtherState(gameController, islandScreen, gameModel, this);
 		default:
 		}
 		return null;
