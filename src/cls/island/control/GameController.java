@@ -37,7 +37,9 @@ public class GameController {
 	}
 
 	public void buttonPressed(final ButtonAction action) {
+		System.out.println("Start buttonPressed");
 		if (islandScreen.c_isAnimationInProgress()) {
+			System.out.println("anim in progress -- abort");
 			return;
 		}
 		islandScreen.c_setAnimationInProgress(true);
@@ -56,6 +58,7 @@ public class GameController {
 				setGameState(state);
 			}
 		}
+		System.out.println("End buttonPressed");
 		islandScreen.c_setAnimationInProgress(false);
 	}
 
@@ -98,12 +101,8 @@ public class GameController {
 				TreasuryCard treasuryCard = treasuryPile.getTopPileCard();
 				gameModel
 						.giveCardToPlayerFromTreasurePile(player, treasuryCard);
-				System.out.println(Thread.currentThread().getName()
-						+ " before move");
 				islandScreen.c_moveTreasuryCardFromPileToPlayer(treasuryCard
 						.getComponent(), player.getBase().getComponent());
-				System.out.println(Thread.currentThread().getName()
-						+ " after  move");
 			}
 		}
 

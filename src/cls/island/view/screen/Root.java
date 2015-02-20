@@ -1,16 +1,16 @@
 package cls.island.view.screen;
 
+import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Scale;
 import cls.island.control.Config;
-import cls.island.control.MainController;
 
-public class Root extends AbstractScreen {
+public class Root extends Group {
 	
 	ImageView imageView;
 	
-	public Root(final MainController mainController, final Config config) {
-		super(mainController, config);
+	public Root(final Config config) {
+		
 		this.imageView =  new ImageView(config.background);
 		getChildren().add(imageView);
 		getTransforms().add(

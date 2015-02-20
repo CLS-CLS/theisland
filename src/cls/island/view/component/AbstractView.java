@@ -3,8 +3,6 @@ package cls.island.view.component;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -20,14 +18,6 @@ import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
 
-
-/**
- * General class that provides implementation for {@link IslandComponent} and {@link ThreadBlock}
- * interfaces 
- * @author lytsikas
- *
- * @param <T>
- */
 public class AbstractView<T> extends Parent implements IslandComponent {
 	private static final double HOVER_OVER_OPACITY = 0.2;
 	private static final double HOVER_OVER_ANIM_DURATION = 200;
@@ -82,80 +72,72 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 		super.relocate(loc.x, loc.y);
 	}
 	
-		
-	public void setValidToCkickEffect(final boolean on){
-		
-		Platform.runLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				if (validToClick == null){
-					validToClick = createValidToClick();
-				}
-				if (on && !getChildren().contains(validToClick)){
-					if (validToClick.getRelativePosition() == RelativePosition.TOP){
-						getChildren().add(validToClick);
-					}else{
-						getChildren().add(0, validToClick);
-					}
-					validToClick.switchEffectOn();
-				}else if (!on){
-					getChildren().remove(validToClick);
-					validToClick.switchEffectOff();
-				}
-				
+	public void setValidToCkickEffect(final boolean on) {
+
+		if (validToClick == null) {
+			validToClick = createValidToClick();
+		}
+		if (on && !getChildren().contains(validToClick)) {
+			if (validToClick.getRelativePosition() == RelativePosition.TOP) {
+				getChildren().add(validToClick);
+			} else {
+				getChildren().add(0, validToClick);
 			}
-		});
-	
+			validToClick.switchEffectOn();
+		} else if (!on) {
+			getChildren().remove(validToClick);
+			validToClick.switchEffectOff();
+		}
+
 	}
 
 	private void initSelectableHandlers() {
 
-		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				if (!isSelectable())
-					return;
-				onExitedAnimation.stop();
-				if (mouseEnteredRect == null) {
-					mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(), AbstractView.this
-							.getLayoutBounds().getHeight(), Color.BLACK);
-					mouseEnteredRect.setOpacity(0);
-					getChildren().add(mouseEnteredRect);
-				}
-				double delta = HOVER_OVER_OPACITY - mouseEnteredRect.getOpacity();
-				Duration duration = Duration.millis(delta * HOVER_OVER_ANIM_DURATION / HOVER_OVER_OPACITY);
-				if (duration.toMillis() > 0) {
-					onEnteredAnimation = new Timeline(new KeyFrame(duration, new KeyValue(
-							mouseEnteredRect.opacityProperty(), HOVER_OVER_OPACITY)));
-					onEnteredAnimation.playFromStart();
-				}
-			}
-		});
-		this.setOnMouseExited(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				if (!isSelectable())
-					return;
-				onEnteredAnimation.stop();
-				if (mouseEnteredRect == null) {
-					mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(), AbstractView.this
-							.getLayoutBounds().getHeight(), Color.BLACK);
-					mouseEnteredRect.setOpacity(0);
-					getChildren().add(mouseEnteredRect);
-				}
-				double delta = mouseEnteredRect.getOpacity();
-				Duration duration = Duration.millis(Math.max(0, delta * 400));
-				onExitedAnimation = new Timeline(new KeyFrame(duration, new KeyValue(mouseEnteredRect.opacityProperty(), 0)));
-				onExitedAnimation.playFromStart();
-
-			}
-		});
-
+		this.setOnMouseEntered(this::mouseEntered);
+		
+		this.setOnMouseExited(this::mouseExited);
 	}
-
+	
+	
+	public void mouseEntered(MouseEvent event){
+		if (!isSelectable()) {
+			return;
+		}
+		onExitedAnimation.stop();
+		
+		if (mouseEnteredRect == null) {
+			mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(), AbstractView.this
+					.getLayoutBounds().getHeight(), Color.BLACK);
+			mouseEnteredRect.setOpacity(0);
+			getChildren().add(mouseEnteredRect);
+		}
+		double delta = HOVER_OVER_OPACITY - mouseEnteredRect.getOpacity();
+		Duration duration = Duration.millis(delta * HOVER_OVER_ANIM_DURATION / HOVER_OVER_OPACITY);
+		if (duration.toMillis() > 0) {
+			onEnteredAnimation = new Timeline(new KeyFrame(duration, new KeyValue(
+					mouseEnteredRect.opacityProperty(), HOVER_OVER_OPACITY)));
+			onEnteredAnimation.playFromStart();
+		}
+		
+	}
+	
+	
+	public void mouseExited(MouseEvent event){
+		if (!isSelectable())
+			return;
+		onEnteredAnimation.stop();
+		if (mouseEnteredRect == null) {
+			mouseEnteredRect = new Rectangle(AbstractView.this.getLayoutBounds().getWidth(), AbstractView.this
+					.getLayoutBounds().getHeight(), Color.BLACK);
+			mouseEnteredRect.setOpacity(0);
+			getChildren().add(mouseEnteredRect);
+		}
+		double delta = mouseEnteredRect.getOpacity();
+		Duration duration = Duration.millis(Math.max(0, delta * 400));
+		onExitedAnimation = new Timeline(new KeyFrame(duration, new KeyValue(mouseEnteredRect.opacityProperty(), 0)));
+		onExitedAnimation.playFromStart();
+	}
+	
 	public boolean isSelectable() {
 		return selectable;
 	}

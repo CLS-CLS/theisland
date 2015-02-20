@@ -89,7 +89,6 @@ public class DrawCardState implements GameState {
 		final TreasuryCard treasuryCard = getTopPileCard();
 
 		if (treasuryCard.getType() == Type.WATER_RISE) {
-			System.out.println("water rise : " + islandScreen.c_isAnimationInProgress());
 			islandScreen.c_WaterCardDrawnPopUp();
 			waterRised = true;
 			gameModel.discardCard(currentPlayer, treasuryCard);

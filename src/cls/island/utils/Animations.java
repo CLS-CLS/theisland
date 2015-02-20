@@ -49,17 +49,7 @@ public class Animations {
 
 	public static void moveComponentToLocation(final Node component, Loc location,
 			final EventHandler<ActionEvent> onFinish, final FxThreadBlock block) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(new Runnable() {
-
-				@Override
-				public void run() {
-					component.toFront();
-				}
-			});
-		} else {
-			component.toFront();
-		}
+		component.toFront();
 		TimelineSingle timeline = new TimelineSingle();
 		if (onFinish != null) {
 			timeline.setOnFinished((event) -> {
@@ -111,7 +101,6 @@ public class Animations {
 	 */
 	public static void teleportCardToLocationReverse(TreasuryCardView treasuryCardView,
 			Loc location, final FxThreadBlock block){
-		System.out.println(Thread.currentThread().getName() + " Start teleporting");
 		treasuryCardView.toFront();
 		treasuryCardView.setOpacity(0);
 		treasuryCardView.relocate(location);
@@ -119,11 +108,7 @@ public class Animations {
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(),
 						1)));
-		timeline.setOnFinished((event) -> {
-			System.out.println(Thread.currentThread().getName()
-					+ " fininsed Teleporting");
-			block.unpause();
-		});
+		timeline.setOnFinished((event) ->block.unpause());
 
 		timeline.play();
 	}

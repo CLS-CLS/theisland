@@ -2,6 +2,7 @@ package cls.island.view.screen;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -9,14 +10,16 @@ import cls.island.control.Config;
 import cls.island.control.MainController;
 import cls.island.utils.ButtonFactory;
 
-public class StartScreen extends AbstractScreen {
+public class StartScreen extends Group {
 
 	private final double[] btnGroupLoc = new double[] { 700D, 750D };
 
 	VBox mainBtns = new VBox();
 
-	public StartScreen(MainController mainController, Config config) {
-		super(mainController, config);
+	private MainController mainController;
+
+	public StartScreen(MainController mainController) {
+		this.mainController = mainController;
 		mainBtns.setLayoutX(btnGroupLoc[0]);
 		mainBtns.setLayoutY(btnGroupLoc[1]);
 		mainBtns.getStyleClass().add("gen-vBox");
@@ -66,5 +69,4 @@ public class StartScreen extends AbstractScreen {
 		mainController.goToOptions();
 	}
 
-	
 }

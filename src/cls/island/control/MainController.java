@@ -1,7 +1,5 @@
 package cls.island.control;
 
-import java.util.Arrays;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -12,11 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import cls.island.control.Options.PlayerType;
 import cls.island.model.GameModel;
 import cls.island.utils.Animations;
 import cls.island.utils.TimeLineManager;
-import cls.island.view.component.piece.PieceColor;
 import cls.island.view.screen.IslandScreen;
 import cls.island.view.screen.OptionScreen;
 import cls.island.view.screen.Root;
@@ -73,11 +69,11 @@ public class MainController {
 
 	public void init() {
 		config = Config.getInstance();
-		root = new Root(MainController.this, config);
+		root = new Root(config);
 		options = new Options();
 		selectPlayerScreen = new SelectPlayerScreen(MainController.this, config);
-		startScreen = new StartScreen(MainController.this, config);
-		optionScreen = new OptionScreen(MainController.this, config);
+		startScreen = new StartScreen(MainController.this);
+		optionScreen = new OptionScreen(MainController.this);
 
 		initScene();
 		initStage();

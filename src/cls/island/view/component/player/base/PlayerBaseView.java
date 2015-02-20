@@ -70,13 +70,11 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	public void moveToBase(final TreasuryCardView treasuryCard) {
 		FxThreadBlock block = new FxThreadBlock();
 		block.execute(() -> {
-			System.out.println(Thread.currentThread().getName() + " move To Base Start ");
 			int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 			treasuryCard.setSelectable(true);
 			Animations.teleportCardToLocationReverse(treasuryCard,
 					PlayerBaseView.this.getLoc().add(locCalculator.cardLocationInCardHolder(index)),
 					block);
-			System.out.println(Thread.currentThread().getName() + " move To Base End ");
 		});
 
 	}

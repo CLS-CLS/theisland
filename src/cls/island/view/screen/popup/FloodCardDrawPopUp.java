@@ -17,13 +17,8 @@ public class FloodCardDrawPopUp extends PopUpInternal<Void> {
 		Rectangle rect = new Rectangle(500,500,Color.BLUE);
 		vBox.getChildren().add(rect);
 		Button exit = ButtonFactory.genButton("OK");
-		exit.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				FloodCardDrawPopUp.this.close();
-			}
-		});
+		exit.setOnAction((event) -> close());
+		
 		vBox.getChildren().add(exit);
 		vBox.setMaxHeight(Double.MAX_VALUE);
 		getChildren().add(vBox);

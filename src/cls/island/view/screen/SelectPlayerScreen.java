@@ -35,14 +35,17 @@ import cls.island.utils.ButtonFactory;
 import cls.island.utils.TimelineSingle;
 import cls.island.view.component.piece.PieceColor;
 
-public class SelectPlayerScreen extends AbstractScreen {
+public class SelectPlayerScreen extends Group {
 	protected static final int MAX_RANDOM_PLAYERS = 4;
 
 	List<Combo> players = new ArrayList<>();
 	ComboRandom randomNode;
 
+
+	private Config config;
+
 	public SelectPlayerScreen(final MainController controller, Config config) {
-		super(controller, config);
+		this.config = config;
 		Group root = new Group();
 		Group main = new Group();
 		this.getChildren().add(root);

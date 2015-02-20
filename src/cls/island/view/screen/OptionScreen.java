@@ -2,16 +2,18 @@ package cls.island.view.screen;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import cls.island.control.Config;
 import cls.island.control.MainController;
 import cls.island.utils.ButtonFactory;
 
-public class OptionScreen extends AbstractScreen {
+public class OptionScreen extends Group {
 
-	public OptionScreen(final MainController controller, Config config) {
-		super(controller, config);
+	private MainController mainController;
+
+	public OptionScreen(final MainController controller) {
+		this.mainController = controller;
 		createOptionButtonGroup();
 	}
 

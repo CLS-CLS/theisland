@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.function.Consumer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -16,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
@@ -41,6 +41,7 @@ import cls.island.model.player.Player;
 import cls.island.utils.Animations;
 import cls.island.utils.ButtonFactory;
 import cls.island.utils.FxThreadBlock;
+import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
 import cls.island.view.component.MessagePanel;
 import cls.island.view.component.actionsleft.ActionsLeftView;
@@ -58,10 +59,14 @@ import cls.island.view.component.waterlevel.WaterLevelView;
 import cls.island.view.control.Action;
 import cls.island.view.screen.popup.FloodCardDrawPopUp;
 import cls.island.view.screen.popup.GameLostPopUp;
+import cls.island.view.screen.popup.PopUpInternal;
+import cls.island.view.screen.popup.PopUpWrapper;
 import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 
-public class IslandScreen extends AbstractScreen {
-
+public class IslandScreen extends Group {
+	protected static LocCalculator locCalculator = LocCalculator.getInstance();
+	private boolean animationInProgress;
+	
 	private Rectangle background;
 	private List<TreasuryCard> cards = new ArrayList<>();
 	private TreasuryPile treasuryBase;
@@ -81,10 +86,13 @@ public class IslandScreen extends AbstractScreen {
 	private IslandView islandViewToDelete;
 	private WaterLevelView waterLevelView;
 	private Button collectTreasureButton;
+	private MainController mainController;
+	private Config config;
 
 	public IslandScreen(final MainController mainController, final GameController gameController,
 			final Config config, GameModel model) {
-		super(mainController, config);
+		this.mainController = mainController;
+		this.config = config;
 		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
 				.getHeight(), Color.DARKGRAY);
 		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980,
@@ -132,8 +140,6 @@ public class IslandScreen extends AbstractScreen {
 
 			@Override
 			public void handle(MouseEvent event) {
-				System.out.println("MouseClicked : \n   Animation in progress = "
-						+ c_isAnimationInProgress());
 				if (!c_isAnimationInProgress()) {
 					gameController.mouseClicked(event);
 				}
@@ -392,5 +398,25 @@ public class IslandScreen extends AbstractScreen {
 			flyButton.setOpacity(1);
 		}
 	}
+	
+	/**
+	 * Shows the pop up on top of this screen. Makes the thread that 
+	 * requested this pop-up to wait until the pop-up is closed.
+	 * @param popUpInternal
+	 * @return
+	 */
+	protected <T> T c_showPopup(final PopUpInternal<T> popUpInternal) {
+		final PopUpWrapper<T> popUp = new PopUpWrapper<>(popUpInternal, mainController.getStage());
+		return popUp.getResult();
+	}
+	
+	public void c_setAnimationInProgress(final boolean inProgress) {
+		animationInProgress = inProgress;
+	}
+
+	public boolean c_isAnimationInProgress() {
+		return animationInProgress;
+	}
+
 
 }
