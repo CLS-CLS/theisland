@@ -63,6 +63,8 @@ public class SelectPlayerScreen extends Group {
 				randomNode.rndCombo, Options.PlayerType.ENGINEER.name(),PieceColor.RED);
 		final Combo messengerNode = new Combo(new ImageView(config.messengerImage),
 				randomNode.rndCombo, Options.PlayerType.MESSENGER.name(),PieceColor.WHITE);
+		final Combo navigatorNode = new Combo(new ImageView(config.navigatorImage),
+				randomNode.rndCombo, Options.PlayerType.NAVIGATOR.name(),PieceColor.YELLOW);
 
 		randomNode.rndCombo.selected.addListener(new ChangeListener<Boolean>() {
 
@@ -75,6 +77,7 @@ public class SelectPlayerScreen extends Group {
 					pilotNode.setSelected(false);
 					engineerNode.setSelected(false);
 					messengerNode.setSelected(false);
+					navigatorNode.setSelected(false);
 				}
 			}
 		});
@@ -84,12 +87,14 @@ public class SelectPlayerScreen extends Group {
 		players.add(pilotNode);
 		players.add(engineerNode);
 		players.add(messengerNode);
+		players.add(navigatorNode);
 
 		diverNode.relocate(200, 180);
 		explorerNode.relocate(400, 180);
 		pilotNode.relocate(600, 180);
 		engineerNode.relocate(800, 180);
 		messengerNode.relocate(400,380);
+		navigatorNode.relocate(600,380);
 		randomNode.relocate(1100, 180);
 		Label text = new Label("Select the players to land... \n"
 				+ "         ...on the forbidden island");
@@ -114,22 +119,10 @@ public class SelectPlayerScreen extends Group {
 		buttons.setFillWidth(true);
 
 		Button back = ButtonFactory.genButton("Back");
-		back.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				controller.goToMainScreen(SelectPlayerScreen.this);
-			}
-		});
+		back.setOnAction((ev) -> controller.goToMainScreen(SelectPlayerScreen.this));
 
 		Button goToIsland = ButtonFactory.genButton("Go To Island");
-		goToIsland.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				controller.goToIslandScreen();
-			}
-		});
+		goToIsland.setOnAction((ev) -> controller.goToIslandScreen());
 
 		buttons.getChildren().add(goToIsland);
 		buttons.getChildren().add(back);
@@ -140,6 +133,7 @@ public class SelectPlayerScreen extends Group {
 		main.getChildren().add(pilotNode);
 		main.getChildren().add(engineerNode);
 		main.getChildren().add(messengerNode);
+		main.getChildren().add(navigatorNode);
 		main.getChildren().add(randomNode);
 		root.getChildren().add(buttons);
 

@@ -128,7 +128,7 @@ public class MainController {
 		});
 
 		stage.setScene(scene);
-		stage.initStyle(StageStyle.UNDECORATED);
+//		stage.initStyle(StageStyle.UNDECORATED);
 //		stage.setFullScreen(true);
 		goToMainScreen(null);
 		stage.show();

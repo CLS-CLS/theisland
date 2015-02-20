@@ -12,6 +12,7 @@ import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.LooseCondition;
+import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
@@ -97,6 +98,10 @@ public class SwimToAdjacentIslandState implements GameState {
 			for (Island island : gameModel.getIslands()) {
 				if (island.isSunk())
 					continue;
+				if (player instanceof PilotPlayer){
+					possibleMoves.add(island);
+					continue;
+				}
 				if (player.isValidMove(sinkedIsland, island, gameModel.getIslandGrid())) {
 					possibleMoves.add(island);
 				}

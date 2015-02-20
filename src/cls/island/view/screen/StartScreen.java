@@ -12,7 +12,7 @@ import cls.island.utils.ButtonFactory;
 
 public class StartScreen extends Group {
 
-	private final double[] btnGroupLoc = new double[] { 700D, 750D };
+	private final double[] btnGroupLoc = new double[] { 700D, 700D };
 
 	VBox mainBtns = new VBox();
 

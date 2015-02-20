@@ -36,6 +36,7 @@ import cls.island.control.GameController.ButtonAction;
 import cls.island.control.MainController;
 import cls.island.model.GameModel;
 import cls.island.model.LooseCondition;
+import cls.island.model.player.NavigatorPlayer;
 import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.Animations;
@@ -82,6 +83,7 @@ public class IslandScreen extends Group {
 	private ToggleButton shoreUpButton;
 	private ToggleButton tradeButton;
 	private ToggleButton flyButton;
+	private ToggleButton moveOtherButton;
 	private List<TreasuryCardView> floodCards = new ArrayList<>();
 	private IslandView islandViewToDelete;
 	private WaterLevelView waterLevelView;
@@ -181,6 +183,9 @@ public class IslandScreen extends Group {
 		flyButton = ButtonFactory.actionToggleButton("Fly", ButtonAction.FLY, gameController);
 		flyButton.setToggleGroup(toggleGroup);
 		buttons.add(flyButton);
+		moveOtherButton = ButtonFactory.actionToggleButton("Move \nOther", ButtonAction.MOVE_OTHER, gameController);
+		moveOtherButton.setToggleGroup(toggleGroup);
+		buttons.add(moveOtherButton);
 		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
 		getChildren().add(actionsLeft);
 		actionsLeft.relocate(400, 810);
@@ -193,6 +198,7 @@ public class IslandScreen extends Group {
 		undoButton.disableProperty().bind(
 				BooleanBinding.booleanExpression(gameController.undoActionProperty()).not());
 		flyButton.relocate(1310, 520);
+		moveOtherButton.relocate(1310, 630);
 
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
@@ -201,6 +207,7 @@ public class IslandScreen extends Group {
 		getChildren().add(nextTurnButton);
 		getChildren().add(undoButton);
 		getChildren().add(flyButton);
+		getChildren().add(moveOtherButton);
 		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		getChildren().add(msgPanel);
 		msgPanel.relocate(600, 1000);
@@ -394,8 +401,11 @@ public class IslandScreen extends Group {
 
 	public void c_setUpButtonsForPlayer(Player player) {
 		flyButton.setOpacity(0);
+		moveOtherButton.setOpacity(0);
 		if (player instanceof PilotPlayer) {
 			flyButton.setOpacity(1);
+		}else if (player instanceof NavigatorPlayer){
+			moveOtherButton.setOpacity(1);
 		}
 	}
 	

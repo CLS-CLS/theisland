@@ -40,6 +40,8 @@ public class Config {
 	public final Image randomPlayerImage;
 	public final Image tickImage;
 	public final Image pieceWhite;
+	public final Image pieceYellow;
+	public final Image pieceBrown;
 	public final Image playerCardHolder;
 	public final Image islandCard;
 	public final Image islandBackCard;
@@ -70,6 +72,7 @@ public class Config {
 	public Image checkBoxWithTick;
 	public Image pilotImage;
 	public Image messengerImage;
+	public Image navigatorImage;
 	public Image engineerImage;
 	public Image deepOcean;
 	public Image window;
@@ -82,12 +85,15 @@ public class Config {
 		pilotImage = new Image("images/other/pilot.png", 120, 120, false, true);
 		messengerImage = new Image("images/other/messenger.png", 120, 120, false, true);
 		engineerImage = new Image("images/other/engineer.png", 120, 120, false, true);
+		navigatorImage = new Image("images/other/navigator.png", 120, 120, false, true);
 		randomPlayerImage = new Image("images/other/randomPlayer.png", 160, 125, true, true);
 		tickImage = new Image("images/other/tick.png", 40, 40, true, true);
 		pieceWhite = new Image("images/other/pieceWhite.png", 31, 52, true, true);
 		pieceGreen = new Image("images/other/pieceGreen.png", 31, 52, true, true);
 		pieceRed = new Image("images/other/pieceRed.png", 31, 52, true, true);
 		pieceBlue = new Image("images/other/pieceBlue.png", 31, 52, true, true);
+		pieceYellow = new Image("images/other/pieceYellow.png", 31, 52, true, true);
+		pieceBrown = new Image("images/other/pieceWhite.png", 31, 52, true, true);
 		//TODO curently mapped to white image!! make it black
 		pieceBlack = new Image("images/other/pieceBlack.png", 31, 52, true, true);
 		pieceWhiteLarge = new Image("images/other/pieceWhite.png", 31 * 2, 52 * 2, true, true);
@@ -155,6 +161,8 @@ public class Config {
 			return messengerImage;
 		case PILOT:
 			return pilotImage;
+		case NAVIGATOR:
+			return navigatorImage;
 		default:
 			return null;
 		}
@@ -233,9 +241,9 @@ public class Config {
 		case WHITE:
 			return pieceWhite;
 		case YELLOW:
-			return pieceWhite;
+			return pieceYellow;
 		case BROWN:
-			return pieceWhite;
+			return pieceBrown;
 		default:
 			break;
 		}

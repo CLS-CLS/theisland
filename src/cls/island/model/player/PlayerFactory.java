@@ -20,6 +20,8 @@ public class PlayerFactory {
 			return new PilotPlayer(piece, base);
 		case MESSENGER:
 			return new MessengerPlayer(piece, base);
+		case NAVIGATOR:
+			return new NavigatorPlayer(piece, base);
 		default:
 			return new Player(type, piece, base);
 		}

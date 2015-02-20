@@ -113,6 +113,8 @@ public class NormalState implements GameState {
 			return new TradeCardState(gameController, islandScreen, gameModel, this);
 		case FLY:
 			return new FlyState(gameController, islandScreen, gameModel, this);
+		case MOVE_OTHER:
+			return null;
 		default:
 		}
 		return null;

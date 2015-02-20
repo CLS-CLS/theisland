@@ -1,6 +1,5 @@
 package cls.island.control;
 
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
@@ -16,7 +15,7 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO;
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO, MOVE_OTHER;
 	}
 
 	private GameState gameState;
@@ -37,9 +36,7 @@ public class GameController {
 	}
 
 	public void buttonPressed(final ButtonAction action) {
-		System.out.println("Start buttonPressed");
 		if (islandScreen.c_isAnimationInProgress()) {
-			System.out.println("anim in progress -- abort");
 			return;
 		}
 		islandScreen.c_setAnimationInProgress(true);
@@ -58,7 +55,6 @@ public class GameController {
 				setGameState(state);
 			}
 		}
-		System.out.println("End buttonPressed");
 		islandScreen.c_setAnimationInProgress(false);
 	}
 
