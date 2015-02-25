@@ -17,7 +17,7 @@ public class MessagePanel extends AbstractView<MessagePanel> {
 		rect.getStyleClass().add("messagePanel");
 		getChildren().add(rect);
 		msg = new Label();
-		msg.getStyleClass().add("white-text-button");
+		msg.getStyleClass().add("msg-label");
 		getChildren().add(msg);
 		msg.relocate(30,30);
 		msg.setOpacity(0);

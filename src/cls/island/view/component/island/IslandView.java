@@ -11,6 +11,7 @@ import javafx.animation.KeyValue;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
@@ -18,7 +19,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
+import cls.island.control.Config;
 import cls.island.utils.Animations;
 import cls.island.utils.FxThreadBlock;
 import cls.island.utils.TimelineSingle;
@@ -64,6 +67,8 @@ public class IslandView extends AbstractView<Island> {
 			getChildren().add(treasureImageView);
 			treasureImageView.relocate(0, 50);
 		}
+		setCache(true);
+		setCacheHint(CacheHint.QUALITY);
 	}
 
 	private void init(Image tileImage) {
@@ -71,11 +76,9 @@ public class IslandView extends AbstractView<Island> {
 		height = tileImage.getRequestedHeight();
 		islandImage = new ImageView(tileImage);
 		savedNode = createBorder();
-		// if (new Random().nextBoolean()){
 		flood = new Rectangle(width, height, Color.BLUE);
 		flood.opacityProperty().set(0);
 		flood.setBlendMode(BlendMode.OVERLAY);
-		// }
 
 		islandImage.setEffect(floodEffect);
 		getChildren().add(islandImage);
@@ -84,31 +87,28 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	private Node createBorder() {
-		return new ImageView(new Image("images/other/saved.png", 20, 20, false, true));
+//		return new ImageView(new Image("images/other/saved.png", 20, 20, false, true));
+		Rectangle rect = new Rectangle(width + 4, height + 4 , Color.WHITE);
+		rect.setStrokeType(StrokeType.INSIDE);
+		rect.setStrokeWidth(3);
+		rect.setStroke(Color.RED);
+		rect.getStrokeDashArray().add(25D);
+		return rect;
 	}
 
 	public void activateSavedNode() {
-		IslandView.this.getChildren().add(savedNode);
-		savedNode.relocate(0, 100);
+		getChildren().add(0, savedNode);
+		savedNode.relocate(-2, -2);
+		
 	}
 
 	public void deactivateSavedNode() {
-		TimelineSingle timelineSingle = new TimelineSingle(Process.ASYNC);
-		timelineSingle.getKeyFrames().add(
-				new KeyFrame(Duration.millis(200), new KeyValue(savedNode.opacityProperty(), 0)));
-		timelineSingle.setOnFinished(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				IslandView.this.getChildren().remove(savedNode);
-				savedNode.setOpacity(1);
-			}
-		});
-		timelineSingle.play();
+		getChildren().remove(savedNode);
 	}
 
 	public void sink() {
 		FxThreadBlock block = new FxThreadBlock();
+		Config.getInstance().getFireballSound().play();
 		block.execute(()->Animations.sinkTile(IslandView.this, block));
 	}
 
@@ -133,6 +133,10 @@ public class IslandView extends AbstractView<Island> {
 	}
 
 	private void animate(boolean floodBool, FxThreadBlock block) {
+		if (floodBool){
+			Config.getInstance().getSplashSound().play();
+		}
+	
 		List<DoubleProperty> animateProps = new ArrayList<>();
 		animateProps.add(floodEffect.brightnessProperty());
 		animateProps.add(floodEffect.contrastProperty());

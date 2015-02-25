@@ -3,6 +3,7 @@ package cls.island.control;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.MediaPlayer;
 import cls.island.control.action.Action;
 import cls.island.control.action.RevertableAction;
 import cls.island.control.state.NormalState;
@@ -15,7 +16,7 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO, MOVE_OTHER;
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO, MOVE_OTHER, SEND;
 	}
 
 	private GameState gameState;
@@ -29,17 +30,23 @@ public class GameController {
 	 */
 	private volatile SimpleBooleanProperty undoAction = new SimpleBooleanProperty(
 			false);
+	private MediaPlayer mediaPlayer;
 
 	public GameController(MainController mainController, GameModel gameModel) {
 		this.mainController = mainController;
 		this.gameModel = gameModel;
+		mediaPlayer = new MediaPlayer(mainController.config.getBackgoundSound());
+		mediaPlayer.setVolume(0.3);
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 	}
 
 	public void buttonPressed(final ButtonAction action) {
+		System.out.println("Animation in progress  = " + islandScreen.c_isAnimationInProgress());
 		if (islandScreen.c_isAnimationInProgress()) {
 			return;
 		}
 		islandScreen.c_setAnimationInProgress(true);
+		mainController.config.getClickBtnSound().play();
 
 		if (action == ButtonAction.UNDO) {
 			gameState.end();
@@ -51,6 +58,7 @@ public class GameController {
 			}
 		} else {
 			GameState state = gameState.buttonPressed(action);
+			System.out.println("Setting gameState "  + (state == null ? "NULL": state) );
 			if (state != null) {
 				setGameState(state);
 			}
@@ -60,6 +68,7 @@ public class GameController {
 
 	public void mouseClicked(final MouseEvent event) {
 		islandScreen.c_setAnimationInProgress(true);
+		mainController.config.getClickSound().play();
 
 		GameState state = gameState.mouseClicked(event);
 		if (state != null) {
@@ -81,6 +90,7 @@ public class GameController {
 	}
 
 	public void backToMainScreen() {
+		mediaPlayer.stop();
 		mainController.goToMainScreen(islandScreen);
 
 	}
@@ -88,7 +98,8 @@ public class GameController {
 	public void startNewGame() {
 		if (islandScreen == null)
 			throw new RuntimeException("IslandScrren should not be null");
-
+		mediaPlayer.play();
+		
 		setGameState(new NormalState(GameController.this, islandScreen,
 				gameModel));
 		for (Player player : gameModel.getPlayers()) {

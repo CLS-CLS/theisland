@@ -1,6 +1,7 @@
 package cls.island.model.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,19 +32,25 @@ public class NavigatorPlayer extends Player {
 	public boolean isValidOtherPlayerMove(Player otherPlayer, Island toIsland, IslandGrid<Island> islandGrid) {
 		Island otherIsland = otherPlayer.getPiece().getIsland();
 		List<Island> tier_1_islands = new ArrayList<>();
-		for (Direction d : Direction.values()) {
+		tier_1_islands.add(otherIsland);
+		List<Direction> horizAndVert = Arrays.asList(new Direction[]{Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT});
+		for (Direction d : horizAndVert) {
 			Island adjIsland = islandGrid.getAdjacent(otherIsland, d);
 			if (adjIsland != null && !adjIsland.isSunk()) {
 				tier_1_islands.add(adjIsland);
 			}
 		}
+		
 		Optional<Island> result = tier_1_islands.stream()
-				.filter((island) -> islandGrid.findDirection(island, toIsland) != null).findFirst();
+				.filter((island) -> {
+					Direction d = islandGrid.findDirection(island, toIsland);
+					return d != null && horizAndVert.contains(d);
+				}).findFirst();
 		return result.isPresent();
 	}
 
 	public boolean canMoveOtherPlayer() {
-		return actionsLeft.get() >0 ;
+		return actionsLeft.get() > 0;
 	}
 
 	@Override

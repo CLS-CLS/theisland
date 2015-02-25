@@ -297,7 +297,12 @@ public class GameModel {
 	public Player getCurrentTurnPlayer() {
 		return players.get(currentTurn);
 	}
-
+	
+	/**
+	 * Removes the card from the players pile and puts the card in the discarded pile
+	 * @param player the player who this card belongs to
+	 * @param treasuryCard the card to be discarded
+	 */
 	public void discardCard(Player player, TreasuryCard treasuryCard) {
 		treasuryPile.addToPile(treasuryCard, PileType.DISCARD);
 		player.getBase().removeCard(treasuryCard);

@@ -8,6 +8,7 @@ import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.control.action.RevertableAction;
 import cls.island.model.GameModel;
+import cls.island.model.player.NavigatorPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
 import cls.island.view.component.island.Island;
@@ -61,27 +62,31 @@ public class MoveOtherStepTwoState implements GameState {
 	}
 
 	private GameState moveToIsland(Island island) {
-		gameController.executeAction(new RevertableAction() {
-			Island islandFrom = pieceToMove.getParentModel().getIsland();
-
-			@Override
-			public void execute() {
-				int index = gameController.getPlayerWithPiece(pieceToMove.getParentModel()).setToIsland(island);
-				islandScreen.c_movePiece(pieceToMove, island.getComponent(), index);
-			}
-
-			@Override
-			public GameState revert() {
-				Player player = ViewUtils.getPlayerById(gameModel, pieceToMove.getParentModel().getPlayerId());
-				int index = player.setToIsland(islandFrom);
-				islandScreen.c_movePiece(player.getPiece().getComponent(), islandFrom.getComponent(), index);
-				player.setActionsLeft(player.getActionsLeft() + 1);
-				return fromState;
-			}
-		});
-		return goToState(getFromState().getFromState());
+		Island islandFrom = pieceToMove.getParentModel().getIsland();
+		Player playerToMove = gameController.getPlayerWithPiece(pieceToMove.getParentModel());
+		NavigatorPlayer currentPlayer = (NavigatorPlayer) gameModel.getCurrentTurnPlayer();
+		if (currentPlayer.canMoveOtherPlayer()
+				&& currentPlayer.isValidOtherPlayerMove(playerToMove, island, gameModel.getIslandGrid())) {
+			gameController.executeAction(new RevertableAction() {
+				@Override
+				public void execute() {
+					int index = currentPlayer.moveOtherPlayer(playerToMove, island);
+					islandScreen.c_movePiece(pieceToMove, island.getComponent(), index);
+				}
+	
+				@Override
+				public GameState revert() {
+					int index = playerToMove.setToIsland(islandFrom);
+					islandScreen.c_movePiece(playerToMove.getPiece().getComponent(), islandFrom.getComponent(), index);
+					currentPlayer.setActionsLeft(currentPlayer.getActionsLeft() + 1);
+					return fromState.getFromState();
+				}
+			});
+			return goToState(getFromState().getFromState());
+		}else {
+			return null;
+		}
 	}
-
 
 	private GameState goToState(GameState state) {
 		islandScreen.c_hideMessagePanel();
@@ -97,7 +102,7 @@ public class MoveOtherStepTwoState implements GameState {
 
 	@Override
 	public GameState getFromState() {
-		throw new UnsupportedOperationException();
+		return fromState;
 	}
 
 	@Override

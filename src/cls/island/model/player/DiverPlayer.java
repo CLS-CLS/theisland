@@ -42,6 +42,7 @@ public class DiverPlayer extends Player{
 			ArrayList<Island> visitedIslands) {
 		List<Island> adjIslands = new ArrayList<>();
 		visitedIslands.add(fromIsland);
+		
 		for (Direction direction : adjDirections){
 			Island currentIsland = grid.getAdjacent(fromIsland, direction);
 			if (currentIsland != null) { 

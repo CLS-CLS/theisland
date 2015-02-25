@@ -51,7 +51,9 @@ public class PileView extends AbstractView<TreasuryPile> {
 	}
 
 
-
+	/**
+	 * Z-orders the cards treasure cards. Called after shuffling 
+	 */
 	public void rearrangePiles() {
 		for (int i = 0; i < getParentModel().getDiscardPileCards().size(); i++) {
 			TreasuryCardView card = getParentModel().getDiscardPileCards().get(i).getComponent();

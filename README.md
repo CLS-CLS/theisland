@@ -1,4 +1,0 @@
-firstrepo
-=========
-
-init

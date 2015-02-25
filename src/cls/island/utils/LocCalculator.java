@@ -83,9 +83,9 @@ public class LocCalculator {
 	public Loc pieceLocationOnIslandTile(int index) {
 		Loc loc = null;
 		if (index < 2) {
-			loc = new Loc(45 + 40 * index, -10);
+			loc = new Loc(20 + 40 * index, -20);
 		} else {
-			loc = new Loc(45 + 40 * (index - 2), 50);
+			loc = new Loc(20 + 40 * (index - 2), 40);
 		}
 		return loc;
 	}

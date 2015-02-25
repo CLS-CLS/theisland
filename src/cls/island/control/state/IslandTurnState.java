@@ -73,13 +73,11 @@ public class IslandTurnState implements GameState {
 		}
 		if (!gameModel.hasIslandToFlood()) {
 			gameModel.shuffleDiscardedAndPutBackToNormalPile();
+			gameModel.getIslands().forEach((island)->island.getComponent().deactivateSavedNode());
 		}
 		Island island = gameModel.getNextIslantToFlood();
 		counter ++;
 		if (island.isFlooded()) {
-			if (counter > gameModel.getNumberOfIslandsToSink()){
-				throw new RuntimeException("counter = " + counter + " / max is " + gameModel.getNumberOfIslandsToSink());
-			}
 			gameModel.sinkIsland(island);
 			island.getComponent().sink();
 			Object[] infos = new Object[1];
@@ -98,7 +96,7 @@ public class IslandTurnState implements GameState {
 		} else {
 			gameModel.floodIsland(island);
 			island.getComponent().flood();
-
+			island.getComponent().activateSavedNode();
 		}
 		return this;
 	}

@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import cls.island.model.GameModel;
 import cls.island.utils.Animations;
 import cls.island.utils.TimeLineManager;
@@ -129,7 +128,7 @@ public class MainController {
 
 		stage.setScene(scene);
 //		stage.initStyle(StageStyle.UNDECORATED);
-//		stage.setFullScreen(true);
+		stage.setFullScreen(config.isFullScreen());
 		goToMainScreen(null);
 		stage.show();
 	}

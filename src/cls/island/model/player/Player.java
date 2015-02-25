@@ -65,7 +65,11 @@ public class Player {
 	public int addCard(TreasuryCard card) {
 		return base.addCard(card);
 	}
-
+	
+	/**
+	 * convenient method
+	 * @return the cards the player is holding
+	 */
 	public List<TreasuryCard> getTreasuryCards() {
 		return new ArrayList<>(base.getTreasuryCards());
 	}

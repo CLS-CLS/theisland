@@ -34,8 +34,10 @@ import cls.island.control.Config;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;
 import cls.island.control.MainController;
+import cls.island.control.Options.PlayerType;
 import cls.island.model.GameModel;
 import cls.island.model.LooseCondition;
+import cls.island.model.player.MessengerPlayer;
 import cls.island.model.player.NavigatorPlayer;
 import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
@@ -67,7 +69,7 @@ import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 public class IslandScreen extends Group {
 	protected static LocCalculator locCalculator = LocCalculator.getInstance();
 	private boolean animationInProgress;
-	
+
 	private Rectangle background;
 	private List<TreasuryCard> cards = new ArrayList<>();
 	private TreasuryPile treasuryBase;
@@ -150,19 +152,17 @@ public class IslandScreen extends Group {
 
 		TreasuryBagView treasureBagView = model.getTreasureBag().getComponent();
 		getChildren().add(treasureBagView);
-		treasureBagView.relocate(620, 810);
+		treasureBagView.relocate(920, 810);
 
 		moveButton = ButtonFactory.actionToggleButton("Move", ButtonAction.MOVE, gameController);
 		moveButton.setToggleGroup(toggleGroup);
 		buttons.add(moveButton);
-		shoreUpButton = ButtonFactory.actionToggleButton("Shore \nUp", ButtonAction.SHORE_UP,
-				gameController);
+		shoreUpButton = ButtonFactory.actionToggleButton("Shore \nUp", ButtonAction.SHORE_UP, gameController);
 		shoreUpButton.setToggleGroup(toggleGroup);
 		toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue,
-					Toggle newValue) {
+			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
 				if (newValue == null) {
 					toggleGroup.selectToggle(moveButton);
 				}
@@ -173,14 +173,14 @@ public class IslandScreen extends Group {
 		tradeButton = ButtonFactory.actionToggleButton("Trade", ButtonAction.TRADE, gameController);
 		tradeButton.setToggleGroup(toggleGroup);
 		buttons.add(tradeButton);
-		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure",
-				ButtonAction.COLLECT_TREASURE, gameController);
-		buttons.add(collectTreasureButton);
-		nextTurnButton = ButtonFactory.actionButton("Next \n Turn", ButtonAction.NEXT_TURN,
+		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure", ButtonAction.COLLECT_TREASURE,
 				gameController);
+		buttons.add(collectTreasureButton);
+		nextTurnButton = ButtonFactory.actionButton("Next \n Turn", ButtonAction.NEXT_TURN, gameController);
 		buttons.add(nextTurnButton);
 		undoButton = ButtonFactory.actionButton("Undo", ButtonAction.UNDO, gameController);
 		flyButton = ButtonFactory.actionToggleButton("Fly", ButtonAction.FLY, gameController);
+		
 		flyButton.setToggleGroup(toggleGroup);
 		buttons.add(flyButton);
 		moveOtherButton = ButtonFactory.actionToggleButton("Move \nOther", ButtonAction.MOVE_OTHER, gameController);
@@ -188,7 +188,7 @@ public class IslandScreen extends Group {
 		buttons.add(moveOtherButton);
 		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
 		getChildren().add(actionsLeft);
-		actionsLeft.relocate(400, 810);
+		actionsLeft.relocate(300, 710);
 		moveButton.relocate(1200, 300);
 		shoreUpButton.relocate(1310, 300);
 		tradeButton.relocate(1200, 410);
@@ -198,7 +198,7 @@ public class IslandScreen extends Group {
 		undoButton.disableProperty().bind(
 				BooleanBinding.booleanExpression(gameController.undoActionProperty()).not());
 		flyButton.relocate(1310, 520);
-		moveOtherButton.relocate(1310, 630);
+		moveOtherButton.relocate(1310, 520);
 
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
@@ -206,12 +206,10 @@ public class IslandScreen extends Group {
 		getChildren().add(tradeButton);
 		getChildren().add(nextTurnButton);
 		getChildren().add(undoButton);
-		getChildren().add(flyButton);
-		getChildren().add(moveOtherButton);
 		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		getChildren().add(msgPanel);
-		msgPanel.relocate(600, 1000);
-		// addControls();
+		msgPanel.relocate(500, 1000);
+//		addControls();
 	}
 
 	public List<TreasuryCard> c_getTreasuryCards() {
@@ -258,17 +256,16 @@ public class IslandScreen extends Group {
 		block.execute(() -> {
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200),
 					new KeyValue(msgPanel.layoutYProperty(), 800)));
-			
+
 			timeline.setOnFinished((event) -> {
 				msgPanel.showMessage(message);
 				block.unpause();
 			});
-			
+
 			timeline.play();
 		});
 
 	}
-	
 
 	public void c_hideMessagePanel() {
 		FxThreadBlock block = new FxThreadBlock();
@@ -400,12 +397,12 @@ public class IslandScreen extends Group {
 	}
 
 	public void c_setUpButtonsForPlayer(Player player) {
-		flyButton.setOpacity(0);
-		moveOtherButton.setOpacity(0);
+		getChildren().remove(flyButton);
+		getChildren().remove(moveOtherButton);
 		if (player instanceof PilotPlayer) {
-			flyButton.setOpacity(1);
+			getChildren().add(flyButton);
 		}else if (player instanceof NavigatorPlayer){
-			moveOtherButton.setOpacity(1);
+			getChildren().add(moveOtherButton);
 		}
 	}
 	
@@ -419,7 +416,7 @@ public class IslandScreen extends Group {
 		final PopUpWrapper<T> popUp = new PopUpWrapper<>(popUpInternal, mainController.getStage());
 		return popUp.getResult();
 	}
-	
+
 	public void c_setAnimationInProgress(final boolean inProgress) {
 		animationInProgress = inProgress;
 	}
@@ -427,6 +424,5 @@ public class IslandScreen extends Group {
 	public boolean c_isAnimationInProgress() {
 		return animationInProgress;
 	}
-
 
 }

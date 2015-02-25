@@ -30,16 +30,18 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	private volatile OnOffEffectNode validToClick;
 
 	private static final Effect defaultEffect() {
-		Light.Distant light = new Light.Distant();
-		light.setAzimuth(-45);
-		light.setElevation(60);
-		Lighting l = new Lighting();
-		l.setLight(light);
-		l.setSurfaceScale(1.0);
-		l.setDiffuseConstant(1.5);
-		l.setSpecularConstant(0);
+//		Light.Distant light = new Light.Distant();
+//		light.setAzimuth(-45);
+//		light.setElevation(60);
+//		Lighting l = new Lighting();
+//		l.setLight(light);
+//		l.setSurfaceScale(1.0);
+//		l.setDiffuseConstant(1.5);
+//		l.setSpecularConstant(0);
 		DropShadow dr = new DropShadow();
-		dr.setInput(l);
+		dr.setOffsetX(4f);
+		dr.setOffsetY(4f);
+//		dr.setInput(l);
 		return dr;
 	}
 	
@@ -74,20 +76,20 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 	
 	public void setValidToCkickEffect(final boolean on) {
 
-		if (validToClick == null) {
-			validToClick = createValidToClick();
-		}
-		if (on && !getChildren().contains(validToClick)) {
-			if (validToClick.getRelativePosition() == RelativePosition.TOP) {
-				getChildren().add(validToClick);
-			} else {
-				getChildren().add(0, validToClick);
-			}
-			validToClick.switchEffectOn();
-		} else if (!on) {
-			getChildren().remove(validToClick);
-			validToClick.switchEffectOff();
-		}
+//		if (validToClick == null) {
+//			validToClick = createValidToClick();
+//		}
+//		if (on && !getChildren().contains(validToClick)) {
+//			if (validToClick.getRelativePosition() == RelativePosition.TOP) {
+//				getChildren().add(validToClick);
+//			} else {
+//				getChildren().add(0, validToClick);
+//			}
+//			validToClick.switchEffectOn();
+//		} else if (!on) {
+//			getChildren().remove(validToClick);
+//			validToClick.switchEffectOff();
+//		}
 
 	}
 

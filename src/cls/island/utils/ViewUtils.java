@@ -52,10 +52,10 @@ public class ViewUtils {
 		return result;
 	}
 
-	public static Player getPlayerById(GameModel gameModel, String id) {
-		Optional<Player> player = gameModel.getPlayers().stream().filter((p) -> p.getPlayerId().equals(id)).findFirst();
-		return player.get();
-
-	}
+//	public static Player getPlayerById(GameModel gameModel, String id) {
+//		Optional<Player> player = gameModel.getPlayers().stream().filter((p) -> p.getPlayerId().equals(id)).findFirst();
+//		return player.get();
+//
+//	}
 
 }

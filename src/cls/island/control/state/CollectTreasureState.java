@@ -50,20 +50,19 @@ public class CollectTreasureState implements GameState {
 	@Override
 	public GameState start() {
 		islandScreen.disableButtons();
-		
-		Action action  =  () -> {
+
+		Action action = () -> {
 			Player currentPlayer = gameModel.getCurrentTurnPlayer();
 			List<TreasuryCard> collectionCards = gameModel.getTreasureCollection(currentPlayer);
 			if (gameModel.canCollectTreasure(currentPlayer)) {
 				Type collectedType = gameModel.collectTreasure(collectionCards);
 				gameModel.getTreasureBag().getComponent().removeEffect(collectedType);
-				collectionCards.forEach((card) -> {
-					islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
-							card.getComponent());});
+				collectionCards.forEach((card) -> islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
+						card.getComponent()));
 			}
 		};
-		
-		//TODO make it revertable
+
+		// TODO make it revertable
 		gameController.executeAction(action);
 		return fromState;
 	}

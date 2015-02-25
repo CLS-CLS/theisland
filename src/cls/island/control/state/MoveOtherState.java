@@ -32,6 +32,7 @@ public class MoveOtherState implements GameState {
 
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
+		GameState gs = null;
 		if (event.getButton() == MouseButton.SECONDARY) {
 			return cancel();
 		}
@@ -41,11 +42,11 @@ public class MoveOtherState implements GameState {
 			if (gameModel.getCurrentTurnPlayer().getPiece() == piece) {
 				return null;
 			}
-			handleClickOnPiece(pv);
+			gs = handleClickOnPiece(pv);
 		} else {
 			return null;
 		}
-		return null;
+		return gs;
 
 	}
 

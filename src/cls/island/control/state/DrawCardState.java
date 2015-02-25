@@ -90,21 +90,23 @@ public class DrawCardState implements GameState {
 
 		if (treasuryCard.getType() == Type.WATER_RISE) {
 			islandScreen.c_WaterCardDrawnPopUp();
-			waterRised = true;
-			gameModel.discardCard(currentPlayer, treasuryCard);
 			gameModel.increaseFloodMeter();
 			if (gameModel.checkLooseCondition(LooseCondition.MAX_WATER_LEVEL_REACHED)) {
 				return new GameLostState(LooseCondition.MAX_WATER_LEVEL_REACHED, gameController,
 						islandScreen, gameModel, this);
 			}
-			
-			Action c = () -> {
-				islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
-						treasuryCard.getComponent());
+			if (!waterRised){
 				gameModel.shuffleDiscardedAndPutBackToNormalPile();
-				gameModel.getTreasuryPile().getComponent().rearrangePiles();
-			};
-			gameController.executeAction(c);
+			}
+			gameModel.discardCard(currentPlayer, treasuryCard);
+			islandScreen.c_discardPlayerCard(currentPlayer.getBase().getComponent(),
+					treasuryCard.getComponent());
+			gameModel.getIslands().forEach((island) -> island.getComponent().deactivateSavedNode());
+			gameModel.getTreasuryPile().getComponent().rearrangePiles();
+			
+			//force the controller to execute a non-revertable action to disable undo
+			gameController.executeAction(()->{});
+			waterRised = true;
 			return this;
 
 		}

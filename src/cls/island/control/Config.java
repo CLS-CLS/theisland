@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
 import javafx.stage.Screen;
 import cls.island.control.Options.PlayerType;
 import cls.island.view.component.piece.PieceColor;
@@ -23,10 +25,11 @@ public class Config {
 		return INSTANCE;
 	}
 
-	private static final String STYLESHEET_PATH = "style.css";
+	private static final String STYLESHEET_PATH = "style.fxss";
 	private static final String ISLAND_TILES_IMAGE_PATH = "images/tiles";
 	private static final double DEFAULT_WIDTH = 1440D;
 	private static final double DEFAULT_HEIGHT = 900D;
+	private static final boolean FULL_SCREEN = false;
 
 	private Rectangle2D defaultRes = new Rectangle2D(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	private Rectangle2D fullScreenRes;
@@ -77,6 +80,14 @@ public class Config {
 	public Image deepOcean;
 	public Image window;
 	private Image pieceBlack;
+	private AudioClip clickSound;
+	private AudioClip undoSound;
+	private AudioClip clickBtnSound;
+	private AudioClip splashSound;
+	private Media backgoundSound;
+	private AudioClip fireballSound;
+
+	
 
 	private Config() {
 		background = new Image("images/other/startScreen.png", false);
@@ -88,14 +99,14 @@ public class Config {
 		navigatorImage = new Image("images/other/navigator.png", 120, 120, false, true);
 		randomPlayerImage = new Image("images/other/randomPlayer.png", 160, 125, true, true);
 		tickImage = new Image("images/other/tick.png", 40, 40, true, true);
-		pieceWhite = new Image("images/other/pieceWhite.png", 31, 52, true, true);
-		pieceGreen = new Image("images/other/pieceGreen.png", 31, 52, true, true);
-		pieceRed = new Image("images/other/pieceRed.png", 31, 52, true, true);
-		pieceBlue = new Image("images/other/pieceBlue.png", 31, 52, true, true);
-		pieceYellow = new Image("images/other/pieceYellow.png", 31, 52, true, true);
-		pieceBrown = new Image("images/other/pieceWhite.png", 31, 52, true, true);
+		pieceWhite = new Image("images/other/pieceWhite.png", 46, 78, true, true);
+		pieceGreen = new Image("images/other/pieceGreen.png", 46, 78, true, true);
+		pieceRed = new Image("images/other/pieceRed.png", 46, 78, true, true);
+		pieceBlue = new Image("images/other/pieceBlue.png", 46, 78, true, true);
+		pieceYellow = new Image("images/other/pieceYellow.png", 46, 78, true, true);
+		pieceBrown = new Image("images/other/pieceWhite.png", 46, 78, true, true);
 		//TODO curently mapped to white image!! make it black
-		pieceBlack = new Image("images/other/pieceBlack.png", 31, 52, true, true);
+		pieceBlack = new Image("images/other/pieceBlack.png", 46, 78, true, true);
 		pieceWhiteLarge = new Image("images/other/pieceWhite.png", 31 * 2, 52 * 2, true, true);
 		pieceGreenLarge = new Image("images/other/pieceGreen.png", 31 * 2, 52 * 2, true, true);
 		pieceRedLarge = new Image("images/other/pieceRed.png", 31 * 2, 52 * 2, true, true);
@@ -132,6 +143,15 @@ public class Config {
 		deepOcean = new Image("images/other/deepocean.jpg", 400, 300, false, true);
 		window = new Image("images/other/window.png", getDefaultRes().getWidth(), getDefaultRes()
 				.getHeight(), false, true);
+
+		clickSound = new AudioClip(getClass().getResource("/sounds/click.mp3").toString());
+		undoSound = new AudioClip(getClass().getResource("/sounds/undo.mp3").toString());
+		splashSound = new AudioClip(getClass().getResource("/sounds/splash.mp3").toString());
+		
+		clickBtnSound = new AudioClip(getClass().getResource("/sounds/clickBtn.mp3").toString());
+		backgoundSound = new Media(getClass().getResource("/sounds/WavesFinal.mp3").toString());
+		fireballSound = new AudioClip(getClass().getResource("/sounds/Fireball.mp3").toString());
+		fireballSound.setVolume(0.3);
 
 	}
 
@@ -193,8 +213,8 @@ public class Config {
 	public Rectangle2D getFullScreenRes() {
 //		 return fullScreenRes;
 		// TODO
-		return new Rectangle2D(0, 0, 800, 600);
-		// return defaultRes;
+		return new Rectangle2D(0, 0, 1200, 800);
+//		 return defaultRes;
 	}
 
 	public Rectangle2D getDefaultRes() {
@@ -216,6 +236,7 @@ public class Config {
 	private void loadIslandTileImages() {
 		DirectoryStream<Path> dirStream;
 		URL base = this.getClass().getClassLoader().getResource(".");
+		
 		String isladTileImageDir = base.getPath().substring(1) + ISLAND_TILES_IMAGE_PATH;
 		try {
 			dirStream = Files.newDirectoryStream(FileSystems.getDefault()
@@ -225,8 +246,9 @@ public class Config {
 		}
 		for (Path imgPath : dirStream) {
 			String fileName = imgPath.getFileName().toString();
-			islandTiles.put(fileName.split("\\.")[0], new Image(ISLAND_TILES_IMAGE_PATH + "/"
-					+ fileName, 120, 120, true, true));
+			Image islandImg = new Image(ISLAND_TILES_IMAGE_PATH + "/"
+					+ fileName, 120, 120, true, true);
+			islandTiles.put(fileName.split("\\.")[0], islandImg);
 		}
 	}
 
@@ -264,6 +286,35 @@ public class Config {
 			break;
 		}
 		return pieceRedLarge;
+	}
+
+	public AudioClip getClickSound() {
+		return clickSound;
+	}
+
+
+	public AudioClip getUndoSound() {
+		return undoSound;
+	}
+
+	public boolean isFullScreen() {
+		return FULL_SCREEN;
+	}
+
+	public Media getBackgoundSound() {
+		return backgoundSound;
+	}
+
+	public AudioClip getClickBtnSound() {
+		return clickBtnSound;
+	}
+
+	public AudioClip getSplashSound() {
+		return splashSound;
+	}
+
+	public AudioClip getFireballSound() {
+		return fireballSound;
 	}
 
 }
