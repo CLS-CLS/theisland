@@ -36,7 +36,7 @@ public class GameController {
 		this.mainController = mainController;
 		this.gameModel = gameModel;
 		mediaPlayer = new MediaPlayer(mainController.config.getBackgoundSound());
-		mediaPlayer.setVolume(0.3);
+		mediaPlayer.setVolume(0.15);
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 	}
 
