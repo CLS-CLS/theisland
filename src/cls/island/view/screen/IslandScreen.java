@@ -7,103 +7,95 @@ import java.util.SortedMap;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.control.GameController;
 import cls.island.control.MainController;
+import cls.island.control.Options;
 import cls.island.model.GameModel;
-import cls.island.model.LooseCondition;
-import cls.island.model.player.Player;
-import cls.island.utils.Animations;
+import cls.island.model.Island;
+import cls.island.model.TreasuryCardModel;
 import cls.island.utils.ButtonFactory;
+import cls.island.utils.LocCalculator.Grid;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.view.component.MessagePanel;
-import cls.island.view.component.island.Island;
-import cls.island.view.component.island.IslandView;
-import cls.island.view.component.piece.Piece;
-import cls.island.view.component.piece.PieceView;
-import cls.island.view.component.player.base.PlayerBaseView;
-import cls.island.view.component.treasury.card.TreasuryCard;
-import cls.island.view.component.treasury.card.TreasuryCardView;
-import cls.island.view.component.treasury.pile.TreasuryPile;
-import cls.island.view.component.treasury.pile.TreasuryPile.PileType;
-import cls.island.view.component.waterlevel.WaterLevelView;
-import cls.island.view.screen.popup.FloodCardDrawPopUp;
+import cls.island.view.components.Card;
+import cls.island.view.components.CardBase;
+import cls.island.view.components.IslandTile;
+import cls.island.view.components.MessagePanel;
+import cls.island.view.components.Piece;
+import cls.island.view.components.PlayerCardHolder;
+import cls.island.view.screen.popup.FloodCardDraw;
+import cls.island.view.screen.popup.PopUpScreen;
 
 public class IslandScreen extends AbstractScreen {
+	private static int yoohooCounter = 0;
 
+	private Loc[][] islandTileCoords;
+	private List<IslandTile> islandTiles = new ArrayList<>();
 	private Rectangle background;
-	private List<TreasuryCard> cards = new ArrayList<>();
-	private TreasuryPile treasuryBase;
+	private List<Piece> pieces = new ArrayList<>();
+	private List<PlayerCardHolder> playerCardHolders = new ArrayList<>();
+	private List<Card> treasuryCards = new ArrayList<>();
+	private CardBase treasuryBase;
 	private MessagePanel msgPanel = new MessagePanel();
 	private GameController gameController;
-	private Button moveButton;
-	private Button nextTurnButton;
-	private Button shoreUpButton;
-	private Button tradeButton;
-	private List<TreasuryCardView> floodCards = new ArrayList<>();
-	private final GameModel model;
-	private IslandView islandViewToDelete;
-	private WaterLevelView waterLevelView;
-	private Button collectTreasureButton;
+	private Button nextTurn;
+
+	private CardBase floodBase;
+
+	private List<Card> floodCards = new ArrayList<>();
 
 	public IslandScreen(final MainController mainController, final Config config, GameModel model) {
 		super(mainController, config);
-		this.model = model;
-		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes().getHeight(), Color.DARKGRAY);
-		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980, false, true));
+		setupCoords(mainController.getOptions());
+		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
+				.getHeight(), Color.DARKGRAY);
+		getChildren().add(background);
+		getChildren().add(msgPanel);
+		msgPanel.relocate(600, 1000);
 
-		getChildren().add(0, background);
-		getChildren().add(1, background2);
-		background2.relocate(300, 0);
+		gererateBoard(config, mainController.getOptions(), model);
 
-		for (Island island : model.getIslands()) {
-			getChildren().add(island.getComponent());
-			Loc location = locCalculator.gridToCoords(island.getGrid());
-			island.getComponent().relocate(location);
-			islandViewToDelete = island.getComponent();
+		// ~~~~~~~~~~~~~~~~~~~~~~ pieces ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+		for (cls.island.model.PieceModel player : model.getPieces()){
+			pieces.add(new Piece(config.getPieceWhite(), player));
 		}
 		
-		waterLevelView = model.getWaterLevel().getComponent();
-		waterLevelView.relocate(1030,30);
-		getChildren().add(waterLevelView);
+		getChildren().addAll(pieces);
+
+		pieces.get(1).relocate(30, 0);
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ playerCardHolders
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~ //
+		int playerCardHolderPosition = 0;
+		for (Options.PlayerType playerType : mainController.getOptions().getPlayers()) {
+			PlayerCardHolder playerCardHolder = new PlayerCardHolder(playerType, config);
+			playerCardHolders.add(playerCardHolder);
+			getChildren().add(playerCardHolder);
+			playerCardHolder.relocate(locCalculator
+					.playerBasePositionToLoc(playerCardHolderPosition));
+			playerCardHolderPosition++;
+
+		}
+
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ treasury base -treasuryCards
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~ //
+		treasuryBase = new CardBase("Treasury Cards", Color.GREEN);
+		treasuryBase.relocate(1150, 30);
+		getChildren().add(1, treasuryBase);
+		for (TreasuryCardModel trModel : model.getTreasuryCards()) {
+			Card card = new Card(config.getIslandCard(), config.getIslandBackCard(), trModel);
+			treasuryCards.add(card);
+			getChildren().add(card);
+			treasuryBase.addCardtoPile(card);
+		}
 		
-
-		for (Player player : model.getPlayers()) {
-			getChildren().add(player.getPiece().getComponent());
-			Piece piece = player.getPiece();
-			Island island = piece.getIsland();
-			c_movePiece(piece.getComponent(),island.getComponent(),island.getPiecePosition(piece));
-			getChildren().add(player.getBase().getComponent());
-		}
-		model.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
-
-		// ~~~~ ~~~~~~~~~~~~~ treasury base -cards ~~~~~~~~~~~~~~~~~~~~~~ //
-		treasuryBase = model.getTreasuryPile();
-		treasuryBase.getComponent().relocate(1200, 30);
-		getChildren().add(2, treasuryBase.getComponent());
-		for (TreasuryCard trCard : model.getTreasuryPile().getTreasuryCards(PileType.NORMAL)) {
-			cards.add(trCard);
-			getChildren().add(trCard.getComponent());
-		}
-		treasuryBase.getComponent().rearrangePiles();
-
 		addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
 			@Override
@@ -111,195 +103,155 @@ public class IslandScreen extends AbstractScreen {
 				gameController.mouseClicked(event);
 			}
 		});
-
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Buttons
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-		moveButton = ButtonFactory.actionButton("Move");
-		shoreUpButton = ButtonFactory.actionButton("Shore \nUp");
-		tradeButton = ButtonFactory.actionButton("Trade");
-		collectTreasureButton = ButtonFactory.actionButton("Collect \n Treasure");
-		nextTurnButton = ButtonFactory.actionButton("Next \n Turn");
-
-		moveButton.relocate(450, 810);
-		shoreUpButton.relocate(545, 810);
-		tradeButton.relocate(640, 810);
-		collectTreasureButton.relocate(735,810);
-		nextTurnButton.relocate(830, 810);
-		getChildren().add(moveButton);
-		getChildren().add(shoreUpButton);
-		getChildren().add(collectTreasureButton);
-		getChildren().add(tradeButton);
-		getChildren().add(nextTurnButton);
-		moveButton.setOnAction(new EventHandler<ActionEvent>() {
+		
+		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~` Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		nextTurn = ButtonFactory.genButton("Next \n Turn");
+		nextTurn.relocate(750, 820);
+		getChildren().add(nextTurn);
+		nextTurn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.MOVE);
-			}
-		});
-		shoreUpButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.SHORE_UP);
-			}
-		});
-		collectTreasureButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.COLLECT_TREASURE);
+				gameController.nextTurnPressed();
 				
 			}
 		});
-		tradeButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.TRADE);
-			}
-		});
-		nextTurnButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				gameController.buttonPressed(GameController.ButtonAction.NEXT_TURN);
-			}
-		});
-		getChildren().add(msgPanel);
-		msgPanel.relocate(600, 1000);
-//		addControls();
 	}
 
-	public List<TreasuryCard> c_getTreasuryCards() {
-		return cards;
+	private void layoutIslandTiles(Options options) {
+		for (IslandTile tile : islandTiles){
+			Grid grid = tile.model.getGrid();
+			tile.moveToGrid(grid.row, grid.col);
+		}
+		
 	}
 
-	public List<TreasuryCardView> c_getFloodCards() {
+	private void gererateBoard(Config config, Options options, GameModel model) {
+		for (String name : config.getIslandTilesImages().keySet()) {
+			IslandTile island = new IslandTile(config.getIslandTilesImages().get(name),name, model.getIsland(name));
+			islandTiles.add(island);
+			getChildren().add(island);
+		}
+		layoutIslandTiles(options);
+	}
+
+	private void setupCoords(Options options) {
+		islandTileCoords = new Loc[6][6];
+		for (int row = 0; row < 6; row++) {
+			for (int col = 0; col < 6; col++) {
+				islandTileCoords[row][col] = locCalculator.gridToCoords(row, col);
+			}
+		}
+	}
+
+	public List<IslandTile> c_getIslandTiles() {
+		return islandTiles;
+	}
+
+	public List<Piece> c_getPieces() {
+		return pieces;
+	}
+
+	public List<Card> c_getTreasuryCards() {
+		return treasuryCards;
+	}
+
+	public List<Card> c_getFloodCards() {
 		return floodCards;
 	}
 
-	public void c_movePiece(PieceView pieceView, final IslandView islandView, int index) {
-		Loc pieceLoc = islandView.getLoc().add(locCalculator.pieceLocationOnIslandTile(index));
+	public void c_movePieceToTile(final Piece piece, final IslandTile toIsland) {
+		if (piece.model.getIsland() != null) {
+			IslandTile islandTileFrom = getIslandTileFromModel(piece.model.getIsland());
+			islandTileFrom.removePiece(piece);
+			islandTileFrom.model.removePiece(piece.model);
+			
+		}
 		EventHandler<ActionEvent> onFinish = new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				// TODO Fix It !! BAD CODE *** calls the model.. when it
-				// shouldn' t
-				SortedMap<Integer, Piece> pieceZorder = islandView.getParentModel().getPiecesAndPositions();
+
+				SortedMap<Integer, Piece> pieceZorder = toIsland.getPiecesAndPositions();
 				for (int order : pieceZorder.keySet()) {
-					pieceZorder.get(order).getComponent().toFront();
+					pieceZorder.get(order).toFront();
 				}
 			}
 		};
-		Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, null);
+		toIsland.addPiece(piece, onFinish);
+		toIsland.model.addPiece(piece.model);
+		piece.toFront();
 	}
 
-	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard, PlayerBaseView playerBaseView) {
-		treasuryCard.setFaceUp(true);
-		playerBaseView.moveToBase(treasuryCard);
-		
+	private IslandTile getIslandTileFromModel(Island model) {
+		for (IslandTile islandTile : islandTiles){
+			if (islandTile.model == model){
+				return islandTile;
+			}
+		}
+		return null;
 	}
 
-	public void c_discardPlayerCard(PlayerBaseView playerBaseView, TreasuryCardView treasuryCard) {
-		treasuryBase.getComponent().moveCardtoPile(treasuryCard, PileType.DISCARD);
-		playerBaseView.rearrangeCards();
+	public void c_moveTreasuryCardFromPileToPlayer(Card card, PlayerCardHolder playerHolder) {
+		if (!treasuryBase.containsInPile(card)) {
+			throw new IllegalArgumentException("treasuryBase does not have the card " + card);
+		}
+		treasuryBase.removeCardFromPile(card);
+		playerHolder.addCard(card);
+	}
+
+	public void c_moveTreasuryCardFromPlayerToDiscardPile(Card card, PlayerCardHolder playerHolder) {
+		if (!playerHolder.contains(card)) {
+			throw new IllegalArgumentException("PlayerCardHolder does not have the card " + card);
+		}
+		treasuryBase.addCardtoDiscardPile(card);
+		playerHolder.removeCard(card);
+	}
+
+	@Override
+	public void c_setIslandComponentsSelectable(boolean selectable) {
+		for (IslandTile tile : islandTiles) {
+			tile.setSelectable(selectable);
+		}
 	}
 
 	public void c_showMessagePanel(final String message) {
-		if (Platform.isFxApplicationThread())
-			throw new RuntimeException(
-					"the method should run outside fx-tread in order to be blocking");
-		
-		popUpwaitCondition = lock.newCondition();
-		lock.lock();
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(msgPanel.layoutYProperty(), 800)));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(
+				msgPanel.layoutYProperty(), 800)));
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				msgPanel.showMessage(message);
-				popUpwaitCondition.signal();
 			}
 		});
 		timeline.play();
-		try {
-			popUpwaitCondition.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void c_hideMessagePanel() {
-		if (Platform.isFxApplicationThread())
-			throw new RuntimeException(
-					"the method should run outside fx-tread in order to be blocking");
-		
-		popUpwaitCondition = lock.newCondition();
-		lock.lock();
-		Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(msgPanel.layoutYProperty(), 1000)));
-		tmln.setOnFinished(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				popUpwaitCondition.signal();
-				
-			}
-		});
-		tmln.play();
-		try {
-			popUpwaitCondition.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(msgPanel.layoutYProperty(),
+				1000))).play();
 	}
 
-	public void c_WaterCardDrawnPopUp() {
-		c_showPopup(new FloodCardDrawPopUp());
+	public void c_popUp() {
+		EventHandler<ActionEvent> onClose = new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				IslandScreen.this.getChildren().remove(event.getSource());
+			}
+		};
+		PopUpScreen popUp = new PopUpScreen(new FloodCardDraw(mainController, config),
+				IslandScreen.this, onClose);
+		getChildren().add(popUp);
+		popUp.show();
 	}
 
 	public void setGameController(GameController gameController) {
 		this.gameController = gameController;
+		
 	}
-	
-	
-	// Use for debug purposes
-	public void addControls() {
-		int counter = 500;
-		for (String name : islandViewToDelete.exposeEffect().keySet()) {
-			HBox hbox = new HBox();
-			Label label = new Label(name);
-			hbox.getChildren().add(label);
-			ScrollBar scrollbar = new ScrollBar();
-			scrollbar.maxProperty().set(1);
-			scrollbar.minProperty().set(-1);
-			scrollbar.valueProperty().set(0);
-			scrollbar.orientationProperty().set(Orientation.HORIZONTAL);
-			islandViewToDelete.exposeEffect().get(name).bind(scrollbar.valueProperty());
-			hbox.getChildren().add(scrollbar);
-			final Label text = new Label();
-			SimpleDoubleProperty sdb = new SimpleDoubleProperty();
-			sdb.bind(scrollbar.valueProperty());
-			sdb.addListener(new ChangeListener<Number>() {
-
-				@Override
-				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-					text.setText(newValue+"");
-				}
-			});
-			counter = counter +50;
-			hbox.getChildren().add(text);
-			getChildren().add(hbox);
-			hbox.relocate(50, counter);
-		}
-	}
-
-	public void c_showLooseGamePopUp(LooseCondition checkLooseCondition) {
-		c_showPopup(new FloodCardDrawPopUp());
-	}
-	
-	
 
 }

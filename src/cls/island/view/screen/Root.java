@@ -22,4 +22,9 @@ public class Root extends AbstractScreen {
 		getChildren().add(imageView);
 	}
 	
+	@Override
+	public void c_setIslandComponentsSelectable(boolean selectable) {
+		throw new UnsupportedOperationException();
+	}
+
 }

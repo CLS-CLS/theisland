@@ -5,17 +5,18 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import cls.island.control.Options.PlayerType;
 import cls.island.model.GameModel;
 import cls.island.utils.Animations;
 import cls.island.utils.TimeLineManager;
-import cls.island.view.component.piece.PieceColor;
 import cls.island.view.screen.IslandScreen;
 import cls.island.view.screen.OptionScreen;
 import cls.island.view.screen.Root;
@@ -51,14 +52,13 @@ public class MainController {
 
 	public void goToIslandScreen() {
 		options.setPlayers(selectPlayerScreen.getSelectedPlayers());
-		gameModel = new GameModel(options, config);
-		gameModel.setUpNewGame();
-		islandScreen = new IslandScreen(this, config, gameModel);
-		gameController = new GameController(this, gameModel, islandScreen);
-		islandScreen.setGameController(gameController);
+		gameModel = new GameModel(options);
+		gameModel.randomizeBoard();
+		islandScreen = new IslandScreen(this,config,gameModel);
+		gameController = new GameController(this, gameModel,islandScreen);
+		islandScreen.setGameController (gameController);
 		Animations.transtition(selectPlayerScreen, islandScreen, root);
-		gameController.startNewGame();
-
+		
 	}
 
 	public void goToMainScreen(Node from) {
@@ -67,11 +67,11 @@ public class MainController {
 
 	public void init() {
 		config = new Config();
-		root = new Root(MainController.this, config);
+		root = new Root(this, config);
 		options = new Options();
-		selectPlayerScreen = new SelectPlayerScreen(MainController.this, config);
-		startScreen = new StartScreen(MainController.this, config);
-		optionScreen = new OptionScreen(MainController.this, config);
+		selectPlayerScreen = new SelectPlayerScreen(this, config);
+		startScreen = new StartScreen(this, config);
+		optionScreen = new OptionScreen(this, config);
 
 		initScene();
 		initStage();
@@ -94,18 +94,26 @@ public class MainController {
 			}
 		});
 
-		// goToMainScreen(null);
-		options.setPlayers(Arrays.asList(new PlayerAndColor[] { new PlayerAndColor(PlayerType.DIVER, PieceColor.RED),
-				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN) }));
-		gameModel = new GameModel(options, config);
-		gameModel.setUpNewGame();
-		islandScreen = new IslandScreen(MainController.this, config, gameModel);
-		gameController = new GameController(MainController.this, gameModel, islandScreen);
-		islandScreen.setGameController(gameController);
-		root.clear();
-		root.getChildren().add(islandScreen);
-		gameController.startNewGame();
+		root.addEventFilter(MouseEvent.ANY, new EventHandler<Event>() {
 
+			@Override
+			public void handle(Event event) {
+				if (isAnimationInProgress()) {
+					event.consume();
+				}
+			}
+		});
+
+//		goToMainScreen(null);
+		options.setPlayers(Arrays.asList(new PlayerType[]{PlayerType.DIVER, PlayerType.EXPLORER}));
+		gameModel = new GameModel(options);
+		gameModel.randomizeBoard();
+		root.clear();
+		islandScreen = new IslandScreen(this, config, gameModel);
+		gameController = new GameController(this,gameModel,islandScreen);
+		islandScreen.setGameController(gameController);
+		
+		root.getChildren().add(islandScreen);
 	}
 
 	private void initScene() {
@@ -118,7 +126,8 @@ public class MainController {
 		stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue) {
 				if (!newValue) {
 					stage.setIconified(true);
 				}
@@ -127,7 +136,8 @@ public class MainController {
 		stage.iconifiedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue) {
 				if (!newValue) {
 					stage.setFullScreen(true);
 				}
@@ -136,7 +146,7 @@ public class MainController {
 
 		stage.setScene(scene);
 		stage.initStyle(StageStyle.UNDECORATED);
-		// stage.setFullScreen(true);
+//		stage.setFullScreen(true);
 		stage.show();
 	}
 
@@ -144,12 +154,11 @@ public class MainController {
 		return animationInProgress;
 	}
 
-	public void setAnimationInProgress(boolean progress) {
-		animationInProgress = progress;
-	}
-
 	public Options getOptions() {
 		return options;
 	}
+	
+
+	
 
 }

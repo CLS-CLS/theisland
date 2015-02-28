@@ -68,15 +68,15 @@ public class LocCalculator {
 			this.col = col;
 			this.row = row;
 		}
-
+		
 		@Override
 		public String toString() {
-			return Grid.class.getName() + "(r" + this.row + ", c" + this.col + ")";
+			return Grid.class.getName()+"(r"+this.row +", c" + this.col+")";
 		}
 	}
 
 	public Loc cardLocationInPile(int index) {
-		return new Loc(index / 2, -index / 2);
+		return new Loc(index /2, -index/2);
 	}
 
 	public Loc pieceLocationOnIslandTile(int index) {
@@ -87,15 +87,6 @@ public class LocCalculator {
 			loc = new Loc(45 + 40 * (index - 2), 50);
 		}
 		return loc;
-	}
-
-	public Loc gridToCoords(Grid grid) {
-		return gridToCoords(grid.row, grid.col);
-	}
-
-	public Loc markerLocation(float waterLevel) {
-		return new Loc(-10, 195 - 21 * waterLevel);
-
 	}
 
 }

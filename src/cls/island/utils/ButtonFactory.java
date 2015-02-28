@@ -11,15 +11,4 @@ public class ButtonFactory {
 		genButton.setMaxHeight(Double.MAX_VALUE);
 		return genButton;
 	}
-	
-	public static Button actionButton(String text){
-		double size = 80D;
-		Button genButton = new Button(text);
-		genButton.getStyleClass().add("action-button");
-		genButton.setMaxWidth(size);
-		genButton.setMaxHeight(size);
-		genButton.setMinWidth(size);
-		genButton.setMinHeight(size);
-		return genButton;
-	}
 }

@@ -3,21 +3,17 @@ package cls.island.control;
 import java.util.ArrayList;
 import java.util.List;
 
-import cls.island.view.component.piece.PieceColor;
-
 public class Options {
 	
 	public enum PlayerType{
-		DIVER, EXPLORER, PILOT, MESSANGER, RANDOM, ENGINEER;
+		DIVER, EXPLORER, PILOT, FORGOTTEN, RANDOM;
 	}
 
-	private static final int DEFAULT_FLOOD = 0;
-
-	private List<PlayerAndColor> selectedPlayers = new ArrayList<>();
+	private List<PlayerType> selectedPlayers = new ArrayList<>();
 	
 	
-	public void addPlayer(PlayerType type, PieceColor color){
-		selectedPlayers.add(new PlayerAndColor(type, color));
+	public void addPlayer(PlayerType type){
+		selectedPlayers.add(type);
 	}
 	
 	public void removePlayer(PlayerType type){
@@ -27,7 +23,7 @@ public class Options {
 	/**
 	 * @return a copy of the selected players in a list.
 	 */
-	public List<PlayerAndColor> getPlayers(){
+	public List<PlayerType> getPlayers(){
 		return new ArrayList<>(selectedPlayers);
 	}
 	/**
@@ -35,13 +31,10 @@ public class Options {
 	 * the provided one
 	 * @param enumPlayers
 	 */
-	public void setPlayers(List<PlayerAndColor> playerAndColor) {
-		this.selectedPlayers = new ArrayList<>(playerAndColor);
+	public void setPlayers(List<PlayerType> enumPlayers) {
+		this.selectedPlayers = new ArrayList<>(enumPlayers);
 		
 	}
-
-	public int getFloodStartingLevel() {
-		return DEFAULT_FLOOD;
-	}
 	
+
 }

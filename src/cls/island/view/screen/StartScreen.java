@@ -66,5 +66,9 @@ public class StartScreen extends AbstractScreen {
 		mainController.goToOptions();
 	}
 
-	
+	@Override
+	public void c_setIslandComponentsSelectable(boolean selectable) {
+		throw new UnsupportedOperationException();
+	}
+
 }

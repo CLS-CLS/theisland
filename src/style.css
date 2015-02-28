@@ -4,43 +4,11 @@
 	-fx-background-insets: 0 0 0 0, 0, 1, 2;
 	-fx-background-radius: 5, 5, 4, 3;
 }
-
 .gen-button: focus {
 	-fx-font: bold italic 20pt "Arial";
 	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
 	-fx-background-insets: 0 0 0 0, 0, 1, 2;
 	-fx-background-radius: 5, 5, 4, 3;
-}
-
-.treasury-use-discard-button {
-	-fx-background-color: transparent;
-}
-
-.treasury-use-discard-button: hover {
-	-fx-scale-x: 1.3;
-	-fx-scale-y: 1.3;
-}
-
-.action-button {
-	-fx-font: 12pt "Arial";
-	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
-	-fx-background-insets: 0 0 0 0, 0, 1, 2;
-	-fx-background-radius: 5, 5, 4, 3;
-	-fx-background-color: linear-gradient(#f0ff35, #a9ff00),
-		radial-gradient(center 50% -40%, radius 200%, #b8ee36 45%, #80c800 50%);
-}
-
-.action-button: hover {
-	-fx-scale-x: 1.1;
-	-fx-scale-y: 1.1;
-}
-
-.action-button: pressed {
-	-fx-font: bold italic 20pt "Arial";
-	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
-	-fx-background-insets: 0 0 0 0, 0, 1, 2;
-	-fx-background-radius: 5, 5, 4, 3;
-	  -fx-background-color: linear-gradient(#f0ff35, #a9ff00)
 }
 
 .clickable: hover {
@@ -49,6 +17,7 @@
 		-fx-inner-border, -fx-body-color;
 	-fx-background-insets: 0, 2, 2, 2;
 	-fx-background-radius: 6, 6, 6, 6;
+	
 }
 
 .gen-vBox {
@@ -71,7 +40,7 @@
 	-fx-text-fill: white;
 }
 
-.messagePanel {
+.messagePanel { 
 	-fx-stroke: white;
-	-fx-stroke-width: 4;
+	-fx-stroke-width : 4;
 }

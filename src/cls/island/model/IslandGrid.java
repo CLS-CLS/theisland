@@ -123,8 +123,7 @@ public class IslandGrid<E> {
 	public void addElement(E element, int row, int col) {
 		addElement(element, new Grid(row, col));
 	}
-	
-	
+
 	public E getAdjacent(E element, Direction direction) {
 		Grid grid = findGridOfElemet(element);
 		if (grid == null || !isValidGrid(grid))
@@ -137,8 +136,6 @@ public class IslandGrid<E> {
 		E result = (E) data[adjGrid.row][adjGrid.col].e;
 		return result;
 	}
-	
-	
 
 	private boolean hasAdjacent(E element, Direction direction) {
 		E adjElem = getAdjacent(element, direction);
@@ -182,14 +179,7 @@ public class IslandGrid<E> {
 		}
 		return hasAdjacent;
 	}
-	
-	/**
-	 * finds in which direction should travel i order to go from
-	 * grid with element from to grid with element to.
-	 * @param from
-	 * @param to
-	 * @return the directon or null if none is applicable
-	 */
+
 	public Direction findDirection(E from, E to) {
 		for (Direction d : Direction.values()) {
 			if (to.equals(getAdjacent(from, d))) {
@@ -210,13 +200,7 @@ public class IslandGrid<E> {
 		return null;
 
 	}
-	
-	/**
-	 * Checks if the provided grid is valid. A valid grid one 
-	 * that is within the boundaries of the IslandGrid
-	 * @param grid
-	 * @return
-	 */
+
 	public boolean isValidGrid(Grid grid) {
 		if (grid.col < 0 || grid.row < 0)
 			return false;
@@ -234,9 +218,11 @@ public class IslandGrid<E> {
 	/**
 	 * Checks if the e2 is adjacent to e1 at the provided directions. The
 	 * directions are considered from e1.
+	 * 
 	 * @param e1
 	 * @param e2
-	 * @param directions the directions of e1 to search for adjacency.
+	 * @param directions
+	 *            the directions of e1 to search for adjacency.
 	 */
 	public boolean isAdjacent(E e1, E e2, Direction... directions) {
 		boolean adjacent = false;
@@ -251,13 +237,7 @@ public class IslandGrid<E> {
 		}
 		return adjacent;
 	}
-	
-	/**
-	 * Convenient method. Checks if e1 is adjacent to e2 for all directoins. 
-	 * @param e1
-	 * @param e2
-	 * @return
-	 */
+
 	public boolean isAdjacent(E e1, E e2) {
 		Direction[] directions = Direction.values();
 		return isAdjacent(e1, e2, directions);

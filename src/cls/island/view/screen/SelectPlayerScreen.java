@@ -2,7 +2,6 @@ package cls.island.view.screen;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.beans.property.BooleanProperty;
@@ -29,10 +28,8 @@ import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.control.MainController;
 import cls.island.control.Options;
-import cls.island.control.PlayerAndColor;
 import cls.island.utils.ButtonFactory;
 import cls.island.utils.TimelineSingle;
-import cls.island.view.component.piece.PieceColor;
 
 public class SelectPlayerScreen extends AbstractScreen {
 	protected static final int MAX_RANDOM_PLAYERS = 4;
@@ -56,7 +53,7 @@ public class SelectPlayerScreen extends AbstractScreen {
 		final Combo pilotNode = new Combo(new ImageView(config.getDiverImage()),
 				randomNode.rndCombo, Options.PlayerType.PILOT.name());
 		final Combo lol2Node = new Combo(new ImageView(config.getDiverImage()),
-				randomNode.rndCombo, Options.PlayerType.MESSANGER.name());
+				randomNode.rndCombo, Options.PlayerType.FORGOTTEN.name());
 
 		randomNode.rndCombo.selected.addListener(new ChangeListener<Boolean>() {
 
@@ -190,11 +187,6 @@ public class SelectPlayerScreen extends AbstractScreen {
 		public String getDescription() {
 			return description;
 		}
-
-		public PieceColor getColor() {
-			//TODO 
-			return null;
-		}
 	}
 
 	private class ComboRandom extends HBox {
@@ -281,25 +273,26 @@ public class SelectPlayerScreen extends AbstractScreen {
 		}
 	}
 
-	public ArrayList<PlayerAndColor> getSelectedPlayers() {
-		ArrayList<PlayerAndColor> enumPlayers = new ArrayList<>();
+	public ArrayList<Options.PlayerType> getSelectedPlayers() {
+		ArrayList<Options.PlayerType> enumPlayers = new ArrayList<>();
 		for (Combo player : players) {
 			if (player.isSelected()) {
-				enumPlayers.add(new PlayerAndColor(
-						Options.PlayerType.valueOf(player.getDescription()),
-						player.getColor()));
+				enumPlayers.add(Options.PlayerType.valueOf(player.getDescription()));
 			}
 		}
 		if (randomNode.rndCombo.isSelected()) {
 			for (int i = 0; i < randomNode.randomPlayers; i++) {
-				//TODO
-//				enumPlayers.add(
-//						Options.PlayerType.valueOf(randomNode.rndCombo.getDescription()));
+				enumPlayers.add(Options.PlayerType.valueOf(randomNode.rndCombo.getDescription()));
 			}
 		}
 		return enumPlayers;
 	}
 
-
+	@Override
+	public void c_setIslandComponentsSelectable(boolean selectable) {
+		throw new UnsupportedOperationException();
+		
+	}
+	
 	
 }

@@ -34,6 +34,9 @@ public class OptionScreen extends AbstractScreen {
 		getChildren().add(optionBtns);
 	}
 
-
+	@Override
+	public void c_setIslandComponentsSelectable(boolean selectable) {
+		throw new UnsupportedOperationException();
+	}
 
 }
