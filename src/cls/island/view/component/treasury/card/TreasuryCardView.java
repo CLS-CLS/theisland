@@ -77,8 +77,10 @@ public class TreasuryCardView extends AbstractView<TreasuryCard> {
 		public UseDiscardComponent() {
 			getChildren().add(useButton);
 			getChildren().add(discardButton);
-			useButton.relocate(-5, 5);
-			discardButton.relocate(30, 5);
+			useButton.setTranslateX(-5);
+			useButton.setTranslateY(5);
+			discardButton.setTranslateX(30);
+			discardButton.setTranslateY(5);
 			discardButton.getStyleClass().add("treasury-use-discard-button");
 			useButton.getStyleClass().add("treasury-use-discard-button");
 		}

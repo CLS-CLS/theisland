@@ -6,15 +6,12 @@ import javafx.animation.Timeline;
 import javafx.scene.Parent;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import cls.island.utils.LocCalculator;
 import cls.island.utils.LocCalculator.Loc;
-import cls.island.view.component.OnOffEffectNode.RelativePosition;
 import cls.island.view.screen.IslandComponent;
 
 
@@ -66,12 +63,17 @@ public class AbstractView<T> extends Parent implements IslandComponent {
 
 	@Override
 	public Loc getLoc() {
-		return new Loc(getLayoutX(), getLayoutY());
+		return new Loc(getTranslateX(), getTranslateY());
 	}
 
 	@Override
-	public void relocate(Loc loc) {
-		super.relocate(loc.x, loc.y);
+	public void translate(Loc loc) {
+		translate(loc.x, loc.y);
+	}
+	
+	public void translate(double x, double y){
+		setTranslateX(x);
+		setTranslateY(y);
 	}
 	
 	public void setValidToCkickEffect(final boolean on) {

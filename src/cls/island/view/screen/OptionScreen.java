@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Translate;
 import cls.island.control.MainController;
 import cls.island.utils.ButtonFactory;
 
@@ -30,8 +31,7 @@ public class OptionScreen extends Group {
 
 		optionBtns.getChildren().add(button);
 
-		optionBtns.setLayoutX(700);
-		optionBtns.setLayoutY(750);
+		optionBtns.getTransforms().add(new Translate(700, 750));
 		getChildren().add(optionBtns);
 	}
 

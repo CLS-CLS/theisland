@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.transform.Translate;
 import cls.island.control.Config;
 import cls.island.model.LooseCondition;
 import cls.island.utils.ButtonFactory;
@@ -31,10 +32,10 @@ public class GameLostPopUp extends PopUpInternal<Object> {
 			break;
 		case TREASURE_SUNK:
 			label.setText("Treasure was lost");
-			label.relocate(100, 0);
+			label.getTransforms().add(new Translate(100, 0));
 			ImageView lostImage = new ImageView(Config.getInstance().getTreasureImage(
 					Type.valueOf(infos[0].toString())));
-			lostImage.relocate(150, 50);
+			lostImage.getTransforms().add(new Translate(150, 50));
 			getChildren().add(lostImage);
 			break;
 
@@ -43,7 +44,7 @@ public class GameLostPopUp extends PopUpInternal<Object> {
 		}
 		getChildren().add(label);
 		Button okButton = ButtonFactory.genButton("OK");
-		okButton.relocate(0, 300);
+		okButton.getTransforms().add(new Translate(0, 300));
 		getChildren().add(okButton);
 		okButton.setOnAction(new EventHandler<ActionEvent>() {
 			

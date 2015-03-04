@@ -26,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.control.MainController;
@@ -89,17 +90,17 @@ public class SelectPlayerScreen extends Group {
 		players.add(messengerNode);
 		players.add(navigatorNode);
 
-		diverNode.relocate(200, 180);
-		explorerNode.relocate(400, 180);
-		pilotNode.relocate(600, 180);
-		engineerNode.relocate(800, 180);
-		messengerNode.relocate(400,380);
-		navigatorNode.relocate(600,380);
-		randomNode.relocate(1100, 180);
+		diverNode.getTransforms().add(new Translate(200, 180));
+		explorerNode.getTransforms().add(new Translate(400, 180));
+		pilotNode.getTransforms().add(new Translate(600, 180));
+		engineerNode.getTransforms().add(new Translate(800, 180));
+		messengerNode.getTransforms().add(new Translate(400,380));
+		navigatorNode.getTransforms().add(new Translate(600,380));
+		randomNode.getTransforms().add(new Translate(1100, 180));
 		Label text = new Label("Select the players to land... \n"
 				+ "         ...on the forbidden island");
 		text.getStyleClass().add("select-player-msg");
-		text.relocate(50, 50);
+		text.getTransforms().add(new Translate(50, 50));
 
 		Light.Distant light = new Light.Distant();
 		light.setAzimuth(-45);
@@ -114,7 +115,7 @@ public class SelectPlayerScreen extends Group {
 		main.setEffect(refl);
 
 		VBox buttons = new VBox();
-		buttons.relocate(700, 750);
+		buttons.getTransforms().add(new Translate(700, 750));
 		buttons.getStyleClass().add("gen-vBox");
 		buttons.setFillWidth(true);
 

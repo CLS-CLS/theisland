@@ -32,7 +32,8 @@ public class ValidEffectNode extends OnOffEffectNode{
 	}
 
 	public void switchEffectOn() {
-		relocate(-3, -3);
+		setTranslateX(-3);
+		setTranslateY(-3);
 		timeline.playFromStart();
 	}
 

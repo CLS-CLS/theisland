@@ -6,6 +6,6 @@ public interface IslandComponent {
 	
 	public Loc getLoc();
 	
-	public void relocate(Loc loc);
+	public void translate(Loc loc);
 
 }

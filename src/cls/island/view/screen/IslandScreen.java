@@ -104,12 +104,13 @@ public class IslandScreen extends Group {
 
 		getChildren().add(0, background);
 		getChildren().add(1, background2);
-		background2.relocate(300, 0);
+		background2.setTranslateX(300);
+		background2.setTranslateY(0);
 
 		for (Island island : model.getIslands()) {
 			getChildren().add(island.getComponent());
 			Loc location = locCalculator.gridToCoords(island.getGrid());
-			island.getComponent().relocate(location);
+			island.getComponent().translate(location);
 			islandViewToDelete = island.getComponent();
 			if (island.isFlooded()) {
 				island.getComponent().setFlood();
@@ -118,7 +119,7 @@ public class IslandScreen extends Group {
 		}
 
 		waterLevelView = model.getWaterLevel().getComponent();
-		waterLevelView.relocate(1030, 30);
+		waterLevelView.translate(1030, 30);
 		getChildren().add(waterLevelView);
 
 		for (Player player : model.getPlayers()) {
@@ -132,7 +133,7 @@ public class IslandScreen extends Group {
 
 		// ~~~~ ~~~~~~~~~~~~~ treasury base -cards ~~~~~~~~~~~~~~~~~~~~~~ //
 		treasuryBase = model.getTreasuryPile();
-		treasuryBase.getComponent().relocate(1200, 5);
+		treasuryBase.getComponent().translate(1200, 5);
 		getChildren().add(2, treasuryBase.getComponent());
 		for (TreasuryCard trCard : model.getTreasuryPile().getTreasuryCards(PileType.NORMAL)) {
 			cards.add(trCard);
@@ -152,7 +153,7 @@ public class IslandScreen extends Group {
 
 		TreasuryBagView treasureBagView = model.getTreasureBag().getComponent();
 		getChildren().add(treasureBagView);
-		treasureBagView.relocate(920, 810);
+		treasureBagView.translate(920, 810);
 
 		moveButton = ButtonFactory.actionToggleButton("Move", ButtonAction.MOVE, gameController);
 		moveButton.setToggleGroup(toggleGroup);
@@ -188,17 +189,25 @@ public class IslandScreen extends Group {
 		buttons.add(moveOtherButton);
 		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
 		getChildren().add(actionsLeft);
-		actionsLeft.relocate(300, 710);
-		moveButton.relocate(1200, 300);
-		shoreUpButton.relocate(1310, 300);
-		tradeButton.relocate(1200, 410);
-		collectTreasureButton.relocate(1310, 410);
-		nextTurnButton.relocate(1200, 520);
-		undoButton.relocate(1200, 630);
+		actionsLeft.translate(300, 710);
+		moveButton.setTranslateX(1200);
+		moveButton.setTranslateY(300);
+		shoreUpButton.setTranslateX(1310);
+		shoreUpButton.setTranslateY(300);
+		tradeButton.setTranslateX(1200);
+		tradeButton.setTranslateY(410);
+		collectTreasureButton.setTranslateX(1310);
+		collectTreasureButton.setTranslateY(410);
+		nextTurnButton.setTranslateX(1200);
+		nextTurnButton.setTranslateY(520);
+		undoButton.setTranslateX(1200);
+		undoButton.setTranslateY(630);
 		undoButton.disableProperty().bind(
 				BooleanBinding.booleanExpression(gameController.undoActionProperty()).not());
-		flyButton.relocate(1310, 520);
-		moveOtherButton.relocate(1310, 520);
+		flyButton.setTranslateX(1310);
+		flyButton.setTranslateY(520);
+		moveOtherButton.setTranslateX(1310);
+		moveOtherButton.setTranslateY(520);
 
 		getChildren().add(moveButton);
 		getChildren().add(shoreUpButton);
@@ -208,7 +217,7 @@ public class IslandScreen extends Group {
 		getChildren().add(undoButton);
 		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		getChildren().add(msgPanel);
-		msgPanel.relocate(500, 1000);
+		msgPanel.translate(500, 1000);
 //		addControls();
 	}
 
@@ -255,7 +264,7 @@ public class IslandScreen extends Group {
 		FxThreadBlock block = new FxThreadBlock();
 		block.execute(() -> {
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200),
-					new KeyValue(msgPanel.layoutYProperty(), 800)));
+					new KeyValue(msgPanel.translateYProperty(), 800)));
 
 			timeline.setOnFinished((event) -> {
 				msgPanel.showMessage(message);
@@ -271,7 +280,7 @@ public class IslandScreen extends Group {
 		FxThreadBlock block = new FxThreadBlock();
 		block.execute(() -> {
 			Timeline tmln = new Timeline(new KeyFrame(Duration.millis(200),
-					new KeyValue(msgPanel.layoutYProperty(), 1000)));
+					new KeyValue(msgPanel.translateYProperty(), 1000)));
 			tmln.setOnFinished((e) -> block.unpause());
 			tmln.play();
 		});
@@ -309,7 +318,8 @@ public class IslandScreen extends Group {
 			counter = counter + 50;
 			hbox.getChildren().add(text);
 			getChildren().add(hbox);
-			hbox.relocate(50, counter);
+			hbox.setTranslateX(50);
+			hbox.setTranslateY(counter);
 		}
 	}
 

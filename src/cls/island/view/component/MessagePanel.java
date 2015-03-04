@@ -19,7 +19,8 @@ public class MessagePanel extends AbstractView<MessagePanel> {
 		msg = new Label();
 		msg.getStyleClass().add("msg-label");
 		getChildren().add(msg);
-		msg.relocate(30,30);
+		msg.setTranslateX(30);
+		msg.setTranslateY(30);
 		msg.setOpacity(0);
 	}
 

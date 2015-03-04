@@ -6,11 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.beans.property.DoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
@@ -20,12 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.util.Duration;
 import cls.island.control.Config;
 import cls.island.utils.Animations;
 import cls.island.utils.FxThreadBlock;
-import cls.island.utils.TimelineSingle;
-import cls.island.utils.TimelineSingle.Process;
 import cls.island.view.component.AbstractView;
 import cls.island.view.component.island.Island.Model;
 
@@ -65,7 +58,8 @@ public class IslandView extends AbstractView<Island> {
 		if (treasureImg != null) {
 			treasureImageView = new ImageView(treasureImg);
 			getChildren().add(treasureImageView);
-			treasureImageView.relocate(0, 50);
+			treasureImageView.setTranslateX(0);
+			treasureImageView.setTranslateY(50);
 		}
 		setCache(true);
 		setCacheHint(CacheHint.QUALITY);
@@ -98,8 +92,8 @@ public class IslandView extends AbstractView<Island> {
 
 	public void activateSavedNode() {
 		getChildren().add(0, savedNode);
-		savedNode.relocate(-2, -2);
-		
+		savedNode.setTranslateX(-2);
+		savedNode.setTranslateY(-2);
 	}
 
 	public void deactivateSavedNode() {

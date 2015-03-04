@@ -41,8 +41,9 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		ImageView playerImage = new ImageView(playerImg);
 		playerImage.getTransforms().add(new Scale(0.7, 0.7));
 		getChildren().add(playerImage);
-		playerImage.relocate(5, 15);
-		super.relocate(locCalculator.playerBasePositionToLoc(index));
+		playerImage.setTranslateX(5);
+		playerImage.setTranslateY(15);
+		super.translate(locCalculator.playerBasePositionToLoc(index));
 		rearrangeCards();
 	}
 
@@ -53,7 +54,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 //		List<TreasuryCard> treasuryCardsInBase = getParentModel().getTreasuryCards();
 //		for (int i = 0; i < treasuryCardsInBase.size(); i++) {
 //			treasuryCardsInBase.get(i).getComponent()
-//					.relocate(this.getLoc().add(locCalculator.cardLocationInCardHolder(i)));
+//					.translate(this.getLoc().add(locCalculator.cardLocationInCardHolder(i)));
 //		}
 //	}
 
@@ -63,7 +64,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 //	public void setToBase(TreasuryCardView treasuryCard) {
 //		int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 //		treasuryCard.setSelectable(true);
-//		treasuryCard.relocate(PlayerBaseView.this.getLoc().add(
+//		treasuryCard.translate(PlayerBaseView.this.getLoc().add(
 //				locCalculator.cardLocationInCardHolder(index)));
 //	}
 
@@ -96,8 +97,8 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	 * with it;
 	 */
 	@Override
-	public void relocate(Loc loc) {
-		super.relocate(loc);
+	public void translate(Loc loc) {
+		super.translate(loc);
 		rearrangeCards();
 	}
 
@@ -106,8 +107,8 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	 * with it;
 	 */
 	@Override
-	public void relocate(double x, double y) {
-		super.relocate(x, y);
+	public void translate(double x, double y) {
+		super.translate(x, y);
 		rearrangeCards();
 	}
 
@@ -146,7 +147,8 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			t.setFill(Color.WHITE);
 			t.setFont(Font.font(null, FontWeight.EXTRA_BOLD, 16));
 			t.setStrokeWidth(10);
-			t.relocate(275, yTextCoord);
+			t.setTranslateX(275);
+			t.setTranslateY(yTextCoord);
 			yTextCoord += 30;
 			group.getChildren().add(t);
 

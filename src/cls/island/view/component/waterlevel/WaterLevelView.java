@@ -35,7 +35,8 @@ public class WaterLevelView extends AbstractView<WaterLevel>{
 	 */
 	public void animateMarker (float newWaterLevel){
 		Loc loc = locCalculator.markerLocation(getParentModel().getWaterLevel());
-		marker.relocate(loc.x, loc.y);
+		marker.setTranslateX(loc.x);
+		marker.setTranslateY(loc.y);
 	}
 	
 	/**
@@ -44,7 +45,8 @@ public class WaterLevelView extends AbstractView<WaterLevel>{
 	 */
 	public void setMarker(float newWaterLevel){
 		Loc loc = locCalculator.markerLocation(getParentModel().getWaterLevel());
-		marker.relocate(loc.x, loc.y);
+		marker.setTranslateX(loc.x);
+		marker.setTranslateY(loc.y);
 	}
 
 

@@ -20,8 +20,8 @@ public class StartScreen extends Group {
 
 	public StartScreen(MainController mainController) {
 		this.mainController = mainController;
-		mainBtns.setLayoutX(btnGroupLoc[0]);
-		mainBtns.setLayoutY(btnGroupLoc[1]);
+		mainBtns.setTranslateX(btnGroupLoc[0]);
+		mainBtns.setTranslateY(btnGroupLoc[1]);
 		mainBtns.getStyleClass().add("gen-vBox");
 		createStartButton(mainBtns);
 		createoptionsButton(mainBtns);

@@ -62,8 +62,8 @@ public class Animations {
 		}
 
 		timeline.getKeyFrames().add(
-				new KeyFrame(Duration.millis(200), new KeyValue(component.layoutXProperty(),
-						location.x), new KeyValue(component.layoutYProperty(), location.y)));
+				new KeyFrame(Duration.millis(200), new KeyValue(component.translateXProperty(),
+						location.x), new KeyValue(component.translateYProperty(), location.y)));
 		timeline.play();
 	}
 
@@ -87,7 +87,7 @@ public class Animations {
 
 			@Override
 			public void handle(ActionEvent event) {
-				fCard.relocate(fLoc);
+				fCard.translate(fLoc);
 				fCard.setOpacity(1);
 				condition.signal();
 			}
@@ -103,7 +103,7 @@ public class Animations {
 			Loc location, final FxThreadBlock block){
 		treasuryCardView.toFront();
 		treasuryCardView.setOpacity(0);
-		treasuryCardView.relocate(location);
+		treasuryCardView.translate(location);
 		TimelineSingle timeline = new TimelineSingle();
 		timeline.getKeyFrames().add(
 				new KeyFrame(Duration.millis(200), new KeyValue(treasuryCardView.opacityProperty(),
@@ -158,8 +158,8 @@ public class Animations {
 		for (int i = 0; i < cardsToMove.size(); i++) {
 			TreasuryCardView treasuryCardView = cardsToMove.get(i);
 			Loc location = locationToMove.get(i);
-			KeyValue keyValueX = new KeyValue(treasuryCardView.layoutXProperty(), location.x);
-			KeyValue keyValueY = new KeyValue(treasuryCardView.layoutYProperty(), location.y);
+			KeyValue keyValueX = new KeyValue(treasuryCardView.translateXProperty(), location.x);
+			KeyValue keyValueY = new KeyValue(treasuryCardView.translateYProperty(), location.y);
 			keyValues.add(keyValueX);
 			keyValues.add(keyValueY);
 		}
@@ -181,7 +181,7 @@ public class Animations {
 			totalDuration = new Duration(totalDuration.toMillis() + timeStep);
 			KeyValue[] keyValues = new KeyValue[nodes.length];
 			for (int i = 0; i < nodes.length; i++) {
-				keyValues[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty()
+				keyValues[i] = new KeyValue(nodes[i].translateXProperty(), nodes[i].translateXProperty()
 						.getValue() - moveStep);
 			}
 			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues));
@@ -189,7 +189,7 @@ public class Animations {
 			totalDuration = new Duration(totalDuration.toMillis() + timeStep * 2);
 			KeyValue[] keyValues2 = new KeyValue[nodes.length];
 			for (int i = 0; i < nodes.length; i++) {
-				keyValues2[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty()
+				keyValues2[i] = new KeyValue(nodes[i].translateXProperty(), nodes[i].translateXProperty()
 						.getValue() + moveStep * 2);
 			}
 			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues2));
@@ -197,7 +197,7 @@ public class Animations {
 			totalDuration = new Duration(totalDuration.toMillis() + timeStep);
 			KeyValue[] keyValues3 = new KeyValue[nodes.length];
 			for (int i = 0; i < nodes.length; i++) {
-				keyValues3[i] = new KeyValue(nodes[i].layoutXProperty(), nodes[i].layoutXProperty()
+				keyValues3[i] = new KeyValue(nodes[i].translateXProperty(), nodes[i].translateXProperty()
 						.getValue() - moveStep);
 			}
 			timeline.getKeyFrames().add(new KeyFrame(totalDuration, keyValues3));

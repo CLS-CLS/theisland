@@ -6,6 +6,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import cls.island.utils.Animations;
 import cls.island.utils.FxThreadBlock;
 import cls.island.utils.LocCalculator.Loc;
@@ -24,12 +25,13 @@ public class PileView extends AbstractView<TreasuryPile> {
 		text.setEffect(new DropShadow());
 		text.getStyleClass().add("white-text-button");
 		text.setFill(Color.WHITE);
-		text.relocate(20, 10);
+		text.setTranslateX(20);
+		text.setTranslateY(10);
 		Text text2 = new Text("Discard Pile");
 		text2.getTransforms().add(new Rotate(-90));
 		text2.setFill(Color.WHEAT);
 		text2.setFont(new Font(16));
-		text2.relocate(110, 140);
+		text2.getTransforms().add(new Translate(110, 140));
 		getChildren().add(text);
 		getChildren().add(text2);
 
@@ -58,13 +60,13 @@ public class PileView extends AbstractView<TreasuryPile> {
 		for (int i = 0; i < getParentModel().getDiscardPileCards().size(); i++) {
 			TreasuryCardView card = getParentModel().getDiscardPileCards().get(i).getComponent();
 			card.toFront();
-			card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(DISCARD_PILE_LOC));
+			card.translate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(DISCARD_PILE_LOC));
 			card.setSelectable(false);
 		}
 		for (int i = 0; i < getParentModel().getNormalPileCards().size(); i++) {
 			TreasuryCardView card = getParentModel().getNormalPileCards().get(i).getComponent();
 			card.toFront();
-			card.relocate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(PILE_LOC));
+			card.translate(PileView.this.getLoc().add(locCalculator.cardLocationInPile(i)).add(PILE_LOC));
 			card.setSelectable(false);
 		}
 	}
@@ -75,14 +77,14 @@ public class PileView extends AbstractView<TreasuryPile> {
 	}
 
 	@Override
-	public void relocate(Loc loc) {
-		super.relocate(loc);
+	public void translate(Loc loc) {
+		super.translate(loc);
 		rearrangePiles();
 	}
 
 	@Override
-	public void relocate(double x, double y) {
-		super.relocate(x, y);
+	public void translate(double x, double y) {
+		super.translate(x, y);
 		rearrangePiles();
 	}
 
