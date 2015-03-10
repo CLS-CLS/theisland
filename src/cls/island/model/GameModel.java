@@ -101,7 +101,7 @@ public class GameModel {
 				colorToIsland.put(PieceColor.YELLOW, island);
 			}
 			if (island.getName().equals(Island.IslandName.IronGate)) {
-				colorToIsland.put(PieceColor.BROWN, island);
+				colorToIsland.put(PieceColor.BLACK, island);
 			}
 		}
 	}
@@ -156,7 +156,7 @@ public class GameModel {
 		for (PlayerAndColor playerType : players) {
 			Image playerBaseImg = config.playerCardHolder;
 			this.players.add(PlayerFactory.createPlayer(playerType.getPlayer(),
-					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer()
+					new Piece(playerType.getPlayer()
 							.name(), playerType.getColor()), new PlayerBase(playerType,
 							playerBaseImg, config.getPlayerImage(playerType.getPlayer()), index)));
 			index++;

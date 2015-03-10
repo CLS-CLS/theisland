@@ -45,8 +45,7 @@ public class SelectPieceToFlyPopup extends PopUpInternal<List<Piece>> {
 			pieceWithCheckBoxWrapper.setSpacing(5);
 			pieceWithCheckBoxWrapper.setAlignment(Pos.CENTER);
 			final Piece piece = piecesToMove.get(i);
-			PieceView pieceViewClone = new PieceView(Config.getInstance().getPieceImageLarge(
-					piece.getColor()), null);
+			PieceView pieceViewClone = new PieceView(piece.getColor().getColor(), null);
 			pieceWithCheckBoxWrapper.getChildren().add(pieceViewClone);
 			final CustomCheckBox pieceCheckBox = new CustomCheckBox();
 			pieceCheckBox.selectedProperty.addListener(new ChangeListener<Boolean>() {

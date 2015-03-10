@@ -59,7 +59,7 @@ public class SelectPlayerScreen extends Group {
 		randomNode = new ComboRandom(new ImageView(config.randomPlayerImage), PlayerType.RANDOM.name());
 
 		final Combo diverNode = new Combo(new ImageView(config.diverImage), randomNode.rndCombo, PlayerType.DIVER.name(),
-				PieceColor.BROWN);
+				PieceColor.BLACK);
 		final Combo explorerNode = new Combo(new ImageView(config.explorerImage), randomNode.rndCombo,
 				PlayerType.EXPLORER.name(), PieceColor.GREEN);
 		final Combo pilotNode = new Combo(new ImageView(config.pilotImage), randomNode.rndCombo, PlayerType.PILOT.name(),

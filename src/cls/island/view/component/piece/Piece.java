@@ -10,9 +10,9 @@ public class Piece {
 	private String playerId;
 	private final PieceColor color;
 	
-	public Piece(Image image, String playerId, PieceColor color) {
+	public Piece(String playerId, PieceColor color) {
 		this.color = color;
-		pieceView = new PieceView(image, this);
+		pieceView = new PieceView(color.getColor(), this);
 		this.playerId = playerId;
 	}
 	

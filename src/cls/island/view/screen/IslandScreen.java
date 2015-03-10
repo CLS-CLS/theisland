@@ -15,9 +15,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.AmbientLight;
 import javafx.scene.Group;
 import javafx.scene.ImageCursor;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
@@ -34,6 +36,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import cls.island.control.Config;
@@ -73,10 +76,9 @@ import cls.island.view.screen.popup.TreasuryCardsSneakPeek;
 public class IslandScreen extends Group {
 	Group controlSceneGroup = new Group();
 	Group islandSceneGroup = new Group();
-	private SubScene controlScene = new SubScene(controlSceneGroup,1440, 900);
-	private SubScene islandScene = new SubScene(islandSceneGroup, 1440, 900, true, SceneAntialiasing.DISABLED);
-	
-	
+	private SubScene controlScene = new SubScene(controlSceneGroup, 1440, 900);
+	private SubScene islandScene = new SubScene(islandSceneGroup, 1440, 900, true, SceneAntialiasing.BALANCED);
+
 	protected static LocCalculator locCalculator = LocCalculator.getInstance();
 	private boolean animationInProgress;
 
@@ -103,8 +105,7 @@ public class IslandScreen extends Group {
 	private Config config;
 	private Stage stage;
 
-	public IslandScreen(final Stage stage, final GameController gameController,
-			final Config config, GameModel model) {
+	public IslandScreen(final Stage stage, final GameController gameController, final Config config, GameModel model) {
 		this.stage = stage;
 		this.getChildren().addAll(controlScene, islandScene);
 		PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -116,17 +117,16 @@ public class IslandScreen extends Group {
 		camera.setTranslateZ(-1700);
 		camera.setNearClip(100);
 		camera.setFarClip(100000);
-		cameraGroup.getTransforms().add(new Rotate(30, Rotate.X_AXIS));
+		cameraGroup.getTransforms().add(new Rotate(17, Rotate.X_AXIS));
+//		cameraGroup.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
 		islandScene.setCamera(camera);
 		islandSceneGroup.getChildren().add(cameraGroup);
 		System.out.println(camera.getTranslateX());
 		System.out.println(camera.getTranslateY());
 		System.out.println(camera.getTranslateZ());
 		this.config = config;
-		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes()
-				.getHeight(), Color.DARKGRAY);
-		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980,
-				false, true));
+		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes().getHeight(), Color.DARKGRAY);
+		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980, false, true));
 
 		controlSceneGroup.getChildren().add(0, background);
 		controlSceneGroup.getChildren().add(1, background2);
@@ -207,7 +207,7 @@ public class IslandScreen extends Group {
 		buttons.add(nextTurnButton);
 		undoButton = ButtonFactory.actionButton("Undo", ButtonAction.UNDO, gameController);
 		flyButton = ButtonFactory.actionToggleButton("Fly", ButtonAction.FLY, gameController);
-		
+
 		flyButton.setToggleGroup(toggleGroup);
 		buttons.add(flyButton);
 		moveOtherButton = ButtonFactory.actionToggleButton("Move \nOther", ButtonAction.MOVE_OTHER, gameController);
@@ -228,8 +228,7 @@ public class IslandScreen extends Group {
 		nextTurnButton.setTranslateY(520);
 		undoButton.setTranslateX(1200);
 		undoButton.setTranslateY(630);
-		undoButton.disableProperty().bind(
-				BooleanBinding.booleanExpression(gameController.undoActionProperty()).not());
+		undoButton.disableProperty().bind(BooleanBinding.booleanExpression(gameController.undoActionProperty()).not());
 		flyButton.setTranslateX(1310);
 		flyButton.setTranslateY(520);
 		moveOtherButton.setTranslateX(1310);
@@ -244,17 +243,19 @@ public class IslandScreen extends Group {
 		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		controlSceneGroup.getChildren().add(msgPanel);
 		msgPanel.translate(500, 1000);
-//		addControls();
+		// addControls();
 	}
 
 	private void setUpLights(Group islandSceneGroup) {
-//		PointLight pointLight = new PointLight();
-//		pointLight.getTransforms().add(new Translate(0, 0, -500));
-//		islandSceneGroup.getChildren().add(pointLight);
-//		AmbientLight al = new AmbientLight();
-//		islandSceneGroup.getChildren().add(al);
-//		al.getTransforms().add(new Translate(500, 700, 0));
-		
+		PointLight pointLight = new PointLight();
+		pointLight.getTransforms().add(new Translate(0, 0, -1500));
+		PointLight pointLight2 = new PointLight();
+		pointLight2.getTransforms().add(new Translate(1440, 700, -1500));
+		islandSceneGroup.getChildren().addAll(pointLight, pointLight2);
+		AmbientLight al = new AmbientLight();
+		islandSceneGroup.getChildren().add(al);
+		al.getTransforms().add(new Translate(500, 700, 0));
+
 	}
 
 	public List<TreasuryCard> c_getTreasuryCards() {
@@ -279,13 +280,11 @@ public class IslandScreen extends Group {
 					pieceZorder.get(order).getComponent().toFront();
 				}
 			};
-			Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish,
-					block);
+			Animations.moveComponentToLocation(pieceView, pieceLoc, onFinish, block);
 		});
 	}
 
-	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard,
-			PlayerBaseView playerBaseView) {
+	public void c_moveTreasuryCardFromPileToPlayer(TreasuryCardView treasuryCard, PlayerBaseView playerBaseView) {
 		treasuryCard.setFaceUp(true);
 		playerBaseView.moveToBase(treasuryCard);
 
@@ -299,8 +298,8 @@ public class IslandScreen extends Group {
 	public void c_showMessagePanel(final String message) {
 		FxThreadBlock block = new FxThreadBlock();
 		block.execute(() -> {
-			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200),
-					new KeyValue(msgPanel.translateYProperty(), 800)));
+			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200), new KeyValue(msgPanel.translateYProperty(),
+					800)));
 
 			timeline.setOnFinished((event) -> {
 				msgPanel.showMessage(message);
@@ -346,8 +345,7 @@ public class IslandScreen extends Group {
 			sdb.addListener(new ChangeListener<Number>() {
 
 				@Override
-				public void changed(ObservableValue<? extends Number> observable, Number oldValue,
-						Number newValue) {
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 					text.setText(newValue + "");
 				}
 			});
@@ -362,14 +360,15 @@ public class IslandScreen extends Group {
 	public void c_showLooseGamePopUp(LooseCondition looseCondition, Object... infos) {
 		c_showPopup(new GameLostPopUp(looseCondition, infos));
 	}
-	
-	public void c_showTreasurePilePopUp(PileType type){
+
+	public void c_showTreasurePilePopUp(PileType type) {
 		c_showPopup(new TreasuryCardsSneakPeek(treasuryBase, type));
 	}
 
 	/**
-	 * disables the action buttons with the specific actions. If no
-	 * actions are provided all the buttons are disabled
+	 * disables the action buttons with the specific actions. If no actions are
+	 * provided all the buttons are disabled
+	 * 
 	 * @param actions
 	 */
 	public void disableButtons(ButtonAction... actions) {
@@ -382,8 +381,9 @@ public class IslandScreen extends Group {
 	}
 
 	/**
-	 * enables the action buttons with the specific actions. If no
-	 * actions are provided all the buttons are enabled
+	 * enables the action buttons with the specific actions. If no actions are
+	 * provided all the buttons are enabled
+	 * 
 	 * @param actions
 	 */
 	public void enableButtons(ButtonAction... actions) {
@@ -398,8 +398,7 @@ public class IslandScreen extends Group {
 		setButtonsDisabled(false, true, actions);
 	}
 
-	private void setButtonsDisabled(boolean disabled, boolean isExcludeList,
-			ButtonAction... buttonActions) {
+	private void setButtonsDisabled(boolean disabled, boolean isExcludeList, ButtonAction... buttonActions) {
 		List<ButtonAction> actionList = Arrays.asList(buttonActions);
 		for (ButtonBase button : buttons) {
 			if (!(button instanceof Action))
@@ -445,24 +444,25 @@ public class IslandScreen extends Group {
 			c_setCursorImage(config.cursorImg);
 		}
 	}
-	
+
 	public void c_setCursorImage(Image cursorImg) {
 		stage.getScene().setCursor(new ImageCursor(cursorImg));
 	}
-	
+
 	public void c_setUpButtonsForPlayer(Player player) {
 		controlSceneGroup.getChildren().remove(flyButton);
 		controlSceneGroup.getChildren().remove(moveOtherButton);
 		if (player instanceof PilotPlayer) {
 			controlSceneGroup.getChildren().add(flyButton);
-		}else if (player instanceof NavigatorPlayer){
+		} else if (player instanceof NavigatorPlayer) {
 			controlSceneGroup.getChildren().add(moveOtherButton);
 		}
 	}
-	
+
 	/**
-	 * Shows the pop up on top of this screen. Makes the thread that 
-	 * requested this pop-up to wait until the pop-up is closed.
+	 * Shows the pop up on top of this screen. Makes the thread that requested
+	 * this pop-up to wait until the pop-up is closed.
+	 * 
 	 * @param popUpInternal
 	 * @return
 	 */
