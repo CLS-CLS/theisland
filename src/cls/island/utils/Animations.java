@@ -6,7 +6,6 @@ import java.util.concurrent.locks.Condition;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

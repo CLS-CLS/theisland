@@ -1,6 +1,6 @@
 package cls.island.control;
 
-import cls.island.control.Options.PlayerType;
+import cls.island.control.Config.PlayerType;
 import cls.island.view.component.piece.PieceColor;
 
 public  class PlayerAndColor {

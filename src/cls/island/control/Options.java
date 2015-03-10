@@ -5,11 +5,9 @@ import java.util.List;
 
 public class Options {
 	
-	public enum PlayerType{
-		DIVER, EXPLORER, PILOT, MESSENGER, RANDOM, ENGINEER, NAVIGATOR;
-	}
-
 	private static final int DEFAULT_FLOOD = 0;
+	
+	private int floodStartingLevel = DEFAULT_FLOOD;
 
 	private List<PlayerAndColor> selectedPlayers = new ArrayList<>();
 	/**
@@ -29,7 +27,10 @@ public class Options {
 	}
 
 	public int getFloodStartingLevel() {
-		return DEFAULT_FLOOD;
+		return floodStartingLevel;
+	}
+	public void setFloodStartingLevel(int floodStartingLevel) {
+		this.floodStartingLevel = floodStartingLevel;
 	}
 	
 }

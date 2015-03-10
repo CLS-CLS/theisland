@@ -5,7 +5,7 @@ import java.util.List;
 
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
-import cls.island.control.Options.PlayerType;
+import cls.island.control.Config.PlayerType;
 import cls.island.model.IslandGrid;
 import cls.island.model.IslandGrid.Direction;
 import cls.island.view.component.island.Island;

@@ -1,11 +1,10 @@
 package cls.island.utils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.view.component.piece.PieceView;
@@ -25,14 +24,23 @@ public class ViewUtils {
 		}
 		return islandComponent;
 	}
-	
-	public static PieceView findPieceView(Node target){
+
+	public static List<Node> getNodeHierarcyAsList(Node target) {
+		List<Node> nodes = new ArrayList<Node>();
+		Node parent = target;
+		while ((parent = parent.getParent()) != null) {
+			nodes.add(parent);
+		}
+		return nodes;
+	}
+
+	public static PieceView findPieceView(Node target) {
 		Node parent = target;
 		do {
-			if (parent instanceof PieceView){
-				return (PieceView)parent;
+			if (parent instanceof PieceView) {
+				return (PieceView) parent;
 			}
-		}while((parent = parent.getParent())!=null );
+		} while ((parent = parent.getParent()) != null);
 		return null;
 	}
 
@@ -52,10 +60,11 @@ public class ViewUtils {
 		return result;
 	}
 
-//	public static Player getPlayerById(GameModel gameModel, String id) {
-//		Optional<Player> player = gameModel.getPlayers().stream().filter((p) -> p.getPlayerId().equals(id)).findFirst();
-//		return player.get();
-//
-//	}
+	// public static Player getPlayerById(GameModel gameModel, String id) {
+	// Optional<Player> player = gameModel.getPlayers().stream().filter((p) ->
+	// p.getPlayerId().equals(id)).findFirst();
+	// return player.get();
+	//
+	// }
 
 }

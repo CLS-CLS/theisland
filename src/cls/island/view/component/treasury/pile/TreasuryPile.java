@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.scene.paint.Color;
 import cls.island.view.component.treasury.card.TreasuryCard;
 import cls.island.view.component.treasury.card.TreasuryCard.ViewStatus;
-import cls.island.view.component.treasury.card.TreasuryCardView;
 
 public class TreasuryPile {
 
@@ -57,8 +56,8 @@ public class TreasuryPile {
 		return pile.contains(treasuryCard);
 	}
 
-	public boolean containsInDiscardPile(TreasuryCardView treasuryCardView) {
-		return discardPile.contains(treasuryCardView);
+	public boolean containsInDiscardPile(TreasuryCard treasuryCard) {
+		return discardPile.contains(treasuryCard);
 	}
 
 	public PileView getComponent() {
@@ -74,8 +73,13 @@ public class TreasuryPile {
 		return new ArrayList<>(pile);
 	}
 
-	public ArrayList<TreasuryCard> getTreasuryCards(PileType normal) {
-		return new ArrayList<>(pile);
+	public List<TreasuryCard> getTreasuryCards(PileType pileType) {
+		switch (pileType) {
+		case DISCARD:
+			return getDiscardPileCards();
+		default:
+			return getNormalPileCards();
+		}
 	}
 	
 	public boolean isPileEmpty(){

@@ -40,6 +40,7 @@ public class GameModel {
 	public static final int DRAW_CARDS_PER_TURN = 2;
 	public static final int MAX_CARDS_ALLOWED_IN_HAND = 5;
 	private static final int MAX_WATER_LEVEL = 9;
+	
 	private final Config config;
 	private Options options;
 
@@ -64,7 +65,7 @@ public class GameModel {
 		initColorToIslandMap();
 		initTreasuryPile();
 		initTreasuryCards();
-		initPlayers(options.getPlayers());
+		initPlayers();
 		initTreasuryBag();
 		initActionLeft();
 	}
@@ -148,9 +149,11 @@ public class GameModel {
 		}
 	}
 
-	private void initPlayers(List<PlayerAndColor> players) {
+	private void initPlayers() {
 		int index = 0;
-		for (PlayerAndColor playerType : options.getPlayers()) {
+		List<PlayerAndColor> players = options.getPlayers();
+		Collections.shuffle(players);
+		for (PlayerAndColor playerType : players) {
 			Image playerBaseImg = config.playerCardHolder;
 			this.players.add(PlayerFactory.createPlayer(playerType.getPlayer(),
 					new Piece(config.getPieceImage(playerType.getColor()), playerType.getPlayer()

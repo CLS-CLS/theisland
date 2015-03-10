@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import cls.island.control.Options.PlayerType;
+import cls.island.control.Config.PlayerType;
 import cls.island.model.IslandGrid;
 import cls.island.model.IslandGrid.Direction;
 import cls.island.view.component.island.Island;

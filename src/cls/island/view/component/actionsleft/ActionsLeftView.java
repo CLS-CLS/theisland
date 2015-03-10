@@ -6,7 +6,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import cls.island.view.component.AbstractView;
 
 public class ActionsLeftView extends AbstractView<ActionsLeft>{

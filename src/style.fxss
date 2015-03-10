@@ -5,11 +5,18 @@
 	-fx-background-radius: 5, 5, 4, 3;
 }
 
-.gen-button: focus {
+.gen-button: hover {
 	-fx-font: bold italic 20pt "Arial";
 	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
 	-fx-background-insets: 0 0 0 0, 0, 1, 2;
 	-fx-background-radius: 5, 5, 4, 3;
+	-fx-background-color: linear-gradient(GREY, LIGHTGREY);
+}
+
+
+.gen-button: pressed {
+	-fx-effect: innershadow( three-pass-box , BLACK , 10, 0.5 , -1, -1);
+	-fx-background-color: linear-gradient(GREY, DARKGREY);
 }
 
 .treasury-use-discard-button {
@@ -87,7 +94,7 @@
 		radial-gradient(center 50% -40%, radius 200%, #5b7d0b 45%, #355200 50%);
 }
 
-.standard-label: {
+.standard-label {
 	-fx-font: bold italic 20pt "Arial";
 	-fx-background-color: transparent;
 }
@@ -140,14 +147,13 @@
 	-fx-stroke-width :2;
 }
 
-
-.actions-left-label {
-	-fx-fill: linear-gradient(RED, WHITE);
-	-fx-font-size: 40px;
+.pile-sneek-pick-text {
+	-fx-font: bold italic 30pt "Arial";
+	-fx-fill: ORANGE;
 	-fx-font-weight: BOLD;
-	-fx-stroke-type: outside;
-	-fx-stroke-width: 3;
-	-fx-stroke:RED;
-	-fx-blend-mode: hard-light;
+}
+
+.pile-sneek-pick-pane {
+	-fx-background-color: DARKGREEN;
 }
 

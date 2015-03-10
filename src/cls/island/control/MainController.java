@@ -4,13 +4,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Camera;
-import javafx.scene.Group;
 import javafx.scene.ImageCursor;
 import javafx.scene.Node;
-import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import cls.island.model.GameModel;
 import cls.island.utils.Animations;
@@ -54,10 +50,11 @@ public class MainController {
 //				new PlayerAndColor(PlayerType.EXPLORER, PieceColor.GREEN), 
 //				new PlayerAndColor(PlayerType.PILOT, PieceColor.BLUE)}));
 		options.setPlayers(selectPlayerScreen.getSelectedPlayers());
+		options.setFloodStartingLevel(selectPlayerScreen.getFloodStartingLevel());
 		gameModel = new GameModel(options, config);
 		gameModel.newGame();
 		gameController = new GameController(MainController.this, gameModel);
-		islandScreen = new IslandScreen(MainController.this, gameController, config, gameModel);
+		islandScreen = new IslandScreen(stage, gameController, config, gameModel);
 		gameController.setIslandScreen(islandScreen);
 		root.clear();
 		root.getChildren().add(islandScreen);
@@ -140,10 +137,6 @@ public class MainController {
 		return options;
 	}
 
-	public void setCursorImage(Image cursorImg) {
-		scene.setCursor(new ImageCursor(cursorImg));
-	}
-	
 	public Stage getStage(){
 		return stage;
 	}

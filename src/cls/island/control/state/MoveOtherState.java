@@ -9,8 +9,6 @@ import cls.island.control.GameState;
 import cls.island.model.GameModel;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
-import cls.island.view.component.island.Island;
-import cls.island.view.component.island.IslandView;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.piece.PieceView;
 import cls.island.view.screen.IslandScreen;

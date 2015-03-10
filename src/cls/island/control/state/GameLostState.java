@@ -1,6 +1,5 @@
 package cls.island.control.state;
 
-import javafx.application.Platform;
 import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController;
 import cls.island.control.GameController.ButtonAction;

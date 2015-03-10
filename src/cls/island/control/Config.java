@@ -14,12 +14,20 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.stage.Screen;
-import cls.island.control.Options.PlayerType;
 import cls.island.view.component.piece.PieceColor;
 import cls.island.view.component.treasury.card.Type;
 
 public class Config {
 	private static Config INSTANCE = new Config();
+
+	public enum PlayerType{
+		DIVER, EXPLORER, PILOT, MESSENGER, RANDOM, ENGINEER, NAVIGATOR;
+	}
+	
+	public enum Difficulty{
+		EASY, NORMAL, EPIC, LEGENDARY
+	}
+
 
 	public static Config getInstance() {
 		return INSTANCE;

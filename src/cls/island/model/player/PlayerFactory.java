@@ -1,6 +1,6 @@
 package cls.island.model.player;
 
-import cls.island.control.Options.PlayerType;
+import cls.island.control.Config.PlayerType;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.player.base.PlayerBase;
 

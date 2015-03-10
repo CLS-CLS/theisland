@@ -13,10 +13,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Light;
@@ -26,11 +28,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import cls.island.control.Config;
+import cls.island.control.Config.PlayerType;
 import cls.island.control.MainController;
-import cls.island.control.Options;
 import cls.island.control.PlayerAndColor;
 import cls.island.utils.ButtonFactory;
 import cls.island.utils.TimelineSingle;
@@ -42,8 +46,9 @@ public class SelectPlayerScreen extends Group {
 	List<Combo> players = new ArrayList<>();
 	ComboRandom randomNode;
 
-
 	private Config config;
+
+	private int startingLevel;
 
 	public SelectPlayerScreen(final MainController controller, Config config) {
 		this.config = config;
@@ -51,27 +56,25 @@ public class SelectPlayerScreen extends Group {
 		Group main = new Group();
 		this.getChildren().add(root);
 		this.getChildren().add(main);
-		randomNode = new ComboRandom(new ImageView(config.randomPlayerImage),
-				Options.PlayerType.RANDOM.name());
+		randomNode = new ComboRandom(new ImageView(config.randomPlayerImage), PlayerType.RANDOM.name());
 
-		final Combo diverNode = new Combo(new ImageView(config.diverImage),
-				randomNode.rndCombo, Options.PlayerType.DIVER.name(), PieceColor.BROWN);
-		final Combo explorerNode = new Combo(new ImageView(config.explorerImage),
-				randomNode.rndCombo, Options.PlayerType.EXPLORER.name(), PieceColor.GREEN);
-		final Combo pilotNode = new Combo(new ImageView(config.pilotImage),
-				randomNode.rndCombo, Options.PlayerType.PILOT.name(),PieceColor.BLUE);
-		final Combo engineerNode = new Combo(new ImageView(config.engineerImage),
-				randomNode.rndCombo, Options.PlayerType.ENGINEER.name(),PieceColor.RED);
-		final Combo messengerNode = new Combo(new ImageView(config.messengerImage),
-				randomNode.rndCombo, Options.PlayerType.MESSENGER.name(),PieceColor.WHITE);
-		final Combo navigatorNode = new Combo(new ImageView(config.navigatorImage),
-				randomNode.rndCombo, Options.PlayerType.NAVIGATOR.name(),PieceColor.YELLOW);
+		final Combo diverNode = new Combo(new ImageView(config.diverImage), randomNode.rndCombo, PlayerType.DIVER.name(),
+				PieceColor.BROWN);
+		final Combo explorerNode = new Combo(new ImageView(config.explorerImage), randomNode.rndCombo,
+				PlayerType.EXPLORER.name(), PieceColor.GREEN);
+		final Combo pilotNode = new Combo(new ImageView(config.pilotImage), randomNode.rndCombo, PlayerType.PILOT.name(),
+				PieceColor.BLUE);
+		final Combo engineerNode = new Combo(new ImageView(config.engineerImage), randomNode.rndCombo,
+				PlayerType.ENGINEER.name(), PieceColor.RED);
+		final Combo messengerNode = new Combo(new ImageView(config.messengerImage), randomNode.rndCombo,
+				PlayerType.MESSENGER.name(), PieceColor.WHITE);
+		final Combo navigatorNode = new Combo(new ImageView(config.navigatorImage), randomNode.rndCombo,
+				PlayerType.NAVIGATOR.name(), PieceColor.YELLOW);
 
 		randomNode.rndCombo.selected.addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if (newValue) {
 					diverNode.setSelected(false);
 					explorerNode.setSelected(false);
@@ -94,11 +97,10 @@ public class SelectPlayerScreen extends Group {
 		explorerNode.getTransforms().add(new Translate(400, 180));
 		pilotNode.getTransforms().add(new Translate(600, 180));
 		engineerNode.getTransforms().add(new Translate(800, 180));
-		messengerNode.getTransforms().add(new Translate(400,380));
-		navigatorNode.getTransforms().add(new Translate(600,380));
+		messengerNode.getTransforms().add(new Translate(400, 380));
+		navigatorNode.getTransforms().add(new Translate(600, 380));
 		randomNode.getTransforms().add(new Translate(1100, 180));
-		Label text = new Label("Select the players to land... \n"
-				+ "         ...on the forbidden island");
+		Label text = new Label("Select the players to land... \n" + "         ...on the forbidden island");
 		text.getStyleClass().add("select-player-msg");
 		text.getTransforms().add(new Translate(50, 50));
 
@@ -136,10 +138,45 @@ public class SelectPlayerScreen extends Group {
 		main.getChildren().add(messengerNode);
 		main.getChildren().add(navigatorNode);
 		main.getChildren().add(randomNode);
-		root.getChildren().add(buttons);
+
+		Slider slider = new Slider(0, 3, 0);
+		slider.setSnapToTicks(true);
+		slider.setShowTickMarks(true);
+		slider.setShowTickLabels(true);
+		slider.setMajorTickUnit(1);
+		slider.setMinorTickCount(0);
+		slider.setBlockIncrement(1f);
+		slider.getTransforms().add(new Translate(1100, 500));
+		slider.getTransforms().add(new Scale(4, 2));
+		slider.setOrientation(Orientation.VERTICAL);
+		slider.setLabelFormatter(new StringConverter<Double>() {
+		
+			@Override
+			public String toString(Double object) {
+				switch (object.intValue()) {
+				case 0:
+					return "Novice";
+				case 1:
+					return "Normal";
+				case 2:
+					return "Epic";
+				case 3:
+					return "Legendary";
+				default:
+					return "Oops";
+				}
+			}
+			
+			@Override
+			public Double fromString(String string) {
+				return 0D;
+			}
+		});
+		root.getChildren().addAll(buttons, slider);
+		slider.valueProperty().addListener((b, o, newValue) -> startingLevel = newValue.intValue());
 
 	}
-
+	
 	private class Combo extends VBox {
 		private ImageView imageView;
 		private Label selectedNode = new Label("", new ImageView(config.tickImage));
@@ -254,8 +291,7 @@ public class SelectPlayerScreen extends Group {
 				private void animate(double opacity) {
 					TimelineSingle opacityTimeline = new TimelineSingle();
 					opacityTimeline.getKeyFrames().add(
-							new KeyFrame(Duration.millis(200), new KeyValue(textWithbuttons
-									.opacityProperty(), opacity)));
+							new KeyFrame(Duration.millis(200), new KeyValue(textWithbuttons.opacityProperty(), opacity)));
 					opacityTimeline.play();
 				}
 
@@ -291,9 +327,7 @@ public class SelectPlayerScreen extends Group {
 		ArrayList<PlayerAndColor> enumPlayers = new ArrayList<>();
 		for (Combo player : players) {
 			if (player.isSelected()) {
-				enumPlayers.add(new PlayerAndColor(
-						Options.PlayerType.valueOf(player.getDescription()),
-						player.getColor()));
+				enumPlayers.add(new PlayerAndColor(PlayerType.valueOf(player.getDescription()), player.getColor()));
 			}
 		}
 		if (randomNode.rndCombo.isSelected()) {
@@ -301,14 +335,14 @@ public class SelectPlayerScreen extends Group {
 			for (int i = 0; i < randomNode.randomPlayers; i++) {
 				int random = rndGen.nextInt(players.size());
 				Combo player = players.remove(random);
-				enumPlayers.add(new PlayerAndColor(
-						Options.PlayerType.valueOf(player.getDescription()),
-						player.getColor()));
+				enumPlayers.add(new PlayerAndColor(PlayerType.valueOf(player.getDescription()), player.getColor()));
 			}
 		}
 		return enumPlayers;
 	}
 
+	public int getFloodStartingLevel() {
+		return startingLevel;
+	}
 
-	
 }

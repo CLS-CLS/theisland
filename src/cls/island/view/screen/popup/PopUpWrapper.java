@@ -1,5 +1,6 @@
 package cls.island.view.screen.popup;
 
+import cls.island.control.Config;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,6 +27,7 @@ public class PopUpWrapper<T> extends Stage {
 		this.internal = internal;
 		internal.registerToPopUp(this);
 		Scene scene = new Scene(internal);
+		scene.getStylesheets().add(Config.getInstance().getStyleSheetPath());
 		setScene(scene);
 		initModality(Modality.WINDOW_MODAL);
 		initOwner(this.parent);

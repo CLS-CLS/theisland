@@ -3,7 +3,7 @@ package cls.island.model.player;
 import java.util.ArrayList;
 import java.util.List;
 
-import cls.island.control.Options.PlayerType;
+import cls.island.control.Config.PlayerType;
 import cls.island.model.IslandGrid;
 import cls.island.model.IslandGrid.Direction;
 import cls.island.view.component.island.Island;

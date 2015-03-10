@@ -1,6 +1,6 @@
 package cls.island.model.player;
 
-import cls.island.control.Options.PlayerType;
+import cls.island.control.Config.PlayerType;
 import cls.island.view.component.piece.Piece;
 import cls.island.view.component.player.base.PlayerBase;
 import cls.island.view.component.treasury.card.TreasuryCard;
@@ -22,5 +22,5 @@ public class MessengerPlayer extends Player{
 		assert card.getType().getAbility() == Ability.TREASURE :card + " is not of type TREASURE";
 		return hasAction();
 	}
-
+	
 }

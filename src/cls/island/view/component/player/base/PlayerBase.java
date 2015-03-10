@@ -5,8 +5,8 @@ import java.util.List;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.LinearGradient;
+import cls.island.control.Config.PlayerType;
 import cls.island.control.PlayerAndColor;
-import cls.island.control.Options.PlayerType;
 import cls.island.utils.LocCalculator;
 import cls.island.view.component.treasury.card.TreasuryCard;
 
