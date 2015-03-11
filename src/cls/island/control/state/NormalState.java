@@ -7,6 +7,7 @@ import cls.island.control.GameController.ButtonAction;
 import cls.island.control.GameState;
 import cls.island.control.action.RevertableAction;
 import cls.island.model.GameModel;
+import cls.island.model.player.NavigatorPlayer;
 import cls.island.model.player.PilotPlayer;
 import cls.island.model.player.Player;
 import cls.island.utils.ViewUtils;
@@ -138,6 +139,8 @@ public class NormalState implements GameState {
 			islandScreen.disableButtons(ButtonAction.MOVE);
 			if (currentTurnPlayer instanceof PilotPlayer){
 				islandScreen.disableButtons(ButtonAction.FLY);
+			}if (currentTurnPlayer instanceof NavigatorPlayer){
+				islandScreen.disableButtons(ButtonAction.MOVE_OTHER);
 			}
 		}
 		if (!gameModel.canTrade()){

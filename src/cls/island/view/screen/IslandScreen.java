@@ -104,10 +104,16 @@ public class IslandScreen extends Group {
 	private Button collectTreasureButton;
 	private Config config;
 	private Stage stage;
+	private double startingY;
+	private Rotate xRotate;
+	private boolean moveCamera;
+	private ImageView background2;
 
 	public IslandScreen(final Stage stage, final GameController gameController, final Config config, GameModel model) {
 		this.stage = stage;
 		this.getChildren().addAll(controlScene, islandScene);
+		this.config = config;
+		
 		PerspectiveCamera camera = new PerspectiveCamera(true);
 		setUpLights(islandSceneGroup);
 		Group cameraGroup = new Group();
@@ -117,16 +123,14 @@ public class IslandScreen extends Group {
 		camera.setTranslateZ(-1700);
 		camera.setNearClip(100);
 		camera.setFarClip(100000);
-		cameraGroup.getTransforms().add(new Rotate(17, Rotate.X_AXIS));
-//		cameraGroup.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+		xRotate = new Rotate(17, Rotate.X_AXIS);
+		cameraGroup.getTransforms().add(xRotate);
+		// cameraGroup.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
 		islandScene.setCamera(camera);
 		islandSceneGroup.getChildren().add(cameraGroup);
-		System.out.println(camera.getTranslateX());
-		System.out.println(camera.getTranslateY());
-		System.out.println(camera.getTranslateZ());
-		this.config = config;
+		
 		background = new Rectangle(config.getDefaultRes().getWidth(), config.getDefaultRes().getHeight(), Color.DARKGRAY);
-		ImageView background2 = new ImageView(new Image("images/other/background2.png", 880, 980, false, true));
+		background2 = new ImageView(new Image("images/other/background2.png", 880, 980, false, true));
 
 		controlSceneGroup.getChildren().add(0, background);
 		controlSceneGroup.getChildren().add(1, background2);
@@ -140,6 +144,7 @@ public class IslandScreen extends Group {
 			islandViewToDelete = island.getComponent();
 			if (island.isFlooded()) {
 				island.getComponent().setFlood();
+				island.getComponent().activateSavedNode();
 			}
 			// TODO same for sinked.
 		}
@@ -167,14 +172,16 @@ public class IslandScreen extends Group {
 		}
 		treasuryBase.getComponent().rearrangePiles();
 
-		addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+		addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+			if (!c_isAnimationInProgress())
+				gameController.mouseClicked(e);
+		});
 
-			@Override
-			public void handle(MouseEvent event) {
-				if (!c_isAnimationInProgress()) {
-					gameController.mouseClicked(event);
-				}
-			}
+		addEventHandler(MouseEvent.MOUSE_DRAGGED, this::moveCamera);
+
+		addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
+			moveCamera = (e.getTarget() == background2);
+			startingY = e.getY();
 		});
 
 		TreasuryBagView treasureBagView = model.getTreasureBag().getComponent();
@@ -246,13 +253,29 @@ public class IslandScreen extends Group {
 		// addControls();
 	}
 
+	public void moveCamera(MouseEvent me) {
+		if (!moveCamera)
+			return;
+		double delta = me.getY() - startingY;
+		startingY = me.getY();
+		double deltaAngle = (delta / 500) * 30;
+		double finalAngle = xRotate.getAngle() + deltaAngle;
+		if (finalAngle > 25) {
+			finalAngle = 25;
+		}
+		if (finalAngle < 0) {
+			finalAngle = 0;
+		}
+		xRotate.setAngle(finalAngle);
+	}
+
 	private void setUpLights(Group islandSceneGroup) {
 		PointLight pointLight = new PointLight();
 		pointLight.getTransforms().add(new Translate(0, 0, -1500));
 		PointLight pointLight2 = new PointLight();
-		pointLight2.getTransforms().add(new Translate(1440, 700, -1500));
+		pointLight2.getTransforms().add(new Translate(1440, 700, -700));
 		islandSceneGroup.getChildren().addAll(pointLight, pointLight2);
-		AmbientLight al = new AmbientLight();
+		AmbientLight al = new AmbientLight(Color.ANTIQUEWHITE);
 		islandSceneGroup.getChildren().add(al);
 		al.getTransforms().add(new Translate(500, 700, 0));
 

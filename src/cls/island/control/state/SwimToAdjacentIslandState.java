@@ -54,7 +54,9 @@ public class SwimToAdjacentIslandState implements GameState {
 		}
 		if (island.isSunk())
 			return null;
-		if (!currentPlayer.isValidMove(currentPlayer.getPiece().getIsland(), island,
+		if (currentPlayer instanceof PilotPlayer){
+			// check nothing , pilot player can move anywhere by flying
+		}else if (!currentPlayer.isValidMove(currentPlayer.getPiece().getIsland(), island,
 				gameModel.getIslandGrid())) {
 			return null;
 		}

@@ -114,10 +114,12 @@ public class SelectPlayerScreen extends Group {
 		Reflection refl = new Reflection();
 		refl.setTopOffset(10);
 		refl.setInput(l);
+		refl.setFraction(0.25);
+		refl.setTopOpacity(0.2);
 		main.setEffect(refl);
 
 		VBox buttons = new VBox();
-		buttons.getTransforms().add(new Translate(700, 750));
+		buttons.getTransforms().add(new Translate(600, 750));
 		buttons.getStyleClass().add("gen-vBox");
 		buttons.setFillWidth(true);
 
@@ -181,7 +183,7 @@ public class SelectPlayerScreen extends Group {
 		private ImageView imageView;
 		private Label selectedNode = new Label("", new ImageView(config.tickImage));
 		private BooleanProperty selected = new SimpleBooleanProperty(false);
-		private Effect unselectedEffect = new ColorAdjust(0, -1, 0, 0);
+		private Effect unselectedEffect = new ColorAdjust(0, -1, 0.5, -0.5);
 		private Combo random;
 		private String description;
 		private final PieceColor color;

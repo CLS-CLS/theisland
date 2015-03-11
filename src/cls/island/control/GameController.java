@@ -1,6 +1,8 @@
 package cls.island.control;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
@@ -28,7 +30,7 @@ public class GameController {
 	private MainController mainController;
 	private IslandScreen islandScreen;
 	private final GameModel gameModel;
-	private Action lastAction;
+	private List<Action> lastActions = new ArrayList<>();
 
 	/**
 	 * used by {@link IslandScreen} to bind the disable function of undo button.
@@ -54,9 +56,9 @@ public class GameController {
 
 		if (action == ButtonAction.UNDO) {
 			gameState.end();
-			GameState gameState = ((RevertableAction) lastAction).revert();
-			lastAction = null;
-			undoAction.set(false);
+			GameState gameState = ((RevertableAction) lastActions.get(lastActions.size() - 1)).revert();
+			lastActions.remove(lastActions.size() - 1);
+			undoAction.set(lastActions.size() != 0);
 			if (gameState != null) {
 				setGameState(gameState);
 			}
@@ -83,9 +85,9 @@ public class GameController {
 				islandScreen.c_showTreasurePilePopUp(PileType.NORMAL);
 			}
 		}
-		
+
 		GameState state = gameState.mouseClicked(event);
-		
+
 		if (state != null) {
 			setGameState(state);
 		}
@@ -159,10 +161,10 @@ public class GameController {
 
 	public void executeAction(Action action) {
 		if (action instanceof RevertableAction) {
-			lastAction = action;
+			lastActions.add(action);
 			undoAction.set(true);
 		} else {
-			lastAction = null;
+			lastActions.clear();
 			undoAction.set(false);
 		}
 		action.execute();
@@ -179,7 +181,7 @@ public class GameController {
 	 * the internal state of the game.
 	 */
 	public void resetUndoableActions() {
-		lastAction = null;
+		lastActions.clear();
 		undoAction.set(false);
 	}
 
