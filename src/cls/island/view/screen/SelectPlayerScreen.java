@@ -40,7 +40,7 @@ import cls.island.utils.ButtonFactory;
 import cls.island.utils.TimelineSingle;
 import cls.island.view.component.piece.PieceColor;
 
-public class SelectPlayerScreen extends Group {
+public class SelectPlayerScreen extends Group implements OptionsScreen {
 	protected static final int MAX_RANDOM_PLAYERS = 4;
 
 	List<Combo> players = new ArrayList<>();
@@ -49,6 +49,10 @@ public class SelectPlayerScreen extends Group {
 	private Config config;
 
 	private int startingLevel;
+
+	private Button goToIsland;
+
+	private Button back;
 
 	public SelectPlayerScreen(final MainController controller, Config config) {
 		this.config = config;
@@ -123,11 +127,21 @@ public class SelectPlayerScreen extends Group {
 		buttons.getStyleClass().add("gen-vBox");
 		buttons.setFillWidth(true);
 
-		Button back = ButtonFactory.genButton("Back");
+		back = ButtonFactory.genButton("Back");
 		back.setOnAction((ev) -> controller.goToMainScreen(SelectPlayerScreen.this));
 
-		Button goToIsland = ButtonFactory.genButton("Go To Island");
-		goToIsland.setOnAction((ev) -> controller.goToIslandScreen());
+		goToIsland = ButtonFactory.genButton("Go To Island");
+		goToIsland.setOnAction((ev) -> {
+			if (getSelectedPlayers().size() < 2)
+				return;
+			if (getSelectedPlayers().size() > 4){
+				return;
+			}
+			goToIsland.setDisable(true);
+			back.setDisable(true);
+			controller.goToIslandScreen();
+
+		});
 
 		buttons.getChildren().add(goToIsland);
 		buttons.getChildren().add(back);
@@ -152,7 +166,7 @@ public class SelectPlayerScreen extends Group {
 		slider.getTransforms().add(new Scale(4, 2));
 		slider.setOrientation(Orientation.VERTICAL);
 		slider.setLabelFormatter(new StringConverter<Double>() {
-		
+
 			@Override
 			public String toString(Double object) {
 				switch (object.intValue()) {
@@ -168,7 +182,7 @@ public class SelectPlayerScreen extends Group {
 					return "Oops";
 				}
 			}
-			
+
 			@Override
 			public Double fromString(String string) {
 				return 0D;
@@ -178,7 +192,7 @@ public class SelectPlayerScreen extends Group {
 		slider.valueProperty().addListener((b, o, newValue) -> startingLevel = newValue.intValue());
 
 	}
-	
+
 	private class Combo extends VBox {
 		private ImageView imageView;
 		private Label selectedNode = new Label("", new ImageView(config.tickImage));
@@ -279,7 +293,7 @@ public class SelectPlayerScreen extends Group {
 
 				@Override
 				public void handle(ActionEvent event) {
-					if (randomPlayers > 1) {
+					if (randomPlayers > 2) {
 						randomPlayers--;
 						playersNumber.setText("" + randomPlayers);
 					}
@@ -325,6 +339,7 @@ public class SelectPlayerScreen extends Group {
 		}
 	}
 
+	@Override
 	public ArrayList<PlayerAndColor> getSelectedPlayers() {
 		ArrayList<PlayerAndColor> enumPlayers = new ArrayList<>();
 		for (Combo player : players) {
@@ -333,18 +348,26 @@ public class SelectPlayerScreen extends Group {
 			}
 		}
 		if (randomNode.rndCombo.isSelected()) {
+			List<Combo> playerList = new ArrayList<>(players);
 			Random rndGen = new Random();
 			for (int i = 0; i < randomNode.randomPlayers; i++) {
-				int random = rndGen.nextInt(players.size());
-				Combo player = players.remove(random);
+				int random = rndGen.nextInt(playerList.size());
+				Combo player = playerList.remove(random);
 				enumPlayers.add(new PlayerAndColor(PlayerType.valueOf(player.getDescription()), player.getColor()));
 			}
 		}
 		return enumPlayers;
 	}
 
+	@Override
 	public int getFloodStartingLevel() {
 		return startingLevel;
+	}
+
+	@Override
+	public void prepareNewScreen() {
+		goToIsland.setDisable(false);
+		back.setDisable(false);
 	}
 
 }

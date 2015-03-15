@@ -30,14 +30,16 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	private final LocCalculator locCalculator;
 	private Node activeNode;
 
-	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg, Paint color,
-			LocCalculator locCalculator, int index) {
+	public PlayerBaseView(PlayerBase model, Image playerBaseImg, Image playerImg, LocCalculator locCalculator,
+			int index) {
 		super(true, model);
-		Rectangle rect = new Rectangle(283, 220, color);
-		getChildren().add(rect);
 		this.locCalculator = locCalculator;
+		Rectangle rect = new Rectangle(283, 220, Color.BLUE);
+		rect.getStyleClass().add("player-base");
+		getChildren().add(rect);
 		activeNode = createActiveNode();
-		getChildren().add(new ImageView(playerBaseImg));
+		ImageView image = new ImageView(playerBaseImg);
+		getChildren().add(image);
 		ImageView playerImage = new ImageView(playerImg);
 		playerImage.getTransforms().add(new Scale(0.7, 0.7));
 		getChildren().add(playerImage);
@@ -47,26 +49,28 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 		rearrangeCards();
 	}
 
-//	/**
-//	 * rearrange cards withouts animation
-//	 */
-//	private void setUpCards() {
-//		List<TreasuryCard> treasuryCardsInBase = getParentModel().getTreasuryCards();
-//		for (int i = 0; i < treasuryCardsInBase.size(); i++) {
-//			treasuryCardsInBase.get(i).getComponent()
-//					.translate(this.getLoc().add(locCalculator.cardLocationInCardHolder(i)));
-//		}
-//	}
+	// /**
+	// * rearrange cards withouts animation
+	// */
+	// private void setUpCards() {
+	// List<TreasuryCard> treasuryCardsInBase =
+	// getParentModel().getTreasuryCards();
+	// for (int i = 0; i < treasuryCardsInBase.size(); i++) {
+	// treasuryCardsInBase.get(i).getComponent()
+	// .translate(this.getLoc().add(locCalculator.cardLocationInCardHolder(i)));
+	// }
+	// }
 
-//	/**
-//	 * moveToBase without animation
-//	 */
-//	public void setToBase(TreasuryCardView treasuryCard) {
-//		int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
-//		treasuryCard.setSelectable(true);
-//		treasuryCard.translate(PlayerBaseView.this.getLoc().add(
-//				locCalculator.cardLocationInCardHolder(index)));
-//	}
+	// /**
+	// * moveToBase without animation
+	// */
+	// public void setToBase(TreasuryCardView treasuryCard) {
+	// int index =
+	// PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
+	// treasuryCard.setSelectable(true);
+	// treasuryCard.translate(PlayerBaseView.this.getLoc().add(
+	// locCalculator.cardLocationInCardHolder(index)));
+	// }
 
 	public void moveToBase(final TreasuryCardView treasuryCard) {
 		FxThreadBlock block = new FxThreadBlock();
@@ -74,8 +78,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			int index = PlayerBaseView.this.getParentModel().getTreasuryCards().size() - 1;
 			treasuryCard.setSelectable(true);
 			Animations.teleportCardToLocationReverse(treasuryCard,
-					PlayerBaseView.this.getLoc().add(locCalculator.cardLocationInCardHolder(index)),
-					block);
+					PlayerBaseView.this.getLoc().add(locCalculator.cardLocationInCardHolder(index)), block);
 		});
 
 	}
@@ -89,7 +92,7 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 			cardViews.add(treasuryCardsInBase.get(i).getComponent());
 		}
 		FxThreadBlock block = new FxThreadBlock();
-		block.execute(() ->	Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, block));
+		block.execute(() -> Animations.rearrangeCardsInCardHolder(cardViews, locationToMove, block));
 	}
 
 	/**
@@ -113,19 +116,13 @@ public class PlayerBaseView extends AbstractView<PlayerBase> {
 	}
 
 	public void setActive(final boolean active) {
-		Platform.runLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				if (active && !getChildren().contains(activeNode)) {
-					getChildren().add(activeNode);
-				}
-				if (!active) {
-					getChildren().remove(activeNode);
-				}
-			}
-		});
-	
+		if (active && !getChildren().contains(activeNode)) {
+			getChildren().add(activeNode);
+		}
+		if (!active) {
+			getChildren().remove(activeNode);
+		}
+
 	}
 
 	public Node createActiveNode() {

@@ -24,7 +24,7 @@ public class LocCalculator {
 	}
 
 	public Loc playerBasePositionToLoc(int position) {
-		double base_x = 10;
+		double base_x = 5;
 		double base_y = 5;
 		double delta_y = 222;
 		return new Loc(base_x, base_y + position * delta_y);

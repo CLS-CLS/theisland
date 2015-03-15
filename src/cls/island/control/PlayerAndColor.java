@@ -4,18 +4,18 @@ import cls.island.control.Config.PlayerType;
 import cls.island.view.component.piece.PieceColor;
 
 public  class PlayerAndColor {
-	PlayerType player;
-	PieceColor color;
+	private final PlayerType playerType;
+	private final PieceColor pieceColor;
 	
 	public PlayerAndColor(PlayerType player, PieceColor color) {
 		super();
-		this.player = player;
-		this.color = color;
+		this.playerType = player;
+		this.pieceColor = color;
 	}
-	public PlayerType getPlayer() {
-		return player;
+	public PlayerType getPlayerType() {
+		return playerType;
 	}
-	public PieceColor getColor() {
-		return color;
+	public PieceColor getPieceColor() {
+		return pieceColor;
 	}
 }

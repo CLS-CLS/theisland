@@ -23,7 +23,7 @@ import cls.island.view.screen.IslandScreen;
 
 public class GameController {
 	public static enum ButtonAction {
-		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO, MOVE_OTHER, SEND;
+		NEXT_TURN, MOVE, SHORE_UP, TRADE, OK, COLLECT_TREASURE, USE, DISCARD, FLY, UNDO, MOVE_OTHER, SEND, MENU;
 	}
 
 	private GameState gameState;
@@ -143,7 +143,7 @@ public class GameController {
 	}
 
 	/**
-	 * Finds the player who owns the provided piece
+	 * Finds the playerType who owns the provided piece
 	 * 
 	 * @param piece
 	 * @return

@@ -40,7 +40,7 @@ public class GameModel {
 	public static final int DRAW_CARDS_PER_TURN = 2;
 	public static final int MAX_CARDS_ALLOWED_IN_HAND = 5;
 	private static final int MAX_WATER_LEVEL = 9;
-	
+
 	private final Config config;
 	private Options options;
 
@@ -130,8 +130,7 @@ public class GameModel {
 			treasuryPile.addToPile(treasuryCard, PileType.NORMAL);
 		}
 
-		waterLevel = new WaterLevel(options.getFloodStartingLevel(), config.waterLevelImage,
-				config.waterLevelMarkerImage);
+		waterLevel = new WaterLevel(options.getFloodStartingLevel(), config.waterLevelImage, config.waterLevelMarkerImage);
 
 		for (Player player : players) {
 			player.setToIsland(colorToIsland.get(player.getPiece().getColor()));
@@ -155,10 +154,9 @@ public class GameModel {
 		Collections.shuffle(players);
 		for (PlayerAndColor playerType : players) {
 			Image playerBaseImg = config.playerCardHolder;
-			this.players.add(PlayerFactory.createPlayer(playerType.getPlayer(),
-					new Piece(playerType.getPlayer()
-							.name(), playerType.getColor()), new PlayerBase(playerType,
-							playerBaseImg, config.getPlayerImage(playerType.getPlayer()), index)));
+			this.players.add(PlayerFactory.createPlayer(playerType.getPlayerType(), new Piece(playerType.getPlayerType().name(),
+					playerType.getPieceColor()),
+					new PlayerBase(playerType, playerBaseImg, config.getPlayerImage(playerType.getPlayerType()), index)));
 			index++;
 		}
 	}
@@ -180,9 +178,9 @@ public class GameModel {
 				repeats = SANDBAG_CARD_QUANTITY;
 			}
 			for (int i = 0; i < repeats; i++) {
-				treasuryCards.add(new TreasuryCard(config.getTreasureCard(type),
-						config.islandBackCard, new TreasuryCard.Model(type, ViewStatus.FACE_UP),
-						config.treasuryCardUseImg, config.treasuryCardDiscardImg));
+				treasuryCards.add(new TreasuryCard(config.getTreasureCard(type), config.islandBackCard,
+						new TreasuryCard.Model(type, ViewStatus.FACE_UP), config.treasuryCardUseImg,
+						config.treasuryCardDiscardImg));
 			}
 		}
 	}
@@ -209,49 +207,30 @@ public class GameModel {
 			if (name == IslandName.TempleOfTheSun)
 				treasure = Type.EARTH_STONE;
 			if (treasure == null) {
-				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
-						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name,
-								false, false, LocCalculator.getInstance())));
+				islands.add(new Island(config.getIslandTilesImages().get(name.name()), new Island.Model(new Grid(0, 0),
+						new Piece[4], treasure, false, name, false, false, LocCalculator.getInstance())));
 			} else {
-				islands.add(new Island(config.getIslandTilesImages().get(name.name()),
-						new Island.Model(new Grid(0, 0), new Piece[4], treasure, false, name,
-								false, false, LocCalculator.getInstance()), config
-								.getTreasureImage(treasure)));
+				islands.add(new Island(config.getIslandTilesImages().get(name.name()), new Island.Model(new Grid(0, 0),
+						new Piece[4], treasure, false, name, false, false, LocCalculator.getInstance()), config
+						.getTreasureImage(treasure)));
 			}
 		}
 	}
 
 	private void setUpRandomTiles() {
 		Collections.shuffle(islands);
-		int row = 0;
-		int colStart = 2;
-		int colEnd = 3;
-		int col = colStart;
-		for (int i = 0; i < 12; i++) {
-			if (col > colEnd) {
-				colStart--;
-				colEnd++;
-				row++;
-				col = colStart;
+		int islandIndex = 0;
+		LevelDesign ld = new LevelDesign();
+		boolean[][] level = ld.getLevelAsArray(0);
+		for (int row = 0; row < LevelDesign.ROWS; row++) {
+			for (int col = 0; col < LevelDesign.COLUMNS; col++) {
+				if (level[row][col]) {
+					islands.get(islandIndex).setGrid(row, col);
+					islandGrid.addElement(islands.get(islandIndex), row, col);
+					islandIndex++;
+				}
 			}
-			islands.get(i).setGrid(row, col);
-			islandGrid.addElement(islands.get(i), row, col);
-			col++;
 		}
-		col = colStart;
-		row++;
-		for (int i = 12; i < 24; i++) {
-			if (col > colEnd) {
-				colStart++;
-				colEnd--;
-				row++;
-				col = colStart;
-			}
-			islands.get(i).setGrid(row, col);
-			islandGrid.addElement(islands.get(i), row, col);
-			col++;
-		}
-
 	}
 
 	public List<TreasuryCard> getTreasuryCards() {
@@ -259,8 +238,7 @@ public class GameModel {
 	}
 
 	public boolean isAdjacentIslands(Island from, Island to) {
-		Direction[] directions = new Direction[] { Direction.LEFT, Direction.UP, Direction.RIGHT,
-				Direction.DOWN };
+		Direction[] directions = new Direction[] { Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN };
 		return islandGrid.isAdjacent(from, to, directions);
 	}
 
@@ -274,7 +252,7 @@ public class GameModel {
 
 	/**
 	 * 
-	 * @return the player that will play after this turn is over.
+	 * @return the playerType that will play after this turn is over.
 	 */
 	public Player getNextTurnPlayer() {
 		int nextPlayerIndex = (currentTurn == players.size() - 1) ? 0 : currentTurn + 1;
@@ -288,7 +266,7 @@ public class GameModel {
 	/**
 	 * Progress to next turn
 	 * 
-	 * @return The player that is now playing
+	 * @return The playerType that is now playing
 	 */
 	public Player nextTurn() {
 		currentTurn = (currentTurn == players.size() - 1) ? 0 : currentTurn + 1;
@@ -300,11 +278,15 @@ public class GameModel {
 	public Player getCurrentTurnPlayer() {
 		return players.get(currentTurn);
 	}
-	
+
 	/**
-	 * Removes the card from the players pile and puts the card in the discarded pile
-	 * @param player the player who this card belongs to
-	 * @param treasuryCard the card to be discarded
+	 * Removes the card from the players pile and puts the card in the discarded
+	 * pile
+	 * 
+	 * @param playerType
+	 *            the playerType who this card belongs to
+	 * @param treasuryCard
+	 *            the card to be discarded
 	 */
 	public void discardCard(Player player, TreasuryCard treasuryCard) {
 		treasuryPile.addToPile(treasuryCard, PileType.DISCARD);
@@ -313,9 +295,9 @@ public class GameModel {
 
 	/**
 	 * 
-	 * @param player
+	 * @param playerType
 	 * @param card
-	 * @return the index of the card in the player 's hand
+	 * @return the index of the card in the playerType 's hand
 	 */
 	public int giveCardToPlayerFromTreasurePile(Player player, TreasuryCard card) {
 		if (!treasuryPile.containsInPile(card)) {
@@ -331,7 +313,8 @@ public class GameModel {
 	}
 
 	/**
-	 * floods an island and updates the floodlist 
+	 * floods an island and updates the floodlist
+	 * 
 	 * @param island
 	 */
 	public void floodIsland(Island island) {
@@ -413,8 +396,7 @@ public class GameModel {
 			for (Type remainingTreasure : remainingTreasures) {
 				int sinked = 0;
 				for (Island island : islands) {
-					if (island.hasTreasure() && island.getTreasure() == remainingTreasure
-							&& island.isSunk()) {
+					if (island.hasTreasure() && island.getTreasure() == remainingTreasure && island.isSunk()) {
 						sinked++;
 					}
 				}
@@ -433,7 +415,9 @@ public class GameModel {
 
 	/**
 	 * checks if any of the loose condition is met.
-	 * @param infos object to store more information about the lost conditions
+	 * 
+	 * @param infos
+	 *            object to store more information about the lost conditions
 	 * @return the kind of the loose condition. <code> null </code> if none is
 	 *         met.
 	 */
@@ -449,8 +433,7 @@ public class GameModel {
 		for (Type remainingTreasure : remainingTreasures) {
 			int sinked = 0;
 			for (Island island : islands) {
-				if (island.hasTreasure() && island.getTreasure() == remainingTreasure
-						&& island.isSunk()) {
+				if (island.hasTreasure() && island.getTreasure() == remainingTreasure && island.isSunk()) {
 					sinked++;
 				}
 			}
@@ -473,11 +456,12 @@ public class GameModel {
 	}
 
 	/**
-	 * Collects a treasure for the current turn player. 1)discards all the
-	 * collection cards from the player hand 2)Adds the collected treasure to
-	 * the treasure bug 3)decreases the actions of the player by 1.
+	 * Collects a treasure for the current turn playerType. 1)discards all the
+	 * collection cards from the playerType hand 2)Adds the collected treasure to
+	 * the treasure bug 3)decreases the actions of the playerType by 1.
 	 * 
-	 * @param collectionCards the cards that form the collection.
+	 * @param collectionCards
+	 *            the cards that form the collection.
 	 * @return the type of the treasure collected.
 	 */
 	public Type collectTreasure(List<TreasuryCard> collectionCards) {
@@ -491,13 +475,16 @@ public class GameModel {
 	}
 
 	/**
-	 * finds all the cards which the current player can trade, and the available players the player can 
-	 * trade with.
-	 * @param cards a list that will be  filled with the cards that can be traded.
-	 * @param players list that will be filled with the players the current player can trade with.
+	 * finds all the cards which the current playerType can trade, and the available
+	 * players the playerType can trade with.
+	 * 
+	 * @param cards
+	 *            a list that will be filled with the cards that can be traded.
+	 * @param players
+	 *            list that will be filled with the players the current playerType
+	 *            can trade with.
 	 */
-	public void findCurrentPlayerEligibleCardsAndPlayersToTrade(List<TreasuryCard> cards,
-			List<Player> players) {
+	public void findCurrentPlayerEligibleCardsAndPlayersToTrade(List<TreasuryCard> cards, List<Player> players) {
 		for (TreasuryCard card : getCurrentTurnPlayer().getTreasuryCards()) {
 			if (card.getType().getAbility() == Ability.TREASURE) {
 				cards.add(card);
@@ -517,10 +504,12 @@ public class GameModel {
 	}
 
 	/**
-	 * Convenient method. Checks if the current turn player can give cards to another player. 
-	 * The method uses the {@link findCurrentPlayerEligibleCardsAndPlayersToTrade} to 
-	 * find all the players and cards that can be traded.
-	 * @return 
+	 * Convenient method. Checks if the current turn playerType can give cards to
+	 * another playerType. The method uses the
+	 * {@link findCurrentPlayerEligibleCardsAndPlayersToTrade} to find all the
+	 * players and cards that can be traded.
+	 * 
+	 * @return
 	 */
 	public boolean canTrade() {
 		List<TreasuryCard> cards = new ArrayList<>();
@@ -530,20 +519,20 @@ public class GameModel {
 	}
 
 	/**
-	 * Checks if the treasure can be collected by the specified player. A treasure can be collected
-	 * when  : 
-	 * 1) the player has actions left 
-	 * 2) the player has a treasure set 
-	 * 3) is on the island containing the same treasure with his treasure set.
-	 * @param player the player the check will be performed against
+	 * Checks if the treasure can be collected by the specified playerType. A
+	 * treasure can be collected when : 1) the playerType has actions left 2) the
+	 * playerType has a treasure set 3) is on the island containing the same
+	 * treasure with his treasure set.
+	 * 
+	 * @param playerType
+	 *            the playerType the check will be performed against
 	 * @return
 	 */
 	public boolean canCollectTreasure(Player player) {
 		boolean canCollect = true;
 		List<TreasuryCard> collectionCards = getTreasureCollection(player);
 		Type treasureOnIsland = player.getPiece().getIsland().getTreasure();
-		if (!player.hasAction() || collectionCards.size() == 0
-				|| !collectionCards.get(0).getType().equals(treasureOnIsland)
+		if (!player.hasAction() || collectionCards.size() == 0 || !collectionCards.get(0).getType().equals(treasureOnIsland)
 				|| getTreasureBag().isTreasureCollected(collectionCards.get(0).getType())) {
 			canCollect = false;
 		}
@@ -551,9 +540,11 @@ public class GameModel {
 	}
 
 	/**
-	 * Finds all the cards that forms a collection of 4 cards
-	 * of the same treasure type
-	 * @param player the player holding the cards to check.
+	 * Finds all the cards that forms a collection of 4 cards of the same
+	 * treasure type
+	 * 
+	 * @param playerType
+	 *            the playerType holding the cards to check.
 	 * @return the cards forming the treasure collection
 	 */
 	public List<TreasuryCard> getTreasureCollection(Player player) {
@@ -584,8 +575,9 @@ public class GameModel {
 	}
 
 	/**
-	 * Checks if the player has met the win conditions
-	 * @return true if the player has won, false otherwise
+	 * Checks if the playerType has met the win conditions
+	 * 
+	 * @return true if the playerType has won, false otherwise
 	 */
 	public boolean hasWon() {
 		Island island = getCurrentTurnPlayer().getPiece().getIsland();
@@ -598,10 +590,11 @@ public class GameModel {
 	}
 
 	/**
-	 * gives back to player the specified discarded card
+	 * gives back to playerType the specified discarded card
+	 * 
 	 * @param cardHolder
 	 * @param selectedTreasureCard
-	 * @return the index of the card in the player's hand
+	 * @return the index of the card in the playerType's hand
 	 */
 	public int undiscardCard(Player cardHolder, TreasuryCard discardedCard) {
 		treasuryPile.removeFromPile(discardedCard, PileType.DISCARD);

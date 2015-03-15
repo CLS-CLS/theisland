@@ -57,6 +57,10 @@ public class TreasuryBagView extends AbstractView<TreasureBag>{
 		mapping.get(type).setEffect(null);
 	}
 	
+	public void addEffect(final Type type){
+		mapping.get(type).setEffect(createUnacqiredEffect());
+	}
+	
 	
 	
 	

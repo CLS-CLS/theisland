@@ -68,12 +68,15 @@ import cls.island.view.component.waterlevel.WaterLevelView;
 import cls.island.view.control.Action;
 import cls.island.view.screen.popup.FloodCardDrawPopUp;
 import cls.island.view.screen.popup.GameLostPopUp;
+import cls.island.view.screen.popup.MenuPopUp;
 import cls.island.view.screen.popup.PopUpInternal;
 import cls.island.view.screen.popup.PopUpWrapper;
 import cls.island.view.screen.popup.SelectPieceToFlyPopup;
 import cls.island.view.screen.popup.TreasuryCardsSneakPeek;
+import cls.island.view.screen.popup.WinGamePopUp;
 
 public class IslandScreen extends Group {
+	private static final int MAX_CAMERA_ANGLE = 45;
 	Group controlSceneGroup = new Group();
 	Group islandSceneGroup = new Group();
 	private SubScene controlScene = new SubScene(controlSceneGroup, 1440, 900);
@@ -98,6 +101,7 @@ public class IslandScreen extends Group {
 	private ToggleButton tradeButton;
 	private ToggleButton flyButton;
 	private ToggleButton moveOtherButton;
+	private Button menuButton;
 	private List<TreasuryCardView> floodCards = new ArrayList<>();
 	private IslandView islandViewToDelete;
 	private WaterLevelView waterLevelView;
@@ -108,11 +112,14 @@ public class IslandScreen extends Group {
 	private Rotate xRotate;
 	private boolean moveCamera;
 	private ImageView background2;
+	private PopUpInternal<Void> menuPopUp;
 
 	public IslandScreen(final Stage stage, final GameController gameController, final Config config, GameModel model) {
+		
 		this.stage = stage;
 		this.getChildren().addAll(controlScene, islandScene);
 		this.config = config;
+		this.menuPopUp = new MenuPopUp(gameController, config );
 		
 		PerspectiveCamera camera = new PerspectiveCamera(true);
 		setUpLights(islandSceneGroup);
@@ -161,6 +168,7 @@ public class IslandScreen extends Group {
 			controlSceneGroup.getChildren().add(player.getBase().getComponent());
 		}
 		model.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
+		model.getCurrentTurnPlayer().getPiece().getComponent().createValidToClick().switchEffectOn();
 
 		// ~~~~ ~~~~~~~~~~~~~ treasury base -cards ~~~~~~~~~~~~~~~~~~~~~~ //
 		treasuryBase = model.getTreasuryPile();
@@ -178,7 +186,7 @@ public class IslandScreen extends Group {
 		});
 
 		addEventHandler(MouseEvent.MOUSE_DRAGGED, this::moveCamera);
-
+		
 		addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
 			moveCamera = (e.getTarget() == background2);
 			startingY = e.getY();
@@ -213,13 +221,18 @@ public class IslandScreen extends Group {
 		nextTurnButton = ButtonFactory.actionButton("Next \n Turn", ButtonAction.NEXT_TURN, gameController);
 		buttons.add(nextTurnButton);
 		undoButton = ButtonFactory.actionButton("Undo", ButtonAction.UNDO, gameController);
+		
 		flyButton = ButtonFactory.actionToggleButton("Fly", ButtonAction.FLY, gameController);
-
 		flyButton.setToggleGroup(toggleGroup);
 		buttons.add(flyButton);
+		
+		menuButton = ButtonFactory.menuButton("Menu");
+		menuButton.setOnAction((e)->c_showMenuPopUp());
+		
 		moveOtherButton = ButtonFactory.actionToggleButton("Move \nOther", ButtonAction.MOVE_OTHER, gameController);
 		moveOtherButton.setToggleGroup(toggleGroup);
 		buttons.add(moveOtherButton);
+		
 		ActionsLeftView actionsLeft = model.getActionsLeft().getComponent();
 		controlSceneGroup.getChildren().add(actionsLeft);
 		actionsLeft.translate(300, 710);
@@ -240,6 +253,9 @@ public class IslandScreen extends Group {
 		flyButton.setTranslateY(520);
 		moveOtherButton.setTranslateX(1310);
 		moveOtherButton.setTranslateY(520);
+		
+		menuButton.setTranslateX(1210);
+		menuButton.setTranslateY(840);
 
 		controlSceneGroup.getChildren().add(moveButton);
 		controlSceneGroup.getChildren().add(shoreUpButton);
@@ -247,11 +263,13 @@ public class IslandScreen extends Group {
 		controlSceneGroup.getChildren().add(tradeButton);
 		controlSceneGroup.getChildren().add(nextTurnButton);
 		controlSceneGroup.getChildren().add(undoButton);
+		controlSceneGroup.getChildren().add(menuButton);
 		c_setUpButtonsForPlayer(model.getCurrentTurnPlayer());
 		controlSceneGroup.getChildren().add(msgPanel);
 		msgPanel.translate(500, 1000);
 		// addControls();
 	}
+
 
 	public void moveCamera(MouseEvent me) {
 		if (!moveCamera)
@@ -260,8 +278,8 @@ public class IslandScreen extends Group {
 		startingY = me.getY();
 		double deltaAngle = (delta / 500) * 30;
 		double finalAngle = xRotate.getAngle() + deltaAngle;
-		if (finalAngle > 25) {
-			finalAngle = 25;
+		if (finalAngle > MAX_CAMERA_ANGLE) {
+			finalAngle = MAX_CAMERA_ANGLE;
 		}
 		if (finalAngle < 0) {
 			finalAngle = 0;
@@ -343,7 +361,9 @@ public class IslandScreen extends Group {
 			tmln.play();
 		});
 	}
-
+	public void c_WinGamePopUp(){
+		c_showPopup(new WinGamePopUp());
+	}
 	public void c_WaterCardDrawnPopUp() {
 		c_showPopup(new FloodCardDrawPopUp());
 	}
@@ -386,6 +406,10 @@ public class IslandScreen extends Group {
 
 	public void c_showTreasurePilePopUp(PileType type) {
 		c_showPopup(new TreasuryCardsSneakPeek(treasuryBase, type));
+	}
+	
+	public void c_showMenuPopUp(){
+		c_showPopup(menuPopUp);
 	}
 
 	/**

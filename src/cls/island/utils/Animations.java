@@ -24,7 +24,7 @@ public class Animations {
 	 * @param to
 	 * @param root
 	 */
-	public static void transtition(final Node from, final Node to, final Group root) {
+	public static void transition(final Node from, final Node to, final Group root) {
 		if (from != null && !root.getChildrenUnmodifiable().contains(from)) {
 			throw new IllegalArgumentException("the \"from\" node is not child of root");
 		}

@@ -68,7 +68,7 @@ public class Player {
 	
 	/**
 	 * convenient method
-	 * @return the cards the player is holding
+	 * @return the cards the playerType is holding
 	 */
 	public List<TreasuryCard> getTreasuryCards() {
 		return new ArrayList<>(base.getTreasuryCards());
@@ -83,7 +83,7 @@ public class Player {
 	}
 
 	/**
-	 * Returns all the islands the player can make a valid move with i its
+	 * Returns all the islands the playerType can make a valid move with i its
 	 * standard move. Players with special move abilities should override this
 	 * method.
 	 * 
@@ -96,11 +96,11 @@ public class Player {
 	}
 
 	/**
-	 * Checks if the player can make a valid standard move. Players
+	 * Checks if the playerType can make a valid standard move. Players
 	 * with special move abilities should override this method.
 	 * 
-	 * @param fromIsland the island the player is going to move from 
-	 * @param toIsland the island the player will go
+	 * @param fromIsland the island the playerType is going to move from 
+	 * @param toIsland the island the playerType will go
 	 * @param grid the island grids
 	 * @return true if it is valid move
 	 */
@@ -116,9 +116,9 @@ public class Player {
 	}
 
 	/**
-	 * checks if the player can shore up the specific island. The checks are: 1)
-	 * if the island is adjacent to player 2) the island is not sunk. 3) the
-	 * island is the same island the player is on
+	 * checks if the playerType can shore up the specific island. The checks are: 1)
+	 * if the island is adjacent to playerType 2) the island is not sunk. 3) the
+	 * island is the same island the playerType is on
 	 * 
 	 * @param fromIsland
 	 * @param toIsland
@@ -138,9 +138,9 @@ public class Player {
 	}
 	
 	/**
-	 * Check if the player can perform a shore up. By default a player can perform a shore up
+	 * Check if the playerType can perform a shore up. By default a playerType can perform a shore up
 	 * if he has at least one action left. Override this method for specific checks.
-	 * @return true if the player can perform a shore up.
+	 * @return true if the playerType can perform a shore up.
 	 */
 	public boolean canShoreUp() {
 		return actionsLeft.getValue() > 0;
@@ -148,7 +148,7 @@ public class Player {
 	}
 
 	/**
-	 * Moves the player to an island and updates the actions left
+	 * Moves the playerType to an island and updates the actions left
 	 * according to the game's rules. The island should not be sunk. Players with 
 	 * specific move abilities should override this method. In case the model
 	 * update (except the location update) is not desired use the
@@ -166,7 +166,7 @@ public class Player {
 	}
 
 	/**
-	 * Moves the player's piece to the provided island without any restriction.
+	 * Moves the playerType's piece to the provided island without any restriction.
 	 * The move is not bound to any rules and does not affect/update any other
 	 * property. The method should be used only when the piece should be set
 	 * directly to the desired island and the move is not part of the game (for
@@ -210,7 +210,7 @@ public class Player {
 	}
 
 	/**
-	 * Gives a treasure card (with ability TREASURE) to another player and
+	 * Gives a treasure card (with ability TREASURE) to another playerType and
 	 * updates all the model attributes (Player' s actions left) according to
 	 * the game's rules. In case no model update (except the ownership update of
 	 * the card) is desired use the {@link setGiveCard} method.
@@ -219,8 +219,8 @@ public class Player {
 	 * unconditionally. Use the {@link canGiveCard} method to ensure that game
 	 * rules are met
 	 * 
-	 * @param player
-	 *            the player to receice the card
+	 * @param playerType
+	 *            the playerType to receice the card
 	 * @param card
 	 *            the card to give
 	 */
@@ -235,13 +235,13 @@ public class Player {
 	}
 
 	/**
-	 * Ensures that this player can give the provided card to his co-player
+	 * Ensures that this playerType can give the provided card to his co-playerType
 	 * according to the game rules. Override this method in order to provide
-	 * specific game rules. As default a player can give to his co-player the
+	 * specific game rules. As default a playerType can give to his co-playerType the
 	 * card when 1) they are at the same tile 2) the giver has actions
 	 * 
-	 * @param player
-	 *            the player to receice the card
+	 * @param playerType
+	 *            the playerType to receice the card
 	 * @param card the treasure card to give
 	 * @return true if the card can be given
 	 */
@@ -255,11 +255,11 @@ public class Player {
 	}
 
 	/**
-	 * gives the specified card to the provided player unconditionally, and does
+	 * gives the specified card to the provided playerType unconditionally, and does
 	 * not apply any game rules.
 	 * 
-	 * @param player
-	 *            the player to receice the card
+	 * @param playerType
+	 *            the playerType to receice the card
 	 * @param card
 	 *            the card to give
 	 */

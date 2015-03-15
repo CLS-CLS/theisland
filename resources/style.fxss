@@ -38,11 +38,11 @@
 }
 
 .action-button: pressed {
-	-fx-font: bold italic 20pt "Arial";
+	-fx-font: bold italic 16pt "Arial";
 	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
 	-fx-background-insets: 0 0 0 0, 0, 1, 2;
 	-fx-background-radius: 5, 5, 4, 3;
-	  -fx-background-color: linear-gradient(#f0ff35, #a9ff00)
+	-fx-background-color: linear-gradient(#f0ff35, #a9ff00)
 }
 
 .action-button: hover {
@@ -57,6 +57,20 @@
 		radial-gradient(center 50% -40%, radius 200%, #c2c2c2 45%, #393939 50%);
 }
 
+.menu-button {
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #2C58E8 45%, #2C42E8 50%);
+	-fx-font: bold italic 20pt "Arial";
+	-fx-text-fill: white;
+}
+.menu-button: pressed {
+	-fx-font: bold italic 22pt "Arial";
+	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+	-fx-background-insets: 0 0 0 0, 0, 1, 2;
+	-fx-background-radius: 5, 5, 4, 3;
+	-fx-background-color: radial-gradient(center 50% -40%, radius 200%, #1A18E8 45%, #1A12E8 50%);
+		
+}
+
 
 .action-toggle-button {
 	-fx-font: 12pt "Arial";
@@ -68,7 +82,7 @@
 }
 
 .action-toggle-button: pressed {
-	-fx-font: bold italic 20pt "Arial";
+	-fx-font: bold italic 16pt "Arial";
 	-fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
 	-fx-background-insets: 0 0 0 0, 0, 1, 2;
 	-fx-background-radius: 5, 5, 4, 3;
@@ -155,5 +169,9 @@
 
 .pile-sneek-pick-pane {
 	-fx-background-color: DARKGREEN;
+}
+
+.player-base {
+	-fx-fill: linear-gradient(beige, BURLYWOOD,white);
 }
 

@@ -4,6 +4,7 @@ import javafx.scene.input.MouseEvent;
 import cls.island.control.GameController.ButtonAction;
 
 public interface GameState {
+	
 	/**
 	 * handles the click of the mouse 
 	 * @param event

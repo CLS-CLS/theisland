@@ -35,8 +35,8 @@ public class TradeCardState implements GameState {
 	}
 	
 	/**
-	 * if there is exactly one player eligible the selected card is given
-	 * automatically to that player
+	 * if there is exactly one playerType eligible the selected card is given
+	 * automatically to that playerType
 	 */
 	@Override
 	public GameState mouseClicked(MouseEvent event) {
@@ -80,7 +80,7 @@ public class TradeCardState implements GameState {
 	
 	/**
 	 * starts the state if 
-	 * 1)the player has at least one action
+	 * 1)the playerType has at least one action
 	 * 2)there are eligible cards to give
 	 * 3)there are eligible players to receive cards
 	  */

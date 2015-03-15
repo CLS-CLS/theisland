@@ -46,7 +46,7 @@ public class WaterRiseState implements GameState {
 			return null;
 		}
 
-		// check clicked on treasury card and that this card belongs to a player
+		// check clicked on treasury card and that this card belongs to a playerType
 		TreasuryCard selectedCard = null;
 		IslandComponent component = ViewUtils.findIslandComponent((Node) event.getTarget());
 

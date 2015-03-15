@@ -19,7 +19,7 @@ public class NavigatorPlayer extends Player {
 	}
 
 	/**
-	 * Moves the player to the provided island using his flying ability and
+	 * Moves the playerType to the provided island using his flying ability and
 	 * removes one action.
 	 * 
 	 * @param toIsland

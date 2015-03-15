@@ -22,11 +22,11 @@ public class PlayerBase {
 
 	public PlayerBase(PlayerAndColor playerType, List<TreasuryCard> treasuryCards, Image playerBaseImg, Image playerImg,
 			int index) {
-		this.playerType = playerType.getPlayer();
+		this.playerType = playerType.getPlayerType();
 		this.treasuryCards.addAll(treasuryCards);
 	
 		this.playerBaseView = new PlayerBaseView(this, playerBaseImg, playerImg, 
-				LinearGradient.valueOf("linear-gradient(to bottom right, beige, BURLYWOOD,white)"),LocCalculator.getInstance(), index);
+				LocCalculator.getInstance(), index);
 	}
 
 	public List<TreasuryCard> getTreasuryCards() {

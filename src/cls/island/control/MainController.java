@@ -13,6 +13,7 @@ import cls.island.utils.Animations;
 import cls.island.utils.TimeLineManager;
 import cls.island.view.screen.IslandScreen;
 import cls.island.view.screen.OptionScreen;
+import cls.island.view.screen.OptionsScreen;
 import cls.island.view.screen.Root;
 import cls.island.view.screen.SelectPlayerScreen;
 import cls.island.view.screen.StartScreen;
@@ -22,7 +23,7 @@ public class MainController {
 	protected volatile boolean animationInProgress = false;
 	protected Stage stage;
 	protected StartScreen startScreen;
-	protected SelectPlayerScreen selectPlayerScreen;
+	protected OptionsScreen selectPlayerScreen;
 	protected Scene scene;
 	protected Config config;
 	protected Root root;
@@ -37,11 +38,12 @@ public class MainController {
 	}
 
 	public void goToStartPreGame() {
-		Animations.transtition(startScreen, selectPlayerScreen, root);
+		selectPlayerScreen.prepareNewScreen();
+		Animations.transition(startScreen, (Node)selectPlayerScreen, root);
 	}
 
 	public void goToOptions() {
-		Animations.transtition(startScreen, optionScreen, root);
+		Animations.transition(startScreen, optionScreen, root);
 	}
 
 	public void goToIslandScreen() {
@@ -63,7 +65,7 @@ public class MainController {
 	}
 
 	public void goToMainScreen(Node from) {
-		Animations.transtition(from, startScreen, root);
+		Animations.transition(from, startScreen, root);
 	}
 
 	public void init() {
@@ -78,22 +80,10 @@ public class MainController {
 		initStage();
 
 		// When animation is in progress the mouse events are disabled.
-		TimeLineManager.getInstance().registerNotifyStart(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				animationInProgress = true;
-			}
-		});
+		TimeLineManager.getInstance().registerNotifyStart((e)->	animationInProgress = true);
 
 		// When animation is over the mouse events are enabled.
-		TimeLineManager.getInstance().registerNotifyFinish(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				animationInProgress = false;
-			}
-		});
+		TimeLineManager.getInstance().registerNotifyFinish((e)-> animationInProgress = false);
 
 		// goToMainScreen(null);
 	}

@@ -23,7 +23,7 @@ public class UseOrDiscardCardState implements GameState {
 	private final Player playerToDiscardCards;
 
 	/**
-	 * Constructor to create a UseOrDiscardCardState for the cards of the currentTurn player
+	 * Constructor to create a UseOrDiscardCardState for the cards of the currentTurn playerType
 	 * @param gameController
 	 * @param islandScreen
 	 * @param gameModel
@@ -40,7 +40,7 @@ public class UseOrDiscardCardState implements GameState {
 
 	/**
 	 * 
-	 * @param playertToDiscardCards the player who holds more cards than allowed
+	 * @param playertToDiscardCards the playerType who holds more cards than allowed
 	 * @param gameController
 	 * @param islandScreen
 	 * @param gameModel

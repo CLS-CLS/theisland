@@ -14,7 +14,7 @@ public class PilotPlayer extends Player {
 	}
 	
 	/**
-	 * Moves the player to the provided island using his flying ability and removes one action.
+	 * Moves the playerType to the provided island using his flying ability and removes one action.
 	 * @param toIsland
 	 */
 	public int fly(Island toIsland){
@@ -25,7 +25,7 @@ public class PilotPlayer extends Player {
 	}
 	
 	/**
-	 * Checks if the player has used his flying ability in his turn
+	 * Checks if the playerType has used his flying ability in his turn
 	 * @return true if he has not used this ability in this turn.
 	 */
 	public boolean canFly(){

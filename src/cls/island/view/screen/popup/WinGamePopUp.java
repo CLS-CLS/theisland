@@ -1,30 +1,26 @@
 
 package cls.island.view.screen.popup;
 
-import cls.island.utils.ButtonFactory;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import cls.island.control.Config;
+import cls.island.utils.ButtonFactory;
 
-public class FloodCardDrawPopUp extends PopUpInternal<Void> {
+public class WinGamePopUp extends PopUpInternal<Void> {
 	
-	public FloodCardDrawPopUp() {
+	public WinGamePopUp() {
 		VBox vBox = new VBox();
-		Rectangle rect = new Rectangle(500,500,Color.BLUE);
-		vBox.getChildren().add(rect);
+		ImageView win = new ImageView(Config.getInstance().winImage);
+		vBox.getChildren().add(win);
 		Button exit = ButtonFactory.genButton("OK");
 		exit.setOnAction((event) -> close());
 		
 		vBox.getChildren().add(exit);
 		vBox.setMaxHeight(Double.MAX_VALUE);
 		getChildren().add(vBox);
-		
-		Label label = new Label();
-		label.getStyleClass().add("white-text-button");
-		label.setText("     DANGER !!!!\n: Flood is eminent after this playerType' s turn is over!");
-		getChildren().add(label);
 	}
 
 	@Override

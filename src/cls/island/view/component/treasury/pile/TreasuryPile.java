@@ -51,6 +51,14 @@ public class TreasuryPile {
 		}
 		return treasuryCard;
 	}
+	
+	public TreasuryCard getTopDiscardPileCard() {
+		TreasuryCard treasuryCard = null;
+		if (discardPile.size() > 0) {
+			treasuryCard = discardPile.get(discardPile.size() - 1);
+		}
+		return treasuryCard;
+	}
 
 	public boolean containsInPile(TreasuryCard treasuryCard) {
 		return pile.contains(treasuryCard);

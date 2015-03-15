@@ -61,9 +61,9 @@ public class ViewUtils {
 	}
 
 	// public static Player getPlayerById(GameModel gameModel, String id) {
-	// Optional<Player> player = gameModel.getPlayers().stream().filter((p) ->
+	// Optional<Player> playerType = gameModel.getPlayers().stream().filter((p) ->
 	// p.getPlayerId().equals(id)).findFirst();
-	// return player.get();
+	// return playerType.get();
 	//
 	// }
 

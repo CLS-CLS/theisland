@@ -68,6 +68,8 @@ public class IslandTurnState implements GameState {
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().setActive(true);
 			islandScreen.c_setUpButtonsForPlayer(gameModel.getCurrentTurnPlayer());
 			counter = 0;
+			gameModel.getPlayers().forEach((p)->p.resetActions());
+			gameModel.getCurrentTurnPlayer().getPiece().getComponent().createValidToClick().switchEffectOn();
 			return new NormalState(gameController, islandScreen, gameModel);
 
 		}

@@ -21,8 +21,7 @@ public class ShoreUpState implements GameState {
 	private final IslandScreen islandScreen;
 	private final GameModel gameModel;
 
-	public ShoreUpState(GameController gameController, IslandScreen islandScreen,
-			GameModel gameModel) {
+	public ShoreUpState(GameController gameController, IslandScreen islandScreen, GameModel gameModel) {
 		this.gameController = gameController;
 		this.islandScreen = islandScreen;
 		this.gameModel = gameModel;
@@ -33,8 +32,7 @@ public class ShoreUpState implements GameState {
 		if (event.getButton() == MouseButton.SECONDARY) {
 			return normalState();
 		}
-		final IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event
-				.getTarget());
+		final IslandComponent islandComponent = ViewUtils.findIslandComponent((Node) event.getTarget());
 		if (!(islandComponent instanceof IslandView))
 			return null;
 		final IslandView islandView = (IslandView) islandComponent;
@@ -43,16 +41,17 @@ public class ShoreUpState implements GameState {
 
 		// primary button pressed on flooded island
 		final Player player = gameModel.getCurrentTurnPlayer();
-		
-		//and is a valid shore-up.
-		if (!player.isValidShoreUp(player.getPiece().getIsland(), islandView.getParentModel(),
-				gameModel.getIslandGrid())) {
+
+		// and is a valid shore-up.
+		if (!player.isValidShoreUp(player.getPiece().getIsland(), islandView.getParentModel(), gameModel.getIslandGrid())) {
 			return null;
 		}
-		
-		
-		gameController.executeAction(new RevertableAction(){
-			
+
+		gameController.executeAction(new RevertableAction() {
+			public int actionsLeftBefore = player.getActionsLeft();
+			boolean consequence = (player instanceof EngineerPlayer ? ((EngineerPlayer) player).isConsequentShoreUp()
+					: false);
+
 			@Override
 			public void execute() {
 				player.shoreUp(islandView.getParentModel());
@@ -61,19 +60,20 @@ public class ShoreUpState implements GameState {
 
 			@Override
 			public GameState revert() {
-				if (player instanceof EngineerPlayer){
-					((EngineerPlayer)player).undoShoreUp();
-				}else {
-					player.setActionsLeft(player.getActionsLeft()+1);
+				if (player instanceof EngineerPlayer) {
+					((EngineerPlayer) player).undoShoreUp(actionsLeftBefore, consequence);
+				} else {
+					player.setActionsLeft(actionsLeftBefore);
 				}
 				islandView.getParentModel().flood();
 				islandView.flood();
 				return normalState();
 			}
-			
+
 		});
-		
-		if (!player.canShoreUp()) return normalState();
+
+		if (!player.canShoreUp())
+			return normalState();
 		return null;
 	}
 
@@ -85,10 +85,10 @@ public class ShoreUpState implements GameState {
 
 	@Override
 	public GameState buttonPressed(ButtonAction action) {
-		if (action == ButtonAction.SHORE_UP){
+		if (action == ButtonAction.SHORE_UP) {
 			return normalState();
 		}
-		
+
 		return null;
 
 	}
@@ -106,8 +106,7 @@ public class ShoreUpState implements GameState {
 		if (!currentPlayer.canShoreUp()) {
 			return new NormalState(gameController, islandScreen, gameModel);
 		}
-		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up"
-				+ "\nRight Click to cancel");
+		islandScreen.c_showMessagePanel("Select a flooded island to Shore-up" + "\nRight Click to cancel");
 		islandScreen.c_setCursorImage(ButtonAction.SHORE_UP);
 		return null;
 	}

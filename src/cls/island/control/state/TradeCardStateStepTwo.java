@@ -106,7 +106,7 @@ public class TradeCardStateStepTwo implements GameState {
 	}
 
 	/**
-	 * Gives the card to the player, and returns the state that should move on
+	 * Gives the card to the playerType, and returns the state that should move on
 	 * @return the next state to go.s
 	 */
 	private GameState giveCard(Player receiver) {
@@ -121,27 +121,28 @@ public class TradeCardStateStepTwo implements GameState {
 	}
 
 	private final class TradeAction implements RevertableAction {
-		private final Player playerToGiveCard;
+		private final Player taker;
 		TreasuryCard card = selectedCard;
-		Player playerFrom = gameModel.getCurrentTurnPlayer();
+		Player giver = gameModel.getCurrentTurnPlayer();
 		GameState stateToReturn = TradeCardStateStepTwo.this.fromState.getFromState();
 
 		private TradeAction(Player playerToGiveCard) {
-			this.playerToGiveCard = playerToGiveCard;
+			this.taker = playerToGiveCard;
 		}
 
 		@Override
 		public GameState revert() {
-			playerToGiveCard.setGiveCard(playerFrom, card);
-			playerFrom.setActionsLeft(playerFrom.getActionsLeft() + 1);
-			playerFrom.getBase().getComponent().moveToBase(card.getComponent());
+			taker.setGiveCard(giver, card);
+			taker.getBase().getComponent().rearrangeCards();
+			giver.setActionsLeft(giver.getActionsLeft() + 1);
+			giver.getBase().getComponent().moveToBase(card.getComponent());
 			return stateToReturn;
 		}
 
 		@Override
 		public void execute() {
-			gameModel.getCurrentTurnPlayer().giveCard(playerToGiveCard, selectedCard);
-			playerToGiveCard.getBase().getComponent().moveToBase(selectedCard.getComponent());
+			gameModel.getCurrentTurnPlayer().giveCard(taker, selectedCard);
+			taker.getBase().getComponent().moveToBase(selectedCard.getComponent());
 			gameModel.getCurrentTurnPlayer().getBase().getComponent().rearrangeCards();
 			islandScreen.c_hideMessagePanel();
 			selectedCard.getComponent().setValidToCkickEffect(false);

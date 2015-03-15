@@ -39,7 +39,11 @@ public class TreasureBag {
 			throw new IllegalArgumentException(treasure + " already collected");
 		acquiredTreasures.add(treasure);
 	}
-
+	
+	public void removeTreasure(Type collectedType) {
+		acquiredTreasures.remove(collectedType);
+	}
+	
 	/**
 	 * convinient method. Checks if the specified treasure is already collected.
 	 * 
@@ -56,5 +60,7 @@ public class TreasureBag {
 	public TreasuryBagView getComponent() {
 		return view;
 	}
+
+
 
 }

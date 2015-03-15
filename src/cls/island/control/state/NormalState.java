@@ -83,7 +83,7 @@ public class NormalState implements GameState {
 	}
 
 	private GameState mouseClickedOnTreasuryCard(TreasuryCard card) {
-		// check that the treasury card belongs to one player
+		// check that the treasury card belongs to one playerType
 		boolean playerHasit = false;
 		for (Player player : gameModel.getPlayers()) {
 			if (player.getTreasuryCards().contains(card)) {
@@ -122,7 +122,7 @@ public class NormalState implements GameState {
 	}
 
 	private GameState nextTurn() {
-		gameModel.getCurrentTurnPlayer().resetActions();
+		gameModel.getCurrentTurnPlayer().getPiece().getComponent().createValidToClick().switchEffectOff();
 		return new DrawCardState(gameController, islandScreen, gameModel);
 	}
 

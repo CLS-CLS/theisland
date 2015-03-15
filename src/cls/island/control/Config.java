@@ -20,14 +20,13 @@ import cls.island.view.component.treasury.card.Type;
 public class Config {
 	private static Config INSTANCE = new Config();
 
-	public enum PlayerType{
+	public enum PlayerType {
 		DIVER, EXPLORER, PILOT, MESSENGER, RANDOM, ENGINEER, NAVIGATOR;
 	}
-	
-	public enum Difficulty{
+
+	public enum Difficulty {
 		EASY, NORMAL, EPIC, LEGENDARY
 	}
-
 
 	public static Config getInstance() {
 		return INSTANCE;
@@ -50,9 +49,6 @@ public class Config {
 	public final Image explorerImage;
 	public final Image randomPlayerImage;
 	public final Image tickImage;
-	public final Image pieceWhite;
-	public final Image pieceYellow;
-	public final Image pieceBrown;
 	public final Image playerCardHolder;
 	public final Image islandCard;
 	public final Image islandBackCard;
@@ -68,17 +64,11 @@ public class Config {
 	public final Image heliCard;
 	public final Image waterLevelImage;
 	public final Image waterLevelMarkerImage;
-	public final Image pieceRed;
-	public final Image pieceGreen;
+	public final Image sunOuter;
 	public Image earth;
 	public Image chalice;
 	public Image fire;
 	public Image wind;
-	public Image pieceBlue;
-	private Image pieceRedLarge;
-	private Image pieceGreenLarge;
-	private Image pieceBlueLarge;
-	private Image pieceWhiteLarge;
 	public Image checkBoxImg;
 	public Image checkBoxWithTick;
 	public Image pilotImage;
@@ -86,8 +76,8 @@ public class Config {
 	public Image navigatorImage;
 	public Image engineerImage;
 	public Image deepOcean;
+	public final Image winImage;
 	public Image window;
-	private Image pieceBlack;
 	private AudioClip clickSound;
 	private AudioClip undoSound;
 	private AudioClip clickBtnSound;
@@ -95,9 +85,8 @@ public class Config {
 	private Media backgoundSound;
 	private AudioClip fireballSound;
 
-	
-
 	private Config() {
+		sunOuter = new Image("images/other/outerSun2.png", 70, 70, false, false);
 		background = new Image("images/other/startScreen.png", false);
 		diverImage = new Image("images/other/diver.png", 120, 120, false, true);
 		explorerImage = new Image("images/other/explorer.png", 120, 120, false, true);
@@ -107,18 +96,7 @@ public class Config {
 		navigatorImage = new Image("images/other/navigator.png", 120, 120, false, true);
 		randomPlayerImage = new Image("images/other/randomPlayer.png", 160, 125, true, true);
 		tickImage = new Image("images/other/tick.png", 40, 40, true, true);
-		pieceWhite = new Image("images/other/pieceWhite.png", 46, 78, true, true);
-		pieceGreen = new Image("images/other/pieceGreen.png", 46, 78, true, true);
-		pieceRed = new Image("images/other/pieceRed.png", 46, 78, true, true);
-		pieceBlue = new Image("images/other/pieceBlue.png", 46, 78, true, true);
-		pieceYellow = new Image("images/other/pieceYellow.png", 46, 78, true, true);
-		pieceBrown = new Image("images/other/pieceWhite.png", 46, 78, true, true);
-		//TODO curently mapped to white image!! make it black
-		pieceBlack = new Image("images/other/pieceBlack.png", 46, 78, true, true);
-		pieceWhiteLarge = new Image("images/other/pieceWhite.png", 31 * 2, 52 * 2, true, true);
-		pieceGreenLarge = new Image("images/other/pieceGreen.png", 31 * 2, 52 * 2, true, true);
-		pieceRedLarge = new Image("images/other/pieceRed.png", 31 * 2, 52 * 2, true, true);
-		pieceBlueLarge = new Image("images/other/pieceBlue.png", 31 * 2, 52 * 2, true, true);
+		// TODO curently mapped to white image!! make it black
 		playerCardHolder = new Image("images/other/playerCardHolder.png", 283, 220, false, true);
 		islandCard = new Image("images/other/islandCard.png", 70, 100, false, true);
 		islandBackCard = new Image("images/other/backcard.png", 70, 100, false, true);
@@ -133,10 +111,11 @@ public class Config {
 		treasuryCardDiscardImg = new Image("images/other/cancel.png", 25, 25, false, true);
 		waterLevelImage = new Image("images/other/WaterLevelMarker.png", 86, 246, false, true);
 		waterLevelMarkerImage = new Image("images/other/WaterMarker.png", 28, 16, false, true);
+		winImage = new Image("images/other/winImage.png", 500, 500, false, true);
 		loadIslandTileImages();
 		fullScreenRes = Screen.getPrimary().getBounds();
-		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(),
-				getFullScreenRes().getHeight() / getDefaultRes().getHeight());
+		scaleFactor = Math.min(getFullScreenRes().getWidth() / getDefaultRes().getWidth(), getFullScreenRes().getHeight()
+				/ getDefaultRes().getHeight());
 
 		shoreUpCursorImg = new Image("images/other/dig.png", 32, 32, false, true);
 		cursorImg = new Image("images/other/mouse.png", 32, 32, false, true);
@@ -149,13 +128,11 @@ public class Config {
 		checkBoxWithTick = new Image("images/other/checkboxwithtick.png", 50, 50, false, true);
 
 		deepOcean = new Image("images/other/deepocean.jpg", 400, 300, false, true);
-		window = new Image("images/other/window.png", getDefaultRes().getWidth(), getDefaultRes()
-				.getHeight(), false, true);
 
 		clickSound = new AudioClip(getClass().getResource("/sounds/click.mp3").toString());
 		undoSound = new AudioClip(getClass().getResource("/sounds/undo.mp3").toString());
 		splashSound = new AudioClip(getClass().getResource("/sounds/splash.mp3").toString());
-		
+
 		clickBtnSound = new AudioClip(getClass().getResource("/sounds/clickBtn.mp3").toString());
 		backgoundSound = new Media(getClass().getResource("/sounds/WavesFinal.mp3").toString());
 		fireballSound = new AudioClip(getClass().getResource("/sounds/Fireball.mp3").toString());
@@ -219,10 +196,10 @@ public class Config {
 	}
 
 	public Rectangle2D getFullScreenRes() {
-//		 return fullScreenRes;
+		// return fullScreenRes;
 		// TODO
 		return new Rectangle2D(0, 0, 1200, 800);
-//		 return defaultRes;
+		// return defaultRes;
 	}
 
 	public Rectangle2D getDefaultRes() {
@@ -244,62 +221,23 @@ public class Config {
 	private void loadIslandTileImages() {
 		DirectoryStream<Path> dirStream;
 		URL base = this.getClass().getClassLoader().getResource(".");
-		
+
 		String isladTileImageDir = base.getPath().substring(1) + ISLAND_TILES_IMAGE_PATH;
 		try {
-			dirStream = Files.newDirectoryStream(FileSystems.getDefault()
-					.getPath(isladTileImageDir));
+			dirStream = Files.newDirectoryStream(FileSystems.getDefault().getPath(isladTileImageDir));
 		} catch (IOException e) {
 			throw new RuntimeException("Error initializing the island images", e);
 		}
 		for (Path imgPath : dirStream) {
 			String fileName = imgPath.getFileName().toString();
-			Image islandImg = new Image(ISLAND_TILES_IMAGE_PATH + "/"
-					+ fileName, 120, 120, true, true);
+			Image islandImg = new Image(ISLAND_TILES_IMAGE_PATH + "/" + fileName, 120, 120, true, true);
 			islandTiles.put(fileName.split("\\.")[0], islandImg);
 		}
-	}
-
-	public Image getPieceImage(PieceColor color) {
-		switch (color) {
-		case RED:
-			return pieceRed;
-		case GREEN:
-			return pieceGreen;
-		case BLUE:
-			return pieceBlue;
-		case WHITE:
-			return pieceWhite;
-		case YELLOW:
-			return pieceYellow;
-		case BROWN:
-			return pieceBrown;
-		default:
-			break;
-		}
-		return pieceRed;
-	}
-
-	public Image getPieceImageLarge(PieceColor color) {
-		switch (color) {
-		case RED:
-			return pieceRedLarge;
-		case GREEN:
-			return pieceGreenLarge;
-		case BLUE:
-			return pieceBlueLarge;
-		case WHITE:
-			return pieceWhiteLarge;
-		default:
-			break;
-		}
-		return pieceRedLarge;
 	}
 
 	public AudioClip getClickSound() {
 		return clickSound;
 	}
-
 
 	public AudioClip getUndoSound() {
 		return undoSound;

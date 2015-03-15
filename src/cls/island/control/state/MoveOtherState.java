@@ -84,7 +84,7 @@ public class MoveOtherState implements GameState {
 			player.getPiece().getComponent().setValidToCkickEffect(true);
 		}
 		islandScreen.disableButtons();
-		islandScreen.c_showMessagePanel("Select the player to move!\nRight Click to cancel");
+		islandScreen.c_showMessagePanel("Select the playerType to move!\nRight Click to cancel");
 		return null;
 	}
 
